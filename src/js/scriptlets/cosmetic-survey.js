@@ -26,23 +26,12 @@
 (function() {
     if ( typeof vAPI !== 'object' || !vAPI.domFilterer ) { return; }
 
-    var resultset = new Set(),
-        nodes, i;
-
-    for ( var sheet of vAPI.domFilterer.getStylesheets() ) {
-        nodes = document.querySelectorAll(sheet.replace(/^\{[^\n]+\}\n?/gm, ''));
-        i = nodes.length;
-        while ( i-- ) {
-            resultset.add(nodes[i]);
-        }
-    }
-
     vAPI.messaging.send(
         'scriptlets',
         {
             what: 'cosmeticallyFilteredElementCount',
             pageURL: window.location.href,
-            filteredElementCount: resultset.size
+            filteredElementCount: vAPI.domFilterer.getFilteredElementCount()
         }
     );
 })();

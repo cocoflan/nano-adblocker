@@ -305,90 +305,162 @@ vAPI.DOMFilterer = (function() {
         return false;
     };
 
+    var DOMProceduralFilterer = function(domFilterer) {
+        this.domFilterer = domFilterer;
+        this.domIsReady = document.readyState !== 'loading';
+        this.addedSelectors = new Map();
+        this.addedNodes = false;
+        this.removedNodes = false;
+        this.addedNodesHandlerMissCount = 0;
+        this.currentResultset = new Set();
+        this.started = false;
+        this.selectors = new Map();
+        if ( this.domIsReady ) {
+            this.start();
+        } else {
+            document.addEventListener('DOMContentLoaded', function() {
+                this.domIsReady = true;
+                this.start();
+            }.bind(this));
+        }
+    };
+
+    DOMProceduralFilterer.prototype = {
+        addProceduralSelectors: function(aa) {
+            var raw, o, pselector,
+                mustCommit = this.domIsReady;
+            for ( var i = 0, n = aa.length; i < n; i++ ) {
+                raw = aa[i];
+                o = JSON.parse(raw);
+                if ( o.style ) {
+                    this.domFilterer.addCSSRule(o.style[0], o.style[1]);
+                    mustCommit = true;
+                    continue;
+                }
+                if ( o.pseudoclass ) {
+                    this.domFilterer.addCSSRule(
+                        o.raw,
+                        'display: none !important;'
+                    );
+                    mustCommit = true;
+                    continue;
+                }
+                if ( o.tasks ) {
+                    if ( this.selectors.has(raw) === false ) {
+                        pselector = new PSelector(o);
+                        this.selectors.set(raw, pselector);
+                        this.addedSelectors.set(raw, pselector);
+                        mustCommit = true;
+                    }
+                    continue;
+                }
+            }
+            if ( mustCommit ) {
+                this.domFilterer.commit();
+            }
+        },
+        createProceduralFilter: function(o) {
+            return new PSelector(o);
+        },
+        commitNow: function() {
+            if ( this.domIsReady !== true || this.selectors.size === 0 ) {
+                return;
+            }
+
+            if ( this.addedNodes || this.removedNodes ) {
+                this.addedSelectors.clear();
+            }
+
+            var currentResultset = this.currentResultset,
+                entry, nodes, i, node;
+
+            if ( this.addedSelectors.size !== 0 ) {
+                console.time('procedural filterset changed');
+                for ( entry of this.addedSelectors ) {
+                    nodes = entry[1].exec();
+                    i = nodes.length;
+                    while ( i-- ) {
+                        node = nodes[i];
+                        this.domFilterer.hideNode(node);
+                        currentResultset.add(node);
+                    }
+                }
+                this.addedSelectors.clear();
+                console.timeEnd('procedural filterset changed');
+                return;
+            }
+
+            console.time('dom layout changed/procedural selectors');
+
+            var afterResultset = new Set();
+
+            for ( entry of this.selectors ) {
+                nodes = entry[1].exec();
+                i = nodes.length;
+                while ( i-- ) {
+                    node = nodes[i];
+                    this.domFilterer.hideNode(node);
+                    afterResultset.add(node);
+                }
+            }
+            if ( afterResultset.size !== currentResultset.size ) {
+                this.addedNodesHandlerMissCount = 0;
+            } else {
+                this.addedNodesHandlerMissCount += 1;
+            }
+            for ( node of currentResultset ) {
+                if ( afterResultset.has(node) === false ) {
+                    this.domFilterer.unhideNode(node);
+                }
+            }
+
+            this.currentResultset = afterResultset;
+
+            console.timeEnd('dom layout changed/procedural selectors');
+
+            this.addedNodes = this.removedNodes = false;
+        },
+        domChangedHandler: function(addedNodes, removedNodes) {
+            this.addedNodes = this.addedNodes || addedNodes.length !== 0;
+            this.removedNodes = this.removedNodes || removedNodes;
+            this.domFilterer.commit();
+        },
+        domChangedHandlerBound: null,
+        start: function() {
+            if (
+                this.domIsReady !== true ||
+                this.selectors.size === 0 ||
+                this.domChangedHandlerBound !== null
+            ) {
+                return;
+            }
+            if ( vAPI.domWatcher instanceof Object ) {
+                this.domChangedHandlerBound = this.domChangedHandler.bind(this);
+                vAPI.domWatcher.addListener(this.domChangedHandlerBound);
+            }
+        }
+    };
+
     var DOMFiltererBase = vAPI.DOMFilterer;
 
     var domFilterer = function() {
         DOMFiltererBase.call(this);
-        this.addedNodesHandlerMissCount = 0;
-        this.currentResultset = new Set();
-        this.domWatched = false;
-        this.proceduralSelectors = new Map();
+        this.proceduralFilterer = new DOMProceduralFilterer(this);
     };
     domFilterer.prototype = Object.create(DOMFiltererBase.prototype);
     domFilterer.prototype.constructor = domFilterer;
 
     domFilterer.prototype.commitNow = function() {
         DOMFiltererBase.prototype.commitNow.call(this);
-
-        if (
-            this.domReady !== true ||
-            this.proceduralSelectors.size === 0
-        ) {
-            return;
-        }
-
-        var beforeResultset = this.currentResultset,
-            afterResultset = new Set(),
-            nodes, i;
-
-        for ( var entry of this.proceduralSelectors ) {
-            nodes = entry[1].exec();
-            i = nodes.length;
-            while ( i-- ) {
-                afterResultset.add(nodes[i]);
-            }
-        }
-
-        if ( afterResultset.size !== beforeResultset.size ) {
-            this.addedNodesHandlerMissCount = 0;
-        } else {
-            this.addedNodesHandlerMissCount += 1;
-        }
-
-        for ( var node of beforeResultset ) {
-            if ( afterResultset.has(node) === false ) {
-                this.unhideNode(node);
-            }
-        }
-
-        this.currentResultset = afterResultset;
+        this.proceduralFilterer.commitNow();
     };
 
     domFilterer.prototype.addProceduralSelectors = function(aa) {
-        var raw, o;
-        for ( var i = 0, n = aa.length; i < n; i++ ) {
-            raw = aa[i];
-            o = JSON.parse(raw);
-            if ( o.style ) {
-                this.addCSSRule(o.style[0], o.style[1]);
-                continue;
-            }
-            if ( o.pseudoclass ) {
-                this.addCSSRule(o.raw, 'display: none !important;');
-                continue;
-            }
-            if ( o.tasks ) {
-                if ( this.proceduralSelectors.has(raw) === false ) {
-                    this.proceduralSelectors.set(raw, new PSelector(o));
-                }
-                continue;
-            }
-        }
-        if ( this.domReady !== true ) { return; }
-        if ( this.proceduralSelectors.size !== 0 && this.domWatched !== true ) {
-            var domChangedHandler = function() {
-                this.commit();
-            }.bind(this);
-            vAPI.domWatcher.addListener(domChangedHandler);
-            vAPI.shutdown.add(function() {
-                vAPI.domWatcher.removeListener(domChangedHandler);
-            });
-            this.domWatched = true;
-        }
+        this.proceduralFilterer.addProceduralSelectors(aa);
     };
 
     domFilterer.prototype.createProceduralFilter = function(o) {
-        return new PSelector(o);
+        this.proceduralFilterer.createProceduralFilter(o);
     };
 
     domFilterer.prototype.toggleLogging = function() {

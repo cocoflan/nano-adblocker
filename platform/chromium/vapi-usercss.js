@@ -41,11 +41,7 @@ vAPI.DOMFilterer = function() {
         this.addedSpecificComplexHide = [];
 
         this.genericSimpleHide = new Set();
-        this.genericSimpleHideAggregated = undefined;
-        this.addedGenericSimpleHide = [];
         this.genericComplexHide = new Set();
-        this.genericComplexHideAggregated = undefined;
-        this.addedGenericComplexHide = [];
 
         this.userStylesheet = {
             style: null,
@@ -94,7 +90,7 @@ vAPI.DOMFilterer = function() {
                     this.style.disabled = this.disabled;
                 }
             },
-            getAllRules: function() {
+            getAllSelectors: function() {
                 var out = [];
                 var rules = this.style.sheet &&
                             this.style.sheet &&
@@ -111,8 +107,8 @@ vAPI.DOMFilterer = function() {
         this.hideNodeExpando = undefined;
         this.hideNodeBatchProcessTimer = undefined;
         this.hiddenNodeObserver = undefined;
-        this.hideNodeStaged = new Set();
-        this.hiddenNodesSet = new WeakSet();
+        this.hiddenNodesetToProcess = new Set();
+        this.hiddenNodeset = new Set();
 
         if ( this.domIsReady !== true ) {
             document.addEventListener('DOMContentLoaded', () => {
@@ -176,31 +172,7 @@ vAPI.DOMFilterer.prototype = {
         }
 
         console.timeEnd('specific filterset changed');
-/*
-        console.time('generic filterset changed');
 
-        if ( this.addedGenericSimpleHide.length !== 0 ) {
-            console.log('added %d generic simple selectors', this.addedGenericSimpleHide.length);
-            nodes = document.querySelectorAll(this.addedGenericSimpleHide.join(','));
-            for ( node of nodes ) {
-                this.hideNode(node);
-            }
-            this.addedGenericSimpleHide = [];
-            this.genericSimpleHideAggregated = undefined;
-        }
-
-        if ( this.addedGenericComplexHide.length !== 0 ) {
-            console.log('added %d generic complex selectors', this.addedGenericComplexHide.length);
-            nodes = document.querySelectorAll(this.addedGenericComplexHide.join(','));
-            for ( node of nodes ) {
-                this.hideNode(node);
-            }
-            this.addedGenericComplexHide = [];
-            this.genericComplexHideAggregated = undefined;
-        }
-
-        console.timeEnd('generic filterset changed');
-*/
         // DOM layout changed.
 
         console.time('dom layout changed/specific selectors');
@@ -212,7 +184,7 @@ vAPI.DOMFilterer.prototype = {
             return;
         }
 
-        console.log('added %d nodes', this.addedNodes.size);
+        console.log('%d nodes added', this.addedNodes.size);
 
         if ( this.specificSimpleHide.size !== 0 && domNodesAdded ) {
             if ( this.specificSimpleHideAggregated === undefined ) {
@@ -242,38 +214,7 @@ vAPI.DOMFilterer.prototype = {
         }
 
         console.timeEnd('dom layout changed/specific selectors');
-/*
-        console.time('dom layout changed/generic selectors');
 
-        if ( this.genericSimpleHide.size !== 0 && domNodesAdded ) {
-            if ( this.genericSimpleHideAggregated === undefined ) {
-                this.genericSimpleHideAggregated =
-                    Array.from(this.genericSimpleHide).join(',\n');
-            }
-            for ( node of this.addedNodes ) {
-                if ( node[vAPI.matchesProp](this.genericSimpleHideAggregated) ) {
-                    this.hideNode(node);
-                }
-                nodes = node.querySelectorAll(this.genericSimpleHideAggregated);
-                for ( node of nodes ) {
-                    this.hideNode(node);
-                }
-            }
-        }
-
-        if ( this.genericComplexHide.size !== 0 && domLayoutChanged ) {
-            if ( this.genericComplexHideAggregated === undefined ) {
-                this.genericComplexHideAggregated =
-                    Array.from(this.genericComplexHide).join(',\n');
-            }
-            nodes = document.querySelectorAll(this.genericComplexHideAggregated);
-            for ( node of nodes ) {
-                this.hideNode(node);
-            }
-        }
-
-        console.timeEnd('dom layout changed/generic selectors');
-*/
         this.addedNodes.clear();
         this.removedNodes = false;
     },
@@ -349,7 +290,6 @@ vAPI.DOMFilterer.prototype = {
         if ( isSimple ) {
             if ( this.genericSimpleHide.has(selectorsStr) === false ) {
                 this.genericSimpleHide.add(selectorsStr);
-                this.addedGenericSimpleHide.push(selectorsStr);
                 this.userStylesheet.add(
                     selectorsStr +
                     '\n{ display: none !important; }'
@@ -361,7 +301,6 @@ vAPI.DOMFilterer.prototype = {
         if ( isComplex ) {
             if ( this.genericComplexHide.has(selectorsStr) === false ) {
                 this.genericComplexHide.add(selectorsStr);
-                this.addedGenericComplexHide.push(selectorsStr);
                 this.userStylesheet.add(
                     selectorsStr +
                     '\n{ display: none !important; }'
@@ -379,11 +318,9 @@ vAPI.DOMFilterer.prototype = {
             if ( this.reCSSCombinators.test(selector) ) {
                 if ( this.genericComplexHide.has(selector) === false ) {
                     this.genericComplexHide.add(selector);
-                    this.addedGenericComplexHide.push(selector);
                 }
             } else if ( this.genericSimpleHide.has(selector) === false ) {
                 this.genericSimpleHide.add(selector);
-                this.addedGenericSimpleHide.push(selector);
             }
         }
     },
@@ -419,7 +356,7 @@ vAPI.DOMFilterer.prototype = {
     hideNodeBatchProcess: function() {
         this.hideNodeBatchProcessTimer.clear();
         var expando = this.hideNodeExpando;
-        for ( var node of this.hideNodeStaged ) {
+        for ( var node of this.hiddenNodesetToProcess ) {
             if (
                 node[expando] === undefined ||
                 node.clientHeight === 0 || node.clientWidth === 0
@@ -437,13 +374,13 @@ vAPI.DOMFilterer.prototype = {
             }
             node.setAttribute('style', attr + 'display: none !important;');
         }
-        this.hideNodeStaged.clear();
+        this.hiddenNodesetToProcess.clear();
     },
 
     hideNodeObserverHandler: function(mutations) {
         if ( this.userStylesheet.disabled ) { return; }
         var i = mutations.length,
-            stagedNodes = this.hideNodeStaged;
+            stagedNodes = this.hiddenNodesetToProcess;
         while ( i-- ) {
             stagedNodes.add(mutations[i].target);
         }
@@ -470,8 +407,8 @@ vAPI.DOMFilterer.prototype = {
     },
 
     hideNode: function(node) {
-        if ( this.hiddenNodesSet.has(node) ) { return; }
-        this.hiddenNodesSet.add(node);
+        if ( this.hiddenNodeset.has(node) ) { return; }
+        this.hiddenNodeset.add(node);
         if ( this.hideNodeExpando === undefined ) { this.hideNodeInit(); }
         node.setAttribute(this.hideNodeId, '');
         if ( node[this.hideNodeExpando] === undefined ) {
@@ -479,15 +416,15 @@ vAPI.DOMFilterer.prototype = {
                 node.hasAttribute('style') &&
                (node.getAttribute('style') || '');
         }
-        this.hideNodeStaged.add(node);
+        this.hiddenNodesetToProcess.add(node);
         this.hideNodeBatchProcessTimer.start();
         this.hiddenNodeObserver.observe(node, this.hiddenNodeObserverOptions);
     },
 
     unhideNode: function(node) {
-        if ( this.hiddenNodesSet.has(node) === false ) { return; }
+        if ( this.hiddenNodeset.has(node) === false ) { return; }
         node.removeAttribute(this.hideNodeId);
-        this.hideNodeStaged.delete(node);
+        this.hiddenNodesetToProcess.delete(node);
         if ( this.hideNodeExpando === undefined ) { return; }
         var attr = node[this.hideNodeExpando];
         if ( attr === false ) {
@@ -496,7 +433,7 @@ vAPI.DOMFilterer.prototype = {
             node.setAttribute('style', attr);
         }
         node[this.hideNodeExpando] = undefined;
-        this.hiddenNodesSet.delete(node);
+        this.hiddenNodeset.delete(node);
     },
 
     showNode: function(node) {
@@ -509,7 +446,7 @@ vAPI.DOMFilterer.prototype = {
     },
 
     unshowNode: function(node) {
-        this.hideNodeStaged.add(node);
+        this.hiddenNodesetToProcess.add(node);
     },
 
     toggle: function(state) {
@@ -528,7 +465,15 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    getStylesheets: function() {
-        return this.userStylesheet.getAllRules();
+    getFilteredElementCount: function() {
+        let resultset = new Set();
+        for ( var selector of this.userStylesheet.getAllSelectors() ) {
+            var nodes = document.querySelectorAll(selector);
+            var i = nodes.length;
+            while ( i-- ) {
+                resultset.add(nodes[i]);
+            }
+        }
+        return resultset.size;
     },
 };

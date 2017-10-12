@@ -25,9 +25,14 @@
 
 /******************************************************************************/
 
-vAPI.DOMFilterer = (function() {
+vAPI.DOMFilterer = function() {
+    this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
+    this.domIsReady = document.readyState !== 'loading';
+    this.hideNodeId = vAPI.randomToken();
+    this.hideNodeStylesheet = false;
+    this.stagedCSSRules = [];
 
-    var userStylesheets = {
+    this.userStylesheets = {
         sheets: new Set(),
         disabled: false,
         apply: function(add, css) {
@@ -58,22 +63,16 @@ vAPI.DOMFilterer = (function() {
         }
     };
 
-    var DOMFilterer = function() {
-        this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
-        this.domIsReady = document.readyState !== 'loading';
-        this.hideNodeId = vAPI.randomToken();
-        this.hideNodeStylesheet = false;
-        this.stagedCSSRules = [];
+    if ( this.domIsReady !== true ) {
+        document.addEventListener('DOMContentLoaded', () => {
+            this.domIsReady = true;
+            this.commit();
+        });
+    }
+};
 
-        if ( this.domIsReady !== true ) {
-            document.addEventListener('DOMContentLoaded', () => {
-                this.domIsReady = true;
-                this.commitNow();
-            });
-        }
-    };
-
-    DOMFilterer.prototype.commitNow = function() {
+vAPI.DOMFilterer.prototype = {
+    commitNow: function() {
         this.commitTimer.clear();
 
         var stylesheetParts = [], cssRule,
@@ -90,20 +89,20 @@ vAPI.DOMFilterer = (function() {
         }
 
         if ( stylesheetParts.length !== 0 ) {
-            userStylesheets.add(stylesheetParts.join('\n'));
+            this.userStylesheets.add(stylesheetParts.join('\n'));
         }
-    };
+    },
 
-    DOMFilterer.prototype.commit = function(commitNow) {
+    commit: function(commitNow) {
         if ( commitNow ) {
             this.commitTimer.clear();
             this.commitNow();
         } else {
             this.commitTimer.start();
         }
-    };
+    },
 
-    DOMFilterer.prototype.addCSSRule = function(
+    addCSSRule: function(
         selectors,
         declarations,
         options
@@ -119,9 +118,9 @@ vAPI.DOMFilterer = (function() {
             declarations,
             lazy: options && options.lazy === true
         });
-    };
+    },
 
-    DOMFilterer.prototype.hideNode = function(node) {
+    hideNode: function(node) {
         node.setAttribute(this.hideNodeId, '');
         if ( this.hideNodeStylesheet === false ) {
             this.hideNodeStylesheet = true;
@@ -130,19 +129,25 @@ vAPI.DOMFilterer = (function() {
                 'display: none !important;'
             );
         }
-    };
+    },
 
-    DOMFilterer.prototype.unhideNode = function(node) {
+    unhideNode: function(node) {
         node.removeAttribute(this.hideNodeId);
-    };
+    },
 
-    DOMFilterer.prototype.toggle = function(state) {
-        userStylesheets.toggle(state);
-    };
+    toggle: function(state) {
+        this.userStylesheets.toggle(state);
+    },
 
-    DOMFilterer.prototype.getStylesheets = function() {
-        return Array.from(userStylesheets.sheets);
-    };
-
-    return DOMFilterer;
-})();
+    getFilteredElementCount: function() {
+        let resultset = new Set();
+        for ( var sheet of this.userStylesheets.sheets ) {
+            let nodes = document.querySelectorAll(sheet.replace(/^\{[^\n]+\}\n?/gm, ''));
+            let i = nodes.length;
+            while ( i-- ) {
+                resultset.add(nodes[i]);
+            }
+        }
+        return resultset.size;
+    }
+};
