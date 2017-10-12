@@ -145,662 +145,259 @@ vAPI.injectScriptlet = function(doc, text) {
 
 // The DOM filterer is the heart of uBO's cosmetic filtering.
 
-vAPI.domFilterer = (function() {
+vAPI.DOMFilterer = (function() {
 
-/******************************************************************************/
+    // 'P' stands for 'Procedural'
 
-var allExceptions = new Set(),
-    allSelectors = new Set(),
-    stagedNodes = [];
-
-// Complex selectors, due to their nature may need to be "de-committed". A
-// Set() is used to implement this functionality.
-
-var complexSelectorsOldResultSet,
-    complexSelectorsCurrentResultSet = new Set();
-
-/******************************************************************************/
-
-var cosmeticFiltersActivatedTimer = null;
-
-var cosmeticFiltersActivated = function() {
-    cosmeticFiltersActivatedTimer = null;
-    vAPI.messaging.send(
-        'contentscript',
-        { what: 'cosmeticFiltersActivated' }
-    );
-};
-
-/******************************************************************************/
-
-// If a platform does not support its own vAPI.userCSS (user styles), we
-// provide a default (imperfect) implementation.
-
-// Probably no longer need to watch for style tags removal/tampering with fix
-// to https://github.com/gorhill/uBlock/issues/963
-
-// https://github.com/gorhill/uBlock/issues/2810
-//   With Firefox Nightly, it may happens style tags are injected before the
-//   head element is present.
-
-var platformUserCSS = (function() {
-    if ( vAPI.userCSS instanceof Object ) {
-        return vAPI.userCSS;
-    }
-
-    return {
-        enabled: true,
-        styles: [],
-        add: function(css) {
-            var style = document.createElement('style');
-            style.setAttribute('type', 'text/css');
-            style.textContent = css;
-            var parent = document.head || document.documentElement;
-            if ( parent !== null ) {
-                parent.appendChild(style);
-            }
-            this.styles.push(style);
-            if ( style.sheet ) {
-                style.sheet.disabled = !this.enabled;
-            }
-        },
-        remove: function(css) {
-            var i = this.styles.length,
-                style, parent;
-            while ( i-- ) {
-                style = this.styles[i];
-                if ( style.textContent !== css ) { continue; }
-                parent = style.parentNode;
-                if ( parent !== null ) {
-                    parent.removeChild(style);
-                }
-                this.styles.splice(i, 1);
-            }
-        },
-        toggle: function(state) {
-            if ( this.styles.length === '' ) { return; }
-            if ( state === undefined ) {
-                state = !this.enabled;
-            }
-            var i = this.styles.length, style;
-            while ( i-- ) {
-                style = this.styles[i];
-                if ( style.sheet !== null ) {
-                    style.sheet.disabled = !state;
-                }
-            }
-            this.enabled = state;
-        }
+    var PSelectorHasTask = function(task) {
+        this.selector = task[1];
     };
-})();
-
-// If a platform does not provide its own (improved) vAPI.hideNode, we assign
-// a default one to try to override author styles as best as can be.
-
-var platformHideNode = vAPI.hideNode,
-    platformUnhideNode = vAPI.unhideNode;
-
-(function() {
-    if ( platformHideNode instanceof Function ) {
-        return;
-    }
-
-    var uid,
-        timer,
-        observer,
-        changedNodes = new Set(),
-        observerOptions = {
-            attributes: true,
-            attributeFilter: [ 'style' ]
-        };
-
-    // https://jsperf.com/clientheight-and-clientwidth-vs-getcomputedstyle
-    //   Avoid getComputedStyle(), detecting whether a node is visible can be
-    //   achieved with clientWidth/clientHeight.
-    // https://gist.github.com/paulirish/5d52fb081b3570c81e3a
-    //   Do not interleave read-from/write-to the DOM. Write-to DOM
-    //   operations would cause the first read-from to be expensive, and
-    //   interleaving means that potentially all single read-from operation
-    //   would be expensive rather than just the 1st one.
-    //   Benchmarking toggling off/on cosmetic filtering confirms quite an
-    //   improvement when:
-    //   - batching as much as possible handling of all nodes;
-    //   - avoiding to interleave read-from/write-to operations.
-    //   However, toggling off/on cosmetic filtering repeatedly is not
-    //   a real use case, but this shows this will help performance
-    //   on sites which try to use inline styles to bypass blockers.
-    var batchProcess = function() {
-        timer.clear();
-        var uid_ = uid;
-        for ( var node of changedNodes ) {
-            if (
-                node[uid_] === undefined ||
-                node.clientHeight === 0 || node.clientWidth === 0
-            ) {
-                continue;
+    PSelectorHasTask.prototype.exec = function(input) {
+        var output = [];
+        for ( var i = 0, n = input.length; i < n; i++ ) {
+            if ( input[i].querySelector(this.selector) !== null ) {
+                output.push(input[i]);
             }
-            var attr = node.getAttribute('style');
-            if ( attr === null ) {
-                attr = '';
-            } else if (
-                attr.length !== 0 &&
-                attr.charCodeAt(attr.length - 1) !== 0x3B /* ';' */
-            ) {
-                attr += '; ';
-            }
-            node.setAttribute('style', attr + 'display: none !important;');
         }
-        changedNodes.clear();
+        return output;
     };
 
-    var observerHandler = function(mutations) {
-        var i = mutations.length,
-            changedNodes_ = changedNodes;
-        while ( i-- ) {
-            changedNodes_.add(mutations[i].target);
+    var PSelectorHasTextTask = function(task) {
+        this.needle = new RegExp(task[1]);
+    };
+    PSelectorHasTextTask.prototype.exec = function(input) {
+        var output = [];
+        for ( var i = 0, n = input.length; i < n; i++ ) {
+            if ( this.needle.test(input[i].textContent) ) {
+                output.push(input[i]);
+            }
         }
-        timer.start();
+        return output;
     };
 
-    platformHideNode = function(node) {
-        if ( uid === undefined ) {
-            uid = vAPI.randomToken();
-            timer = new vAPI.SafeAnimationFrame(batchProcess);
+    var PSelectorIfTask = function(task) {
+        this.pselector = new PSelector(task[1]);
+    };
+    PSelectorIfTask.prototype.target = true;
+    PSelectorIfTask.prototype.exec = function(input) {
+        var output = [];
+        for ( var i = 0, n = input.length; i < n; i++ ) {
+            if ( this.pselector.test(input[i]) === this.target ) {
+                output.push(input[i]);
+            }
         }
-        if ( node[uid] === undefined ) {
-            node[uid] = node.hasAttribute('style') && (node.getAttribute('style') || '');
-        }
-        // Performance: batch-process nodes to hide.
-        changedNodes.add(node);
-        timer.start();
-        if ( observer === undefined ) {
-            observer = new MutationObserver(observerHandler);
-        }
-        observer.observe(node, observerOptions);
+        return output;
     };
 
-    platformUnhideNode = function(node) {
-        if ( uid === undefined ) { return; }
-        var attr = node[uid];
-        if ( attr === false ) {
-            node.removeAttribute('style');
-        } else if ( typeof attr === 'string' ) {
-            node.setAttribute('style', attr);
-        }
-        delete node[uid];
+    var PSelectorIfNotTask = function(task) {
+        PSelectorIfTask.call(this, task);
+        this.target = false;
     };
-})();
+    PSelectorIfNotTask.prototype = Object.create(PSelectorIfTask.prototype);
+    PSelectorIfNotTask.prototype.constructor = PSelectorIfNotTask;
 
-/******************************************************************************/
-
-// 'P' stands for 'Procedural'
-
-var PSelectorHasTask = function(task) {
-    this.selector = task[1];
-};
-PSelectorHasTask.prototype.exec = function(input) {
-    var output = [];
-    for ( var i = 0, n = input.length; i < n; i++ ) {
-        if ( input[i].querySelector(this.selector) !== null ) {
-            output.push(input[i]);
-        }
-    }
-    return output;
-};
-
-var PSelectorHasTextTask = function(task) {
-    this.needle = new RegExp(task[1]);
-};
-PSelectorHasTextTask.prototype.exec = function(input) {
-    var output = [];
-    for ( var i = 0, n = input.length; i < n; i++ ) {
-        if ( this.needle.test(input[i].textContent) ) {
-            output.push(input[i]);
-        }
-    }
-    return output;
-};
-
-var PSelectorIfTask = function(task) {
-    this.pselector = new PSelector(task[1]);
-};
-PSelectorIfTask.prototype.target = true;
-PSelectorIfTask.prototype.exec = function(input) {
-    var output = [];
-    for ( var i = 0, n = input.length; i < n; i++ ) {
-        if ( this.pselector.test(input[i]) === this.target ) {
-            output.push(input[i]);
-        }
-    }
-    return output;
-};
-
-var PSelectorIfNotTask = function(task) {
-    PSelectorIfTask.call(this, task);
-    this.target = false;
-};
-PSelectorIfNotTask.prototype = Object.create(PSelectorIfTask.prototype);
-PSelectorIfNotTask.prototype.constructor = PSelectorIfNotTask;
-
-var PSelectorMatchesCSSTask = function(task) {
-    this.name = task[1].name;
-    this.value = new RegExp(task[1].value);
-};
-PSelectorMatchesCSSTask.prototype.pseudo = null;
-PSelectorMatchesCSSTask.prototype.exec = function(input) {
-    var output = [], style;
-    for ( var i = 0, n = input.length; i < n; i++ ) {
-        style = window.getComputedStyle(input[i], this.pseudo);
-        if ( style === null ) { return null; } /* FF */
-        if ( this.value.test(style[this.name]) ) {
-            output.push(input[i]);
-        }
-    }
-    return output;
-};
-
-var PSelectorMatchesCSSAfterTask = function(task) {
-    PSelectorMatchesCSSTask.call(this, task);
-    this.pseudo = ':after';
-};
-PSelectorMatchesCSSAfterTask.prototype = Object.create(PSelectorMatchesCSSTask.prototype);
-PSelectorMatchesCSSAfterTask.prototype.constructor = PSelectorMatchesCSSAfterTask;
-
-var PSelectorMatchesCSSBeforeTask = function(task) {
-    PSelectorMatchesCSSTask.call(this, task);
-    this.pseudo = ':before';
-};
-PSelectorMatchesCSSBeforeTask.prototype = Object.create(PSelectorMatchesCSSTask.prototype);
-PSelectorMatchesCSSBeforeTask.prototype.constructor = PSelectorMatchesCSSBeforeTask;
-
-var PSelectorXpathTask = function(task) {
-    this.xpe = document.createExpression(task[1], null);
-    this.xpr = null;
-};
-PSelectorXpathTask.prototype.exec = function(input) {
-    var output = [], j, node;
-    for ( var i = 0, n = input.length; i < n; i++ ) {
-        this.xpr = this.xpe.evaluate(
-            input[i],
-            XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
-            this.xpr
-        );
-        j = this.xpr.snapshotLength;
-        while ( j-- ) {
-            node = this.xpr.snapshotItem(j);
-            if ( node.nodeType === 1 ) {
-                output.push(node);
+    var PSelectorMatchesCSSTask = function(task) {
+        this.name = task[1].name;
+        this.value = new RegExp(task[1].value);
+    };
+    PSelectorMatchesCSSTask.prototype.pseudo = null;
+    PSelectorMatchesCSSTask.prototype.exec = function(input) {
+        var output = [], style;
+        for ( var i = 0, n = input.length; i < n; i++ ) {
+            style = window.getComputedStyle(input[i], this.pseudo);
+            if ( style === null ) { return null; } /* FF */
+            if ( this.value.test(style[this.name]) ) {
+                output.push(input[i]);
             }
         }
-    }
-    return output;
-};
+        return output;
+    };
 
-var PSelector = function(o) {
-    if ( PSelector.prototype.operatorToTaskMap === undefined ) {
-        PSelector.prototype.operatorToTaskMap = new Map([
-            [ ':has', PSelectorHasTask ],
-            [ ':has-text', PSelectorHasTextTask ],
-            [ ':if', PSelectorIfTask ],
-            [ ':if-not', PSelectorIfNotTask ],
-            [ ':matches-css', PSelectorMatchesCSSTask ],
-            [ ':matches-css-after', PSelectorMatchesCSSAfterTask ],
-            [ ':matches-css-before', PSelectorMatchesCSSBeforeTask ],
-            [ ':xpath', PSelectorXpathTask ]
-        ]);
-    }
-    this.raw = o.raw;
-    this.selector = o.selector;
-    this.tasks = [];
-    var tasks = o.tasks;
-    if ( !tasks ) { return; }
-    for ( var i = 0, task, ctor; i < tasks.length; i++ ) {
-        task = tasks[i];
-        ctor = this.operatorToTaskMap.get(task[0]);
-        this.tasks.push(new ctor(task));
-    }
-};
-PSelector.prototype.operatorToTaskMap = undefined;
-PSelector.prototype.prime = function(input) {
-    var root = input || document;
-    if ( this.selector !== '' ) {
-        return root.querySelectorAll(this.selector);
-    }
-    return [ root ];
-};
-PSelector.prototype.exec = function(input) {
-    //var t0 = window.performance.now();
-    var tasks = this.tasks, nodes = this.prime(input);
-    for ( var i = 0, n = tasks.length; i < n && nodes.length !== 0; i++ ) {
-        nodes = tasks[i].exec(nodes);
-    }
-    //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
-    return nodes;
-};
-PSelector.prototype.test = function(input) {
-    //var t0 = window.performance.now();
-    var tasks = this.tasks, nodes = this.prime(input), AA = [ null ], aa;
-    for ( var i = 0, ni = nodes.length; i < ni; i++ ) {
-        AA[0] = nodes[i]; aa = AA;
-        for ( var j = 0, nj = tasks.length; j < nj && aa.length !== 0; j++ ) {
-            aa = tasks[j].exec(aa);
-        }
-        if ( aa.length !== 0 ) { return true; }
-    }
-    //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
-    return false;
-};
+    var PSelectorMatchesCSSAfterTask = function(task) {
+        PSelectorMatchesCSSTask.call(this, task);
+        this.pseudo = ':after';
+    };
+    PSelectorMatchesCSSAfterTask.prototype = Object.create(PSelectorMatchesCSSTask.prototype);
+    PSelectorMatchesCSSAfterTask.prototype.constructor = PSelectorMatchesCSSAfterTask;
 
-/******************************************************************************/
+    var PSelectorMatchesCSSBeforeTask = function(task) {
+        PSelectorMatchesCSSTask.call(this, task);
+        this.pseudo = ':before';
+    };
+    PSelectorMatchesCSSBeforeTask.prototype = Object.create(PSelectorMatchesCSSTask.prototype);
+    PSelectorMatchesCSSBeforeTask.prototype.constructor = PSelectorMatchesCSSBeforeTask;
 
-var domFilterer = {
-    addedNodesHandlerMissCount: 0,
-    commitTimer: null,
-    disabledId: vAPI.randomToken(),
-    enabled: true,
-    excludeId: undefined,
-    hiddenId: vAPI.randomToken(),
-    hiddenNodeCount: 0,
-    hiddenNodeEnforcer: false,
-    loggerEnabled: undefined,
-
-    newHideSelectorBuffer: [], // Hide style filter buffer
-    newStyleRuleBuffer: [],    // Non-hide style filter buffer
-    simpleHideSelectors: {     // Hiding filters: simple selectors
-        entries: [],
-        matchesProp: vAPI.matchesProp,
-        selector: undefined,
-        add: function(selector) {
-            this.entries.push(selector);
-            this.selector = undefined;
-        },
-        forEachNode: function(callback, root, extra) {
-            if ( this.selector === undefined ) {
-                this.selector = this.entries.join(extra + ',') + extra;
-            }
-            if ( root[this.matchesProp](this.selector) ) {
-                callback(root);
-            }
-            var nodes = root.querySelectorAll(this.selector),
-                i = nodes.length;
-            while ( i-- ) {
-                callback(nodes[i]);
-            }
-        }
-    },
-    complexHideSelectors: {    // Hiding filters: complex selectors
-        entries: [],
-        selector: undefined,
-        add: function(selector) {
-            this.entries.push(selector);
-            this.selector = undefined;
-        },
-        forEachNode: function(callback) {
-            if ( this.selector === undefined ) {
-                this.selector = this.entries.join(',');
-            }
-            var nodes = document.querySelectorAll(this.selector),
-                i = nodes.length;
-            while ( i-- ) {
-                callback(nodes[i]);
-            }
-        }
-    },
-    nqsSelectors: [],          // Non-querySelector-able filters
-    proceduralSelectors: {     // Hiding filters: procedural
-        entries: [],
-        add: function(o) {
-            this.entries.push(new PSelector(o));
-        },
-        forEachNode: function(callback) {
-            var pfilters = this.entries, i = pfilters.length, pfilter, nodes, j;
-            while ( i-- ) {
-                pfilter = pfilters[i];
-                nodes = pfilter.exec();
-                j = nodes.length;
-                while ( j-- ) {
-                    callback(nodes[j], pfilter);
+    var PSelectorXpathTask = function(task) {
+        this.xpe = document.createExpression(task[1], null);
+        this.xpr = null;
+    };
+    PSelectorXpathTask.prototype.exec = function(input) {
+        var output = [], j, node;
+        for ( var i = 0, n = input.length; i < n; i++ ) {
+            this.xpr = this.xpe.evaluate(
+                input[i],
+                XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+                this.xpr
+            );
+            j = this.xpr.snapshotLength;
+            while ( j-- ) {
+                node = this.xpr.snapshotItem(j);
+                if ( node.nodeType === 1 ) {
+                    output.push(node);
                 }
             }
         }
-    },
+        return output;
+    };
 
-    addExceptions: function(aa) {
-        for ( var i = 0, n = aa.length; i < n; i++ ) {
-            allExceptions.add(aa[i]);
+    var PSelector = function(o) {
+        if ( PSelector.prototype.operatorToTaskMap === undefined ) {
+            PSelector.prototype.operatorToTaskMap = new Map([
+                [ ':has', PSelectorHasTask ],
+                [ ':has-text', PSelectorHasTextTask ],
+                [ ':if', PSelectorIfTask ],
+                [ ':if-not', PSelectorIfNotTask ],
+                [ ':matches-css', PSelectorMatchesCSSTask ],
+                [ ':matches-css-after', PSelectorMatchesCSSAfterTask ],
+                [ ':matches-css-before', PSelectorMatchesCSSBeforeTask ],
+                [ ':xpath', PSelectorXpathTask ]
+            ]);
         }
-    },
-
-    addSelector: function(selector) {
-        if ( allSelectors.has(selector) || allExceptions.has(selector) ) {
-            return;
+        this.raw = o.raw;
+        this.selector = o.selector;
+        this.tasks = [];
+        var tasks = o.tasks;
+        if ( !tasks ) { return; }
+        for ( var i = 0, task, ctor; i < tasks.length; i++ ) {
+            task = tasks[i];
+            ctor = this.operatorToTaskMap.get(task[0]);
+            this.tasks.push(new ctor(task));
         }
-        allSelectors.add(selector);
-        if ( selector.charCodeAt(0) !== 0x7B /* '{' */ ) {
-            this.newHideSelectorBuffer.push(selector);
-            if ( selector.indexOf(' ') === -1 ) {
-                this.simpleHideSelectors.add(selector);
-            } else {
-                this.complexHideSelectors.add(selector);
+    };
+    PSelector.prototype.operatorToTaskMap = undefined;
+    PSelector.prototype.prime = function(input) {
+        var root = input || document;
+        if ( this.selector !== '' ) {
+            return root.querySelectorAll(this.selector);
+        }
+        return [ root ];
+    };
+    PSelector.prototype.exec = function(input) {
+        //var t0 = window.performance.now();
+        var tasks = this.tasks, nodes = this.prime(input);
+        for ( var i = 0, n = tasks.length; i < n && nodes.length !== 0; i++ ) {
+            nodes = tasks[i].exec(nodes);
+        }
+        //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
+        return nodes;
+    };
+    PSelector.prototype.test = function(input) {
+        //var t0 = window.performance.now();
+        var tasks = this.tasks, nodes = this.prime(input), AA = [ null ], aa;
+        for ( var i = 0, ni = nodes.length; i < ni; i++ ) {
+            AA[0] = nodes[i]; aa = AA;
+            for ( var j = 0, nj = tasks.length; j < nj && aa.length !== 0; j++ ) {
+                aa = tasks[j].exec(aa);
             }
+            if ( aa.length !== 0 ) { return true; }
+        }
+        //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
+        return false;
+    };
+
+    var DOMFiltererBase = vAPI.DOMFilterer;
+
+    var domFilterer = function() {
+        DOMFiltererBase.call(this);
+        this.addedNodesHandlerMissCount = 0;
+        this.currentResultset = new Set();
+        this.domWatched = false;
+        this.proceduralSelectors = new Map();
+    };
+    domFilterer.prototype = Object.create(DOMFiltererBase.prototype);
+    domFilterer.prototype.constructor = domFilterer;
+
+    domFilterer.prototype.commitNow = function() {
+        DOMFiltererBase.prototype.commitNow.call(this);
+
+        if (
+            this.domReady !== true ||
+            this.proceduralSelectors.size === 0
+        ) {
             return;
         }
-        var o = JSON.parse(selector);
-        if ( o.style ) {
-            this.newStyleRuleBuffer.push(o.style.join(' '));
-            this.nqsSelectors.push(o.raw);
-            return;
-        }
-        if ( o.pseudoclass ) {
-            this.newHideSelectorBuffer.push(o.raw);
-            this.nqsSelectors.push(o.raw);
-            return;
-        }
-        if ( o.tasks ) {
-            this.proceduralSelectors.add(o);
-            return;
-        }
-    },
 
-    addSelectors: function(aa) {
-        for ( var i = 0, n = aa.length; i < n; i++ ) {
-            this.addSelector(aa[i]);
-        }
-    },
+        var beforeResultset = this.currentResultset,
+            afterResultset = new Set(),
+            nodes, i;
 
-    commit_: function() {
-        this.commitTimer.clear();
-
-        var beforeHiddenNodeCount = this.hiddenNodeCount,
-            styleText = '';
-
-        // CSS rules/hide
-        if ( this.newHideSelectorBuffer.length ) {
-            styleText = '\n:root ' + this.newHideSelectorBuffer.join(',\n:root ') + '\n{ display: none !important; }';
-            this.newHideSelectorBuffer.length = 0;
-        }
-
-        // CSS rules/any css declaration
-        if ( this.newStyleRuleBuffer.length ) {
-            styleText += '\n' + this.newStyleRuleBuffer.join('\n');
-            this.newStyleRuleBuffer.length = 0;
-        }
-
-        // Simple selectors: incremental.
-
-        // Simple css selectors/hide
-        if ( this.simpleHideSelectors.entries.length ) {
-            var i = stagedNodes.length;
+        for ( var entry of this.proceduralSelectors ) {
+            nodes = entry[1].exec();
+            i = nodes.length;
             while ( i-- ) {
-                this.simpleHideSelectors.forEachNode(hideNode, stagedNodes[i], cssNotHiddenId);
+                afterResultset.add(nodes[i]);
             }
         }
-        stagedNodes = [];
 
-        // Complex selectors: non-incremental.
-        complexSelectorsOldResultSet = complexSelectorsCurrentResultSet;
-        complexSelectorsCurrentResultSet = new Set();
-
-        // Complex css selectors/hide
-        // The handling of these can be considered optional, since they are
-        // also applied declaratively using a style tag.
-        if ( this.complexHideSelectors.entries.length ) {
-            this.complexHideSelectors.forEachNode(complexHideNode);
-        }
-
-        // Procedural cosmetic filters
-        if ( this.proceduralSelectors.entries.length ) {
-            this.proceduralSelectors.forEachNode(complexHideNode);
-        }
-
-        // https://github.com/gorhill/uBlock/issues/1912
-        //   If one or more nodes have been manually hidden, insert a style tag
-        //   targeting these manually hidden nodes. For browsers supporting
-        //   user styles, this allows uBO to win.
-        var commitHit = this.hiddenNodeCount !== beforeHiddenNodeCount;
-        if ( commitHit ) {
-            if ( this.hiddenNodeEnforcer === false ) {
-                styleText += '\n:root *[' + this.hiddenId + '][hidden] { display: none !important; }';
-                this.hiddenNodeEnforcer = true;
-            }
+        if ( afterResultset.size !== beforeResultset.size ) {
             this.addedNodesHandlerMissCount = 0;
         } else {
             this.addedNodesHandlerMissCount += 1;
         }
 
-        if ( styleText !== '' ) {
-            platformUserCSS.add(styleText);
+        for ( var node of beforeResultset ) {
+            if ( afterResultset.has(node) === false ) {
+                this.unhideNode(node);
+            }
         }
 
-        // Un-hide nodes previously hidden.
-        for ( var node of complexSelectorsOldResultSet ) {
-            this.unhideNode(node);
-        }
-        complexSelectorsOldResultSet.clear();
+        this.currentResultset = afterResultset;
+    };
 
-        // If DOM nodes have been affected, lazily notify core process.
-        if (
-            this.loggerEnabled !== false &&
-            commitHit &&
-            cosmeticFiltersActivatedTimer === null
-        ) {
-            cosmeticFiltersActivatedTimer = vAPI.setTimeout(
-                cosmeticFiltersActivated,
-                503
-            );
+    domFilterer.prototype.addProceduralSelectors = function(aa) {
+        var raw, o;
+        for ( var i = 0, n = aa.length; i < n; i++ ) {
+            raw = aa[i];
+            o = JSON.parse(raw);
+            if ( o.style ) {
+                this.addCSSRule(o.style[0], o.style[1]);
+                continue;
+            }
+            if ( o.pseudoclass ) {
+                this.addCSSRule(o.raw, 'display: none !important;');
+                continue;
+            }
+            if ( o.tasks ) {
+                if ( this.proceduralSelectors.has(raw) === false ) {
+                    this.proceduralSelectors.set(raw, new PSelector(o));
+                }
+                continue;
+            }
         }
-    },
+        if ( this.domReady !== true ) { return; }
+        if ( this.proceduralSelectors.size !== 0 && this.domWatched !== true ) {
+            var domChangedHandler = function() {
+                this.commit();
+            }.bind(this);
+            vAPI.domWatcher.addListener(domChangedHandler);
+            vAPI.shutdown.add(function() {
+                vAPI.domWatcher.removeListener(domChangedHandler);
+            });
+            this.domWatched = true;
+        }
+    };
 
-    commit: function(nodes, commitNow) {
-        if ( nodes === 'all' ) {
-            stagedNodes = [ document.documentElement ];
-        } else if ( stagedNodes[0] !== document.documentElement ) {
-            stagedNodes = stagedNodes.concat(nodes);
-        }
-        if ( commitNow ) {
-            this.commitTimer.clear();
-            this.commit_();
-            return;
-        }
-        this.commitTimer.start();
-    },
-
-    createProceduralFilter: function(o) {
+    domFilterer.prototype.createProceduralFilter = function(o) {
         return new PSelector(o);
-    },
+    };
 
-    getExcludeId: function() {
-        if ( this.excludeId === undefined ) {
-            this.excludeId = vAPI.randomToken();
-        }
-        return this.excludeId;
-    },
+    domFilterer.prototype.toggleLogging = function() {
+    };
 
-    hideNode: function(node) {
-        if ( node[this.hiddenId] !== undefined ) { return; }
-        if ( this.excludeId !== undefined && node[this.excludeId] ) { return; }
-        node.setAttribute(this.hiddenId, '');
-        this.hiddenNodeCount += 1;
-        node.hidden = true;
-        node[this.hiddenId] = null;
-        platformHideNode(node);
-    },
-
-    init: function() {
-        this.commitTimer = new vAPI.SafeAnimationFrame(this.commit_.bind(this));
-    },
-
-    showNode: function(node) {
-        node.hidden = false;
-        platformUnhideNode(node);
-    },
-
-    toggleLogging: function(state) {
-        this.loggerEnabled = state;
-    },
-
-    toggleOff: function() {
-        platformUserCSS.toggle(false);
-        this.enabled = false;
-    },
-
-    toggleOn: function() {
-        platformUserCSS.toggle(true);
-        this.enabled = true;
-    },
-
-    userCSS: platformUserCSS,
-
-    unhideNode: function(node) {
-        if ( node[this.hiddenId] !== undefined ) {
-            this.hiddenNodeCount--;
-        }
-        node.removeAttribute(this.hiddenId);
-        node[this.hiddenId] = undefined;
-        node.hidden = false;
-        platformUnhideNode(node);
-    },
-
-    unshowNode: function(node) {
-        node.hidden = true;
-        platformHideNode(node);
-    },
-
-    domChangedHandler: function(addedNodes) {
-        this.commit(addedNodes);
-    },
-
-    start: function() {
-        var domChangedHandler = this.domChangedHandler.bind(this);
-        vAPI.domWatcher.addListener(domChangedHandler);
-        vAPI.shutdown.add(function() {
-            vAPI.domWatcher.removeListener(domChangedHandler);
-        });
-    }
-};
-
-/******************************************************************************/
-
-var hideNode = domFilterer.hideNode.bind(domFilterer);
-
-var complexHideNode = function(node) {
-    complexSelectorsCurrentResultSet.add(node);
-    if ( !complexSelectorsOldResultSet.delete(node) ) {
-        hideNode(node);
-    }
-};
-
-var cssNotHiddenId = ':not([' + domFilterer.hiddenId + '])';
-
-domFilterer.init();
-
-/******************************************************************************/
-
-return domFilterer;
-
-/******************************************************************************/
-
+    return domFilterer;
 })();
+
+vAPI.domFilterer = new vAPI.DOMFilterer();
 
 /******************************************************************************/
 /******************************************************************************/
@@ -829,11 +426,23 @@ return domFilterer;
             if ( response.noGenericCosmeticFiltering || cfeDetails.noDOMSurveying ) {
                 vAPI.domSurveyor = null;
             }
-            if ( cfeDetails.cosmeticHide.length !== 0 || cfeDetails.cosmeticDonthide.length !== 0 ) {
-                domFilterer.addExceptions(cfeDetails.cosmeticDonthide);
-                domFilterer.addSelectors(cfeDetails.cosmeticHide);
-                domFilterer.commit('all', true);
-            }
+            //domFilterer.addExceptionSelectors(cfeDetails.exceptionFilters);
+            domFilterer.addCSSRule(
+                cfeDetails.declarativeFilters,
+                'display: none !important;'
+            );
+            domFilterer.addCSSRule(
+                cfeDetails.highGenericHideSimple,
+                'display: none !important;',
+                { type: 'simple', lazy: true }
+            );
+            domFilterer.addCSSRule(
+                cfeDetails.highGenericHideComplex,
+                'display: none !important;',
+                { type: 'complex', lazy: true }
+            );
+            domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
+            domFilterer.commit();
         }
 
         var parent = document.head || document.documentElement;
@@ -844,8 +453,8 @@ return domFilterer;
                 elem.setAttribute('type', 'text/css');
                 text = cfeDetails.netHide.join(',\n');
                 text += response.collapseBlocked ?
-                    '\n{display:none !important;}' :
-                    '\n{visibility:hidden !important;}';
+                    '\n{ display:none !important; }' :
+                    '\n{ visibility:hidden !important; }';
                 elem.appendChild(document.createTextNode(text));
                 parent.appendChild(elem);
             }
@@ -898,8 +507,9 @@ return domFilterer;
 
 vAPI.domWatcher = (function() {
 
-    var domLayoutObserver = null,
-        ignoreTags = new Set([ 'head', 'link', 'meta', 'script', 'style' ]),
+    var ready = false,
+        domLayoutObserver = null,
+        ignoreTags = new Set([ 'br', 'head', 'link', 'meta', 'script', 'style' ]),
         addedNodeLists = [],
         addedNodes = [],
         removedNodes = false,
@@ -926,12 +536,7 @@ vAPI.domWatcher = (function() {
         }
         addedNodeLists.length = 0;
         if ( j === 0 && removedNodes === false ) { return; }
-        listeners[0](addedNodes);
-        if ( listeners[1] ) {
-            listeners[1](addedNodes);
-        }
-        addedNodes.length = 0;
-        removedNodes = false;
+        processListeners();
     };
 
     var safeObserverHandlerTimer = new vAPI.SafeAnimationFrame(safeObserverHandler);
@@ -956,14 +561,8 @@ vAPI.domWatcher = (function() {
         }
     };
 
-    var addListener = function(listener) {
-        if ( listeners.indexOf(listener) !== -1 ) {
-            return;
-        }
-        listeners.push(listener);
-        if ( domLayoutObserver !== null ) {
-            return;
-        }
+    var startMutationObserver = function() {
+        if ( domLayoutObserver !== null || !ready ) { return; }
         domLayoutObserver = new MutationObserver(observerHandler);
         domLayoutObserver.observe(document.documentElement, {
             //attributeFilter: [ 'class', 'id' ],
@@ -971,35 +570,66 @@ vAPI.domWatcher = (function() {
             childList: true,
             subtree: true
         });
+        vAPI.shutdown.add(cleanup);
+    };
+
+    var stopMutationObserver = function() {
+        if ( domLayoutObserver === null ) { return; }
+        domLayoutObserver.disconnect();
+        domLayoutObserver = null;
+        vAPI.shutdown.remove(cleanup);
+    };
+
+    var addListener = function(listener) {
+        if ( listeners.indexOf(listener) === -1 ) {
+            listeners.push(listener);
+            startMutationObserver();
+        }
     };
 
     var removeListener = function(listener) {
         var pos = listeners.indexOf(listener);
-        if ( pos === -1 ) {
-            return;
-        }
+        if ( pos === -1 ) { return; }
         listeners.splice(pos, 1);
-        if ( listeners.length !== 0 || domLayoutObserver === null ) {
-            return;
+        if ( listeners.length === 0 ) {
+            stopMutationObserver();
         }
-        domLayoutObserver.disconnect();
-        domLayoutObserver = null;
     };
 
-    var start = function() {
-        vAPI.shutdown.add(function() {
-            if ( domLayoutObserver !== null ) {
-                domLayoutObserver.disconnect();
-                domLayoutObserver = null;
-            }
-            safeObserverHandlerTimer.clear();
-        });
+    var processListeners = function() {
+        for ( var i = 0, n = listeners.length; i < n; i++ ) {
+            listeners[i](addedNodes, removedNodes);
+        }
+        addedNodes.length = 0;
+        removedNodes = false;
     };
+
+    var cleanup = function() {
+        if ( domLayoutObserver !== null ) {
+            domLayoutObserver.disconnect();
+            domLayoutObserver = null;
+        }
+        safeObserverHandlerTimer.clear();
+    };
+
+    var domLoaded = function(ev) {
+        if ( ev !== undefined ) {
+            document.removeEventListener('DOMContentLoaded', domLoaded);
+        }
+        ready = true;
+        if ( listeners.length === 0 ) { return; }
+        startMutationObserver();
+    };
+
+    if ( document.readyState !== 'loading' ) {
+        domLoaded();
+    } else {
+        document.addEventListener('DOMContentLoaded', domLoaded);
+    }
 
     return {
         addListener: addListener,
-        removeListener: removeListener,
-        start: start
+        removeListener: removeListener
     };
 })();
 
@@ -1275,10 +905,7 @@ vAPI.domCollapser = (function() {
 vAPI.domSurveyor = (function() {
     var domFilterer = null,
         messaging = vAPI.messaging,
-        surveyPhase3Nodes = [],
         cosmeticSurveyingMissCount = 0,
-        highGenerics = null,
-        lowGenericSelectors = [],
         queriedSelectors = new Set(),
         surveyCost = 0;
 
@@ -1286,214 +913,36 @@ vAPI.domSurveyor = (function() {
 
     var surveyPhase3 = function(response) {
         var result = response && response.result,
-            firstSurvey = highGenerics === null;
+            selectors = result && result.hide || [];
 
-        if ( result ) {
-            if ( result.hide.length ) {
-                processLowGenerics(result.hide);
-            }
-            if ( result.highGenerics ) {
-                highGenerics = result.highGenerics;
-            }
-        }
-
-        if ( highGenerics ) {
-            var t0 = window.performance.now();
-            if ( highGenerics.hideLowCount ) {
-                processHighLowGenerics(highGenerics.hideLow);
-            }
-            if ( highGenerics.hideMediumCount ) {
-                processHighMediumGenerics(highGenerics.hideMedium);
-            }
-            if ( highGenerics.hideHighSimpleCount || highGenerics.hideHighComplexCount ) {
-                processHighHighGenerics();
-            }
-            surveyCost += window.performance.now() - t0;
+        if ( selectors.length ) {
+            domFilterer.addCSSRule(
+                selectors,
+                'display: none !important;'
+            );
+            domFilterer.commit();
         }
 
         // Need to do this before committing DOM filterer, as needed info
         // will no longer be there after commit.
-        if ( firstSurvey || domFilterer.newHideSelectorBuffer.length ) {
+        if ( selectors.length !== 0 ) {
             messaging.send(
                 'contentscript',
                 {
                     what: 'cosmeticFiltersInjected',
                     type: 'cosmetic',
                     hostname: window.location.hostname,
-                    selectors: domFilterer.newHideSelectorBuffer,
-                    first: firstSurvey,
+                    selectors: selectors,
                     cost: surveyCost
                 }
             );
         }
 
         // Shutdown surveyor if too many consecutive empty resultsets.
-        if ( domFilterer.newHideSelectorBuffer.length === 0 ) {
+        if ( selectors.length === 0 ) {
             cosmeticSurveyingMissCount += 1;
         } else {
             cosmeticSurveyingMissCount = 0;
-        }
-
-        domFilterer.commit(surveyPhase3Nodes);
-        surveyPhase3Nodes = [];
-    };
-
-    // Query main process.
-
-    var surveyPhase2 = function(addedNodes) {
-        surveyPhase3Nodes = surveyPhase3Nodes.concat(addedNodes);
-        if ( lowGenericSelectors.length !== 0 || highGenerics === null ) {
-            messaging.send(
-                'contentscript',
-                {
-                    what: 'retrieveGenericCosmeticSelectors',
-                    pageURL: window.location.href,
-                    selectors: lowGenericSelectors,
-                    firstSurvey: highGenerics === null
-                },
-                surveyPhase3
-            );
-            lowGenericSelectors = [];
-        } else {
-            surveyPhase3(null);
-        }
-    };
-
-    // Low generics:
-    // - [id]
-    // - [class]
-
-    var processLowGenerics = function(generics) {
-        domFilterer.addSelectors(generics);
-    };
-
-    // High-low generics:
-    // - [alt="..."]
-    // - [title="..."]
-
-    var processHighLowGenerics = function(generics) {
-        var attrs = ['title', 'alt'];
-        var attr, attrValue, nodeList, iNode, node;
-        var selector;
-        while ( (attr = attrs.pop()) ) {
-            nodeList = selectNodes('[' + attr + ']', surveyPhase3Nodes);
-            iNode = nodeList.length;
-            while ( iNode-- ) {
-                node = nodeList[iNode];
-                attrValue = node.getAttribute(attr);
-                if ( !attrValue ) { continue; }
-                // Candidate 1 = generic form
-                // If generic form is injected, no need to process the
-                // specific form, as the generic will affect all related
-                // specific forms.
-                selector = '[' + attr + '="' + attrValue + '"]';
-                if ( generics.hasOwnProperty(selector) ) {
-                    domFilterer.addSelector(selector);
-                    continue;
-                }
-                // Candidate 2 = specific form
-                selector = node.localName + selector;
-                if ( generics.hasOwnProperty(selector) ) {
-                    domFilterer.addSelector(selector);
-                }
-            }
-        }
-    };
-
-    // High-medium generics:
-    // - [href^="http"]
-
-    var processHighMediumGenerics = function(generics) {
-        var stagedNodes = surveyPhase3Nodes,
-            i = stagedNodes.length;
-        if ( i === 1 && stagedNodes[0] === document.documentElement ) {
-            processHighMediumGenericsForNodes(document.links, generics);
-            return;
-        }
-        var aa = [ null ],
-            node, nodes;
-        while ( i-- ) {
-            node = stagedNodes[i];
-            if ( node.localName === 'a' ) {
-                aa[0] = node;
-                processHighMediumGenericsForNodes(aa, generics);
-            }
-            nodes = node.getElementsByTagName('a');
-            if ( nodes.length !== 0 ) {
-                processHighMediumGenericsForNodes(nodes, generics);
-            }
-        }
-    };
-
-    var processHighMediumGenericsForNodes = function(nodes, generics) {
-        var i = nodes.length,
-            node, href, pos, entry, j, selector;
-        while ( i-- ) {
-            node = nodes[i];
-            href = node.getAttribute('href');
-            if ( !href ) { continue; }
-            pos = href.indexOf('://');
-            if ( pos === -1 ) { continue; }
-            entry = generics[href.slice(pos + 3, pos + 11)];
-            if ( entry === undefined ) { continue; }
-            if ( typeof entry === 'string' ) {
-                if ( href.lastIndexOf(entry.slice(8, -2), 0) === 0 ) {
-                    domFilterer.addSelector(entry);
-                }
-                continue;
-            }
-            j = entry.length;
-            while ( j-- ) {
-                selector = entry[j];
-                if ( href.lastIndexOf(selector.slice(8, -2), 0) === 0 ) {
-                    domFilterer.addSelector(selector);
-                }
-            }
-        }
-    };
-
-    var highHighSimpleGenericsCost = 0,
-        highHighSimpleGenericsInjected = false,
-        highHighComplexGenericsCost = 0,
-        highHighComplexGenericsInjected = false;
-
-    var processHighHighGenerics = function() {
-        var tstart;
-        // Simple selectors.
-        if (
-            highHighSimpleGenericsInjected === false &&
-            highHighSimpleGenericsCost < 50 &&
-            highGenerics.hideHighSimpleCount !== 0
-        ) {
-            tstart = window.performance.now();
-            var matchesProp = vAPI.matchesProp,
-                nodes = surveyPhase3Nodes,
-                i = nodes.length, node;
-            while ( i-- ) {
-                node = nodes[i];
-                if (
-                    node[matchesProp](highGenerics.hideHighSimple) ||
-                    node.querySelector(highGenerics.hideHighSimple) !== null
-                ) {
-                    highHighSimpleGenericsInjected = true;
-                    domFilterer.addSelectors(highGenerics.hideHighSimple.split(',\n'));
-                    break;
-                }
-            }
-            highHighSimpleGenericsCost += window.performance.now() - tstart;
-        }
-        // Complex selectors.
-        if (
-            highHighComplexGenericsInjected === false &&
-            highHighComplexGenericsCost < 50 &&
-            highGenerics.hideHighComplexCount !== 0
-        ) {
-            tstart = window.performance.now();
-            if ( document.querySelector(highGenerics.hideHighComplex) !== null ) {
-                highHighComplexGenericsInjected = true;
-                domFilterer.addSelectors(highGenerics.hideHighComplex.split(',\n'));
-            }
-            highHighComplexGenericsCost += window.performance.now() - tstart;
         }
     };
 
@@ -1531,8 +980,7 @@ vAPI.domSurveyor = (function() {
         var t0 = window.performance.now(),
             rews = reWhitespace,
             qq = queriedSelectors,
-            ll = lowGenericSelectors,
-            lli = ll.length,
+            ll = [], lli = 0,
             nodes, i, node, v, vv, j;
         nodes = selectNodes('[id]', addedNodes);
         i = nodes.length;
@@ -1568,7 +1016,20 @@ vAPI.domSurveyor = (function() {
             }
         }
         surveyCost += window.performance.now() - t0;
-        surveyPhase2(addedNodes);
+        // Query main process.
+        if ( lli !== 0  ) {
+            messaging.send(
+                'contentscript',
+                {
+                    what: 'retrieveGenericCosmeticSelectors',
+                    pageURL: window.location.href,
+                    selectors: ll
+                },
+                surveyPhase3
+            );
+        } else {
+            surveyPhase3(null);
+        }
     };
     var reWhitespace = /\s/;
 
@@ -1576,8 +1037,6 @@ vAPI.domSurveyor = (function() {
         if ( cosmeticSurveyingMissCount > 255 ) {
             vAPI.domWatcher.removeListener(domChangedHandler);
             vAPI.domSurveyor = null;
-            domFilterer.domChangedHandler(addedNodes);
-            domFilterer.start();
             return;
         }
 
@@ -1613,22 +1072,10 @@ vAPI.domIsLoaded = function(ev) {
     }
     vAPI.domIsLoaded = null;
 
-    vAPI.domWatcher.start();
     vAPI.domCollapser.start();
 
-    if ( vAPI.domFilterer ) {
-        // To avoid neddless CPU overhead, we commit existing cosmetic filters
-        // only if the page loaded "slowly", i.e. if the code here had to wait
-        // for a DOMContentLoaded event -- in which case the DOM may have
-        // changed a lot since last time the domFilterer acted on it.
-        if ( slowLoad ) {
-            vAPI.domFilterer.commit('all');
-        }
-        if ( vAPI.domSurveyor ) {
-            vAPI.domSurveyor.start();
-        } else {
-            vAPI.domFilterer.start();
-        }
+    if ( vAPI.domFilterer && vAPI.domSurveyor ) {
+        vAPI.domSurveyor.start();
     }
 
     // To send mouse coordinates to main process, as the chrome API fails

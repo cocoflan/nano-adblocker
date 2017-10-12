@@ -476,7 +476,8 @@ var onMessage = function(request, sender, callback) {
         response = {
             id: request.id,
             hash: request.hash,
-            netSelectorCacheCountMax: µb.cosmeticFilteringEngine.netSelectorCacheCountMax
+            netSelectorCacheCountMax:
+                µb.cosmeticFilteringEngine.netSelectorCacheCountMax
         };
         if (
             µb.userSettings.collapseBlocked &&
@@ -492,20 +493,23 @@ var onMessage = function(request, sender, callback) {
             response = {
                 loggerEnabled: µb.logger.isEnabled(),
                 collapseBlocked: µb.userSettings.collapseBlocked,
-                noCosmeticFiltering: µb.cosmeticFilteringEngine.acceptedCount === 0 || pageStore.noCosmeticFiltering === true,
-                noGenericCosmeticFiltering: pageStore.noGenericCosmeticFiltering === true
+                noCosmeticFiltering:
+                    µb.cosmeticFilteringEngine.acceptedCount === 0 ||
+                    pageStore.noCosmeticFiltering === true,
+                noGenericCosmeticFiltering:
+                    pageStore.noGenericCosmeticFiltering === true
             };
-            response.specificCosmeticFilters = µb.cosmeticFilteringEngine.retrieveDomainSelectors(
-                request,
-                response.noCosmeticFiltering
-            );
+            response.specificCosmeticFilters =
+                µb.cosmeticFilteringEngine
+                  .retrieveDomainSelectors(request, sender, response);
         }
         break;
 
     case 'retrieveGenericCosmeticSelectors':
         if ( pageStore && pageStore.getGenericCosmeticFilteringSwitch() ) {
             response = {
-                result: µb.cosmeticFilteringEngine.retrieveGenericSelectors(request)
+                result: µb.cosmeticFilteringEngine
+                          .retrieveGenericSelectors(request)
             };
         }
         break;
