@@ -650,10 +650,20 @@ FilterContainer.prototype.reset = function() {
     // generic filters
     this.hasGenericHide = false;
 
-    // low generic cosmetic filters are those which can be looked up using
-    // a class or id attribute.
-    this.lowlyGenericSimpleHideSet = new Set();
-    this.lowlyGenericComplexHideMap = new Map();
+    this.lowlyGeneric = {
+        sid: new Set(),
+        cid: new Map(),
+        scl: new Set(),
+        ccl: new Map()
+    };
+
+    // low generic cosmetic filters, id-based.
+    this.lowlyGenericSimpleIdHideSet = new Set();
+    this.lowlyGenericComplexIdHideMap = new Map();
+
+    // low generic cosmetic filters, class-based.
+    this.lowlyGenericSimpleClassHideSet = new Set();
+    this.lowlyGenericComplexClassHideMap = new Map();
 
     // highly generic simple selectors
     this.highlyGenericSimpleHideSet = new Set();
@@ -680,15 +690,24 @@ FilterContainer.prototype.reset = function() {
 FilterContainer.prototype.freeze = function() {
     this.duplicateBuster = new Set();
 
-    this.hasGenericHide = this.lowlyGenericSimpleHideSet.size !== 0 ||
-                          this.lowlyGenericComplexHideMap.size !== 0 ||
-                          this.highlyGenericSimpleHideSet.size !== 0 ||
-                          this.highlyGenericComplexHideSet.size !== 0;
+    this.hasGenericHide =
+        this.lowlyGeneric.sid.size !== 0 ||
+        this.lowlyGeneric.cid.size !== 0 ||
+        this.lowlyGeneric.scl.size !== 0 ||
+        this.lowlyGeneric.ccl.size !== 0 ||
+        this.highlyGenericSimpleHideSet.size !== 0 ||
+        this.highlyGenericComplexHideSet.size !== 0;
 
     if ( this.genericDonthideSet.size !== 0 ) {
         for ( var selector of this.genericDonthideSet ) {
-            this.lowlyGenericSimpleHideSet.delete(selector);
-            // TODO: this.lowlyGenericComplexHideMap
+            var type = selector.charCodeAt(0);
+            if ( type === 0x23 /* '#' */ ) {
+                this.lowlyGeneric.sid.delete(selector);
+            } else if ( type === 0x2E /* '.' */ ) {
+                this.lowlyGeneric.scl.delete(selector);
+            }
+            // TODO:
+            //  this.lowlyGeneric.sid.delete(selector);
             this.highlyGenericSimpleHideSet.delete(selector);
             this.highlyGenericComplexHideSet.delete(selector);
         }
@@ -1127,22 +1146,39 @@ FilterContainer.prototype.compileGenericSelector = function(parsed, writer) {
 
 FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) {
     var selector = parsed.suffix,
-        type = selector.charAt(0),
+        type = selector.charCodeAt(0),
         key;
 
-    if ( type === '#' || type === '.' ) {
+    if ( type === 0x23 /* '#' */ ) {
         key = this.keyFromSelector(selector);
         if ( key === undefined ) { return; }
-        // Single-CSS rule: no need to test for whether the selector
-        // is valid, the regex took care of this. Most generic selector falls
-        // into that category.
+        // Simple selector-based CSS rule: no need to test for whether the
+        // selector is valid, the regex took care of this. Most generic
+        // selector falls into that category.
         if ( key === selector ) {
-            writer.push([ 0 /* lg */, key ]);
+            writer.push([ 0 /* lg */, key.slice(1) ]);
             return;
         }
-        // Composite CSS rule.
+        // Complex selector-based CSS rule.
         if ( this.compileSelector(selector) !== undefined ) {
-            writer.push([ 1 /* lg+ */, key, selector ]);
+            writer.push([ 1 /* lg+ */, key.slice(1), selector ]);
+        }
+        return;
+    }
+
+    if ( type === 0x2E /* '.' */ ) {
+        key = this.keyFromSelector(selector);
+        if ( key === undefined ) { return; }
+        // Simple selector-based CSS rule: no need to test for whether the
+        // selector is valid, the regex took care of this. Most generic
+        // selector falls into that category.
+        if ( key === selector ) {
+            writer.push([ 2 /* lg */, key.slice(1) ]);
+            return;
+        }
+        // Complex selector-based CSS rule.
+        if ( this.compileSelector(selector) !== undefined ) {
+            writer.push([ 3 /* lg+ */, key.slice(1), selector ]);
         }
         return;
     }
@@ -1152,11 +1188,17 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
     // TODO: Detect and error on procedural cosmetic filters.
 
     // https://github.com/gorhill/uBlock/issues/909
-    // Anything which contains a plain id/class selector can be classified
-    // as a low generic cosmetic filter.
+    //   Anything which contains a plain id/class selector can be classified
+    //   as a low generic cosmetic filter.
     var matches = this.rePlainSelectorEx.exec(selector);
     if ( matches !== null ) {
-        writer.push([ 1 /* lg+ */, matches[1] || matches[2], selector ]);
+        key = matches[1] || matches[2];
+        type = key.charCodeAt(0);
+        writer.push([
+            type === 0x23 ? 1 : 3 /* lg+ */,
+            key.slice(1),
+            selector
+        ]);
         return;
     }
 
@@ -1279,32 +1321,61 @@ FilterContainer.prototype.fromCompiledContent = function(
 
         switch ( args[0] ) {
 
-        // .largeAd
+        // #AdBanner
         case 0:
-            bucket = this.lowlyGenericComplexHideMap.get(args[1]);
+            bucket = this.lowlyGeneric.cid.get(args[1]);
             if ( bucket === undefined ) {
-                this.lowlyGenericSimpleHideSet.add(args[1]);
+                this.lowlyGeneric.sid.add(args[1]);
             } else if ( Array.isArray(bucket) ) {
                 bucket.push(args[1]);
             } else {
-                this.lowlyGenericComplexHideMap.set(args[1], [ bucket, args[1] ]);
+                this.lowlyGeneric.cid.set(args[1], [ bucket, args[1] ]);
             }
             break;
 
-        // .Mpopup, .Mpopup + #Mad > #MadZone
+        // #tads + div + .c
         case 1:
-            bucket = this.lowlyGenericComplexHideMap.get(args[1]);
+            bucket = this.lowlyGeneric.cid.get(args[1]);
             if ( bucket === undefined ) {
-                if ( this.lowlyGenericSimpleHideSet.has(args[1]) ) {
-                    this.lowlyGenericComplexHideMap.set(args[1], [ args[1], args[2] ]);
+                if ( this.lowlyGeneric.sid.has(args[1]) ) {
+                    this.lowlyGeneric.cid.set(args[1], [ args[1], args[2] ]);
                 } else {
-                    this.lowlyGenericComplexHideMap.set(args[1], args[2]);
-                    this.lowlyGenericSimpleHideSet.add(args[1]);
+                    this.lowlyGeneric.cid.set(args[1], args[2]);
+                    this.lowlyGeneric.sid.add(args[1]);
                 }
             } else if ( Array.isArray(bucket) ) {
                 bucket.push(args[2]);
             } else {
-                this.lowlyGenericComplexHideMap.set(args[1], [ bucket, args[2] ]);
+                this.lowlyGeneric.cid.set(args[1], [ bucket, args[2] ]);
+            }
+            break;
+
+        // .largeAd
+        case 2:
+            bucket = this.lowlyGeneric.ccl.get(args[1]);
+            if ( bucket === undefined ) {
+                this.lowlyGeneric.scl.add(args[1]);
+            } else if ( Array.isArray(bucket) ) {
+                bucket.push(args[1]);
+            } else {
+                this.lowlyGeneric.ccl.set(args[1], [ bucket, args[1] ]);
+            }
+            break;
+
+        // .Mpopup + #Mad > #MadZone
+        case 3:
+            bucket = this.lowlyGeneric.ccl.get(args[1]);
+            if ( bucket === undefined ) {
+                if ( this.lowlyGeneric.scl.has(args[1]) ) {
+                    this.lowlyGeneric.ccl.set(args[1], [ args[1], args[2] ]);
+                } else {
+                    this.lowlyGeneric.ccl.set(args[1], args[2]);
+                    this.lowlyGeneric.scl.add(args[1]);
+                }
+            } else if ( Array.isArray(bucket) ) {
+                bucket.push(args[2]);
+            } else {
+                this.lowlyGeneric.ccl.set(args[1], [ bucket, args[2] ]);
             }
             break;
 
@@ -1660,8 +1731,10 @@ FilterContainer.prototype.toSelfie = function() {
         discardedCount: this.discardedCount,
         specificFilters: selfieFromMap(this.specificFilters),
         hasGenericHide: this.hasGenericHide,
-        lowSimpleGenericHideArray: µb.setToArray(this.lowlyGenericSimpleHideSet),
-        lowComplexGenericHideArray: µb.mapToArray(this.lowlyGenericComplexHideMap),
+        lowlyGenericSID: µb.setToArray(this.lowlyGeneric.sid),
+        lowlyGenericCID: µb.mapToArray(this.lowlyGeneric.cid),
+        lowlyGenericSCL: µb.setToArray(this.lowlyGeneric.scl),
+        lowlyGenericCCL: µb.mapToArray(this.lowlyGeneric.ccl),
         highSimpleGenericHideArray: µb.setToArray(this.highlyGenericSimpleHideSet),
         highComplexGenericHideArray: µb.setToArray(this.highlyGenericComplexHideSet),
         genericDonthideString: this.genericDonthideString,
@@ -1690,8 +1763,10 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
     this.discardedCount = selfie.discardedCount;
     this.specificFilters = mapFromSelfie(selfie.specificFilters);
     this.hasGenericHide = selfie.hasGenericHide;
-    this.lowlyGenericSimpleHideSet = µb.setFromArray(selfie.lowSimpleGenericHideArray);
-    this.lowlyGenericComplexHideMap = µb.mapFromArray(selfie.lowComplexGenericHideArray);
+    this.lowlyGeneric.sid = µb.setFromArray(selfie.lowlyGenericSID);
+    this.lowlyGeneric.cid = µb.mapFromArray(selfie.lowlyGenericCID);
+    this.lowlyGeneric.scl = µb.setFromArray(selfie.lowlyGenericSCL);
+    this.lowlyGeneric.ccl = µb.mapFromArray(selfie.lowlyGenericCCL);
     this.highlyGenericSimpleHideSet = µb.setFromArray(selfie.highSimpleGenericHideArray);
     this.highlyGenericSimpleHideString = selfie.highSimpleGenericHideArray.join(',\n');
     this.highlyGenericComplexHideSet = µb.setFromArray(selfie.highComplexGenericHideArray);
@@ -1809,32 +1884,81 @@ FilterContainer.prototype.pruneSelectorCacheAsync = function() {
 
 FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     if ( this.acceptedCount === 0 ) { return; }
-    if ( !request.selectors ) { return; }
+    if ( !request.ids && !request.classes ) { return; }
 
     var r = {
-        hide: []
+        simple: [],
+        complex: []
     };
 
-    var hideSelectors = r.hide,
-        selectors = request.selectors,
-        i = selectors.length,
+    var simpleSelectors = r.simple,
+        complexSelectors = r.complex,
+        selectors,
+        strEnd, sliceBeg, sliceEnd,
         selector, bucket;
-    while ( i-- ) {
-        selector = selectors[i];
-        if ( this.lowlyGenericSimpleHideSet.has(selector) === false ) { continue; }
-        if ( (bucket = this.lowlyGenericComplexHideMap.get(selector)) !== undefined ) {
-            if ( Array.isArray(bucket) ) {
-                hideSelectors = hideSelectors.concat(bucket);
+
+    if ( request.ids ) {
+        selectors = request.ids;
+        strEnd = selectors.length;
+        sliceBeg = 0;
+        do {
+            sliceEnd = selectors.indexOf('\n', sliceBeg);
+            if ( sliceEnd === -1 ) { sliceEnd = strEnd; }
+            selector = selectors.slice(sliceBeg, sliceEnd);
+            sliceBeg = sliceEnd + 1;
+            if ( this.lowlyGeneric.sid.has(selector) === false ) { continue; }
+            if ( (bucket = this.lowlyGeneric.cid.get(selector)) !== undefined ) {
+                if ( Array.isArray(bucket) ) {
+                    complexSelectors = complexSelectors.concat(bucket);
+                } else {
+                    complexSelectors.push(bucket);
+                }
             } else {
-                hideSelectors.push(bucket);
+                simpleSelectors.push('#' + selector);
             }
-        } else {
-            hideSelectors.push(selector);
+        } while ( sliceBeg < strEnd );
+    }
+
+    if ( request.classes ) {
+        selectors = request.classes;
+        strEnd = selectors.length;
+        sliceBeg = 0;
+        do {
+            sliceEnd = selectors.indexOf('\n', sliceBeg);
+            if ( sliceEnd === -1 ) { sliceEnd = strEnd; }
+            selector = selectors.slice(sliceBeg, sliceEnd);
+            sliceBeg = sliceEnd + 1;
+            if ( this.lowlyGeneric.scl.has(selector) === false ) { continue; }
+            if ( (bucket = this.lowlyGeneric.ccl.get(selector)) !== undefined ) {
+                if ( Array.isArray(bucket) ) {
+                    complexSelectors = complexSelectors.concat(bucket);
+                } else {
+                    complexSelectors.push(bucket);
+                }
+            } else {
+                simpleSelectors.push('.' + selector);
+            }
+        } while ( sliceBeg < strEnd );
+    }
+
+    // This is needed because possible call to Array.concat() above.
+    r.simple = simpleSelectors;
+    r.complex = complexSelectors;
+
+    if (
+        (simpleSelectors.length !== 0 || complexSelectors.length !== 0) &&
+        (typeof request.frameURL === 'string')
+    ) {
+        var hostname = µb.URI.hostnameFromURI(request.frameURL);
+        if ( hostname !== '' ) {
+            this.addToSelectorCache({
+                selectors: simpleSelectors.concat(complexSelectors),
+                type: 'cosmetic',
+                hostname: hostname,
+                cost: request.surveyCost || 0,
+            });
         }
     }
-    r.hide = hideSelectors;
-
-    //quickProfiler.stop();
 
     return r;
 };

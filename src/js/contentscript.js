@@ -855,11 +855,10 @@ vAPI.domCollapser = (function() {
             if ( node.localName === 'iframe' ) {
                 addIFrame(node);
             }
-            if ( node.childElementCount !== 0 ) {
-                var iframes = node.getElementsByTagName('iframe');
-                if ( iframes.length !== 0 ) {
-                    addIFrames(iframes);
-                }
+            if ( node.childElementCount === 0 ) { continue; }
+            var iframes = node.getElementsByTagName('iframe');
+            if ( iframes.length !== 0 ) {
+                addIFrames(iframes);
             }
         }
         process();
@@ -885,25 +884,43 @@ vAPI.domCollapser = (function() {
 vAPI.domSurveyor = (function() {
     var messaging = vAPI.messaging,
         cosmeticSurveyingMissCount = 0,
-        queriedSelectors = new Set(),
+        queriedIds = new Set(),
+        queriedClasses = new Set(),
         surveyCost = 0;
 
     // Handle main process' response.
 
     var surveyPhase3 = function(response) {
         var result = response && response.result,
-            selectors = result && result.hide || [];
+            simpleSelectors,
+            complexSelectors,
+            mustCommit = false;
 
-        if ( selectors.length ) {
-            vAPI.domFilterer.addCSSRule(
-                selectors,
-                'display: none !important;'
-            );
-            vAPI.domFilterer.commit();
+        if ( result ) {
+            simpleSelectors = result.simple || [];
+            if ( simpleSelectors.length ) {
+                vAPI.domFilterer.addCSSRule(
+                    simpleSelectors,
+                    'display: none !important;',
+                    { type: 'simple' }
+                );
+                mustCommit = true;
+            }
+            complexSelectors = result.complex || [];
+            if ( complexSelectors.length ) {
+                vAPI.domFilterer.addCSSRule(
+                    complexSelectors,
+                    'display: none !important;',
+                    { type: 'complex' }
+                );
+                mustCommit = true;
+            }
+            if ( mustCommit ) {
+                vAPI.domFilterer.commit();
+            }
         }
 
-        // Need to do this before committing DOM filterer, as needed info
-        // will no longer be there after commit.
+/*
         if ( selectors.length !== 0 ) {
             messaging.send(
                 'contentscript',
@@ -923,28 +940,7 @@ vAPI.domSurveyor = (function() {
         } else {
             cosmeticSurveyingMissCount = 0;
         }
-    };
-
-    // Extract and return the staged nodes which (may) match the selectors.
-
-    var selectNodes = function(selector, nodes) {
-        var stagedNodes = nodes,
-            i = stagedNodes.length;
-        if ( i === 1 && stagedNodes[0] === document.documentElement ) {
-            return document.querySelectorAll(selector);
-        }
-        var targetNodes = [],
-            node, nodeList, j;
-        while ( i-- ) {
-            node = stagedNodes[i];
-            targetNodes.push(node);
-            nodeList = node.querySelectorAll(selector);
-            j = nodeList.length;
-            while ( j-- ) {
-                targetNodes.push(nodeList[j]);
-            }
-        }
-        return targetNodes;
+*/
     };
 
     // Extract all classes/ids: these will be passed to the cosmetic
@@ -955,54 +951,59 @@ vAPI.domSurveyor = (function() {
     // http://www.w3.org/TR/2014/REC-html5-20141028/infrastructure.html#space-separated-tokens
     // http://jsperf.com/enumerate-classes/6
 
-    var surveyPhase1 = function(addedNodes) {
+    var surveyPhase1 = function(idNodes, classNodes) {
         var t0 = window.performance.now(),
             rews = reWhitespace,
-            qq = queriedSelectors,
-            ll = [], lli = 0,
-            nodes, i, node, v, vv, j;
-        nodes = selectNodes('[id]', addedNodes);
+            qq, iout, nodes, i, node, v, vv, j;
+        var ids = [];
+        iout = 0;
+        qq = queriedIds;
+        nodes = idNodes;
         i = nodes.length;
         while ( i-- ) {
             node = nodes[i];
             v = node.id;
             if ( typeof v !== 'string' ) { continue; }
-            v = '#' + v.trim();
-            if ( qq.has(v) === false && v.length !== 1 ) {
-                ll[lli] = v; lli++; qq.add(v);
+            v = v.trim();
+            if ( qq.has(v) === false && v.length !== 0 ) {
+                ids[iout++] = v; qq.add(v);
             }
         }
-        nodes = selectNodes('[class]', addedNodes);
+        var classes = [];
+        iout = 0;
+        qq = queriedClasses;
+        nodes = classNodes;
         i = nodes.length;
         while ( i-- ) {
             node = nodes[i];
             vv = node.className;
             if ( typeof vv !== 'string' ) { continue; }
             if ( rews.test(vv) === false ) {
-                v = '.' + vv;
-                if ( qq.has(v) === false && v.length !== 1 ) {
-                    ll[lli] = v; lli++; qq.add(v);
+                if ( qq.has(vv) === false && vv.length !== 0 ) {
+                    classes[iout++] = vv; qq.add(vv);
                 }
             } else {
                 vv = node.classList;
                 j = vv.length;
                 while ( j-- ) {
-                    v = '.' + vv[j];
+                    v = vv[j];
                     if ( qq.has(v) === false ) {
-                        ll[lli] = v; lli++; qq.add(v);
+                        classes[iout++] = v; qq.add(v);
                     }
                 }
             }
         }
         surveyCost += window.performance.now() - t0;
-        // Query main process.
-        if ( lli !== 0  ) {
+        // Phase 2: Ask main process to lookup relevant cosmetic filters.
+        if ( ids.length !== 0 || classes.length !== 0 ) {
             messaging.send(
                 'contentscript',
                 {
                     what: 'retrieveGenericCosmeticSelectors',
-                    pageURL: window.location.href,
-                    selectors: ll
+                    frameURL: window.location.href,
+                    ids: ids.join('\n'),
+                    classes: classes.join('\n'),
+                    cost: surveyCost
                 },
                 surveyPhase3
             );
@@ -1023,7 +1024,12 @@ vAPI.domSurveyor = (function() {
             }
             return;
         }
-        surveyPhase1([ document.documentElement ]);
+        console.time('dom layout created/dom surveyor');
+        surveyPhase1(
+            document.querySelectorAll('[id]'),
+            document.querySelectorAll('[class]')
+        );
+        console.timeEnd('dom layout created/dom surveyor');
     };
 
     var domChangedHandler = function(addedNodes, removedNodes) {
@@ -1035,7 +1041,29 @@ vAPI.domSurveyor = (function() {
             vAPI.domSurveyor = null;
             return;
         }
-        surveyPhase1(addedNodes);
+        console.time('dom layout changed/dom surveyor');
+        var idNodes = [], iid = 0,
+            classNodes = [], iclass = 0;
+        var i = addedNodes.length,
+            node, nodeList, j;
+        while ( i-- ) {
+            node = addedNodes[i];
+            idNodes[iid++] = node;
+            classNodes[iclass++] = node;
+            if ( node.childElementCount === 0 ) { continue; }
+            nodeList = node.querySelectorAll('[id]');
+            j = nodeList.length;
+            while ( j-- ) {
+                idNodes[iid++] = nodeList[j];
+            }
+            nodeList = node.querySelectorAll('[class]');
+            j = nodeList.length;
+            while ( j-- ) {
+                classNodes[iclass++] = nodeList[j];
+            }
+        }
+        surveyPhase1(idNodes, classNodes);
+        console.timeEnd('dom layout changed/dom surveyor');
     };
 
     if ( vAPI.domWatcher instanceof Object ) {
