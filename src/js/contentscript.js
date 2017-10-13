@@ -87,6 +87,161 @@ if ( typeof vAPI !== 'undefined' ) { // >>>>>>>> start of HUGE-IF-BLOCK
 /******************************************************************************/
 /******************************************************************************/
 
+// https://github.com/gorhill/uBlock/issues/2147
+
+vAPI.SafeAnimationFrame = function(callback) {
+    this.fid = this.tid = null;
+    this.callback = callback;
+};
+
+vAPI.SafeAnimationFrame.prototype = {
+    start: function() {
+        if ( this.fid !== null ) { return; }
+        this.fid = requestAnimationFrame(this.callback);
+        this.tid = vAPI.setTimeout(this.callback, 1200000);
+    },
+    clear: function() {
+        if ( this.fid === null ) { return; }
+        cancelAnimationFrame(this.fid);
+        clearTimeout(this.tid);
+        this.fid = this.tid = null;
+    }
+};
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
+vAPI.domWatcher = (function() {
+
+    var domIsReady = false,
+        domLayoutObserver,
+        ignoreTags = new Set([ 'br', 'head', 'link', 'meta', 'script', 'style' ]),
+        addedNodeLists = [],
+        addedNodes = [],
+        removedNodes = false,
+        listeners = [],
+        safeObserverHandlerTimer;
+
+    var safeObserverHandler = function() {
+        safeObserverHandlerTimer.clear();
+        var i = addedNodeLists.length,
+            j = addedNodes.length,
+            nodeList, iNode, node;
+        while ( i-- ) {
+            nodeList = addedNodeLists[i];
+            iNode = nodeList.length;
+            while ( iNode-- ) {
+                node = nodeList[iNode];
+                if (
+                    node.nodeType === 1 &&
+                    ignoreTags.has(node.localName) === false &&
+                    node.parentElement !== null
+                ) {
+                    addedNodes[j++] = node;
+                }
+            }
+        }
+        addedNodeLists.length = 0;
+        if ( j === 0 && removedNodes === false ) { return; }
+        processListeners();
+    };
+
+    // https://github.com/chrisaljoudi/uBlock/issues/205
+    // Do not handle added node directly from within mutation observer.
+    var observerHandler = function(mutations) {
+        var nodeList, mutation,
+            i = mutations.length;
+        while ( i-- ) {
+            mutation = mutations[i];
+            nodeList = mutation.addedNodes;
+            if ( nodeList.length !== 0 ) {
+                addedNodeLists.push(nodeList);
+            }
+            if ( mutation.removedNodes.length !== 0 ) {
+                removedNodes = true;
+            }
+        }
+        if ( addedNodeLists.length !== 0 || removedNodes ) {
+            safeObserverHandlerTimer.start();
+        }
+    };
+
+    var startMutationObserver = function() {
+        if ( domLayoutObserver !== undefined || !domIsReady ) { return; }
+        domLayoutObserver = new MutationObserver(observerHandler);
+        domLayoutObserver.observe(document.documentElement, {
+            //attributeFilter: [ 'class', 'id' ],
+            //attributes: true,
+            childList: true,
+            subtree: true
+        });
+        safeObserverHandlerTimer = new vAPI.SafeAnimationFrame(safeObserverHandler);
+        vAPI.shutdown.add(cleanup);
+    };
+
+    var stopMutationObserver = function() {
+        if ( domLayoutObserver === undefined ) { return; }
+        cleanup();
+        vAPI.shutdown.remove(cleanup);
+    };
+
+    var addListener = function(listener) {
+        if ( listeners.indexOf(listener) !== -1 ) { return; }
+        listeners.push(listener);
+        if ( domIsReady ) {
+            listener([], false);
+        } else {
+            startMutationObserver();
+        }
+    };
+
+    var removeListener = function(listener) {
+        var pos = listeners.indexOf(listener);
+        if ( pos === -1 ) { return; }
+        listeners.splice(pos, 1);
+        if ( listeners.length === 0 ) {
+            stopMutationObserver();
+        }
+    };
+
+    var processListeners = function() {
+        var ll = listeners.slice();
+        for ( var i = 0, n = ll.length; i < n; i++ ) {
+            ll[i](addedNodes, removedNodes);
+        }
+        addedNodes.length = 0;
+        removedNodes = false;
+    };
+
+    var cleanup = function() {
+        if ( domLayoutObserver !== undefined ) {
+            domLayoutObserver.disconnect();
+            domLayoutObserver = null;
+        }
+        if ( safeObserverHandlerTimer !== undefined ) {
+            safeObserverHandlerTimer.clear();
+            safeObserverHandlerTimer = undefined;
+        }
+    };
+
+    var start = function() {
+        domIsReady = true;
+        processListeners();
+        startMutationObserver();
+    };
+
+    return {
+        start: start,
+        addListener: addListener,
+        removeListener: removeListener
+    };
+})();
+
+/******************************************************************************/
+/******************************************************************************/
+/******************************************************************************/
+
 vAPI.matchesProp = (function() {
     var docElem = document.documentElement;
     if ( typeof docElem.matches !== 'function' ) {
@@ -100,30 +255,6 @@ vAPI.matchesProp = (function() {
     }
     return 'matches';
 })();
-
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-
-// https://github.com/gorhill/uBlock/issues/2147
-
-vAPI.SafeAnimationFrame = function(callback) {
-    this.fid = this.tid = null;
-    this.callback = callback;
-};
-
-vAPI.SafeAnimationFrame.prototype.start = function() {
-    if ( this.fid !== null ) { return; }
-    this.fid = requestAnimationFrame(this.callback);
-    this.tid = vAPI.setTimeout(this.callback, 1200000);
-};
-
-vAPI.SafeAnimationFrame.prototype.clear = function() {
-    if ( this.fid === null ) { return; }
-    cancelAnimationFrame(this.fid);
-    clearTimeout(this.tid);
-    this.fid = this.tid = null;
-};
 
 /******************************************************************************/
 /******************************************************************************/
@@ -307,28 +438,20 @@ vAPI.DOMFilterer = (function() {
 
     var DOMProceduralFilterer = function(domFilterer) {
         this.domFilterer = domFilterer;
-        this.domIsReady = document.readyState !== 'loading';
+        this.domIsReady = false;
         this.addedSelectors = new Map();
         this.addedNodes = false;
         this.removedNodes = false;
         this.addedNodesHandlerMissCount = 0;
         this.currentResultset = new Set();
-        this.started = false;
         this.selectors = new Map();
-        if ( this.domIsReady ) {
-            this.start();
-        } else {
-            document.addEventListener('DOMContentLoaded', function() {
-                this.domIsReady = true;
-                this.start();
-            }.bind(this));
-        }
     };
 
     DOMProceduralFilterer.prototype = {
+
         addProceduralSelectors: function(aa) {
             var raw, o, pselector,
-                mustCommit = this.domIsReady;
+                mustCommit = this.domChangedHandlerBound !== null;
             for ( var i = 0, n = aa.length; i < n; i++ ) {
                 raw = aa[i];
                 o = JSON.parse(raw);
@@ -358,14 +481,13 @@ vAPI.DOMFilterer = (function() {
             if ( mustCommit ) {
                 this.domFilterer.commit();
             }
-        },
-        createProceduralFilter: function(o) {
-            return new PSelector(o);
-        },
-        commitNow: function() {
-            if ( this.domIsReady !== true || this.selectors.size === 0 ) {
-                return;
+            if ( this.domChangedHandlerBound === null ) {
+                this.domChangedHandlerInit();
             }
+        },
+
+        commitNow: function() {
+            if ( this.domIsReady === false ) { return; }
 
             if ( this.addedNodes || this.removedNodes ) {
                 this.addedSelectors.clear();
@@ -389,6 +511,10 @@ vAPI.DOMFilterer = (function() {
                 console.timeEnd('procedural filterset changed');
                 return;
             }
+
+            this.addedNodes = this.removedNodes = false;
+
+            if ( this.selectors.size === 0 ) { return; }
 
             console.time('dom layout changed/procedural selectors');
 
@@ -417,23 +543,30 @@ vAPI.DOMFilterer = (function() {
             this.currentResultset = afterResultset;
 
             console.timeEnd('dom layout changed/procedural selectors');
-
-            this.addedNodes = this.removedNodes = false;
         },
+
+        createProceduralFilter: function(o) {
+            return new PSelector(o);
+        },
+
+        domCreatedHandler: function() {
+            this.domIsReady = true;
+        },
+
         domChangedHandler: function(addedNodes, removedNodes) {
+            if ( addedNodes.length === 0 && removedNodes === false ) {
+                this.domCreatedHandler();
+            }
             this.addedNodes = this.addedNodes || addedNodes.length !== 0;
             this.removedNodes = this.removedNodes || removedNodes;
             this.domFilterer.commit();
         },
+
         domChangedHandlerBound: null,
-        start: function() {
-            if (
-                this.domIsReady !== true ||
-                this.selectors.size === 0 ||
-                this.domChangedHandlerBound !== null
-            ) {
-                return;
-            }
+
+        domChangedHandlerInit: function() {
+            if ( this.domChangedHandlerBound !== null ) { return; }
+            if ( this.selectors.length === 0 ) { return; }
             if ( vAPI.domWatcher instanceof Object ) {
                 this.domChangedHandlerBound = this.domChangedHandler.bind(this);
                 vAPI.domWatcher.addListener(this.domChangedHandlerBound);
@@ -470,240 +603,6 @@ vAPI.DOMFilterer = (function() {
 })();
 
 vAPI.domFilterer = new vAPI.DOMFilterer();
-
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-
-// This is executed once, and since no hooks are left behind once the response
-// is received, I expect this code to be garbage collected by the browser.
-
-(function domIsLoading() {
-
-    var responseHandler = function(response) {
-        // cosmetic filtering engine aka 'cfe'
-        var cfeDetails = response && response.specificCosmeticFilters;
-        if ( !cfeDetails || !cfeDetails.ready ) {
-            vAPI.domWatcher = vAPI.domCollapser = vAPI.domFilterer =
-            vAPI.domSurveyor = vAPI.domIsLoaded = null;
-            return;
-        }
-
-        if ( response.noCosmeticFiltering ) {
-            vAPI.domFilterer = null;
-            vAPI.domSurveyor = null;
-        } else {
-            var domFilterer = vAPI.domFilterer;
-            domFilterer.toggleLogging(response.loggerEnabled);
-            if ( response.noGenericCosmeticFiltering || cfeDetails.noDOMSurveying ) {
-                vAPI.domSurveyor = null;
-            }
-            //domFilterer.addExceptionSelectors(cfeDetails.exceptionFilters);
-            domFilterer.addCSSRule(
-                cfeDetails.declarativeFilters,
-                'display: none !important;'
-            );
-            domFilterer.addCSSRule(
-                cfeDetails.highGenericHideSimple,
-                'display: none !important;',
-                { type: 'simple', lazy: true }
-            );
-            domFilterer.addCSSRule(
-                cfeDetails.highGenericHideComplex,
-                'display: none !important;',
-                { type: 'complex', lazy: true }
-            );
-            domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
-            domFilterer.commit();
-        }
-
-        var parent = document.head || document.documentElement;
-        if ( parent ) {
-            var elem, text;
-            if ( cfeDetails.netHide.length !== 0 ) {
-                elem = document.createElement('style');
-                elem.setAttribute('type', 'text/css');
-                text = cfeDetails.netHide.join(',\n');
-                text += response.collapseBlocked ?
-                    '\n{ display:none !important; }' :
-                    '\n{ visibility:hidden !important; }';
-                elem.appendChild(document.createTextNode(text));
-                parent.appendChild(elem);
-            }
-            // Library of resources is located at:
-            // https://github.com/gorhill/uBlock/blob/master/assets/ublock/resources.txt
-            if ( cfeDetails.scripts ) {
-                // Have the injected script tag remove itself when execution completes:
-                // to keep DOM as clean as possible.
-                text = cfeDetails.scripts +
-                    "\n" +
-                    "(function() {\n" +
-                    "    var c = document.currentScript,\n" +
-                    "        p = c && c.parentNode;\n" +
-                    "    if ( p ) {\n" +
-                    "        p.removeChild(c);\n" +
-                    "    }\n" +
-                    "})();";
-                vAPI.injectScriptlet(document, text);
-                vAPI.injectedScripts = text;
-            }
-        }
-
-        // https://github.com/chrisaljoudi/uBlock/issues/587
-        // If no filters were found, maybe the script was injected before
-        // uBlock's process was fully initialized. When this happens, pages
-        // won't be cleaned right after browser launch.
-        if ( document.readyState !== 'loading' ) {
-            (new vAPI.SafeAnimationFrame(vAPI.domIsLoaded)).start();
-        } else {
-            document.addEventListener('DOMContentLoaded', vAPI.domIsLoaded);
-        }
-    };
-
-    var url = window.location.href;
-    vAPI.messaging.send(
-        'contentscript',
-        {
-            what: 'retrieveContentScriptParameters',
-            pageURL: url,
-            locationURL: url
-        },
-        responseHandler
-    );
-
-})();
-
-/******************************************************************************/
-/******************************************************************************/
-/******************************************************************************/
-
-vAPI.domWatcher = (function() {
-
-    var ready = false,
-        domLayoutObserver = null,
-        ignoreTags = new Set([ 'br', 'head', 'link', 'meta', 'script', 'style' ]),
-        addedNodeLists = [],
-        addedNodes = [],
-        removedNodes = false,
-        listeners = [];
-
-    var safeObserverHandler = function() {
-        safeObserverHandlerTimer.clear();
-        var i = addedNodeLists.length,
-            j = addedNodes.length,
-            nodeList, iNode, node;
-        while ( i-- ) {
-            nodeList = addedNodeLists[i];
-            iNode = nodeList.length;
-            while ( iNode-- ) {
-                node = nodeList[iNode];
-                if (
-                    node.nodeType === 1 &&
-                    ignoreTags.has(node.localName) === false &&
-                    node.parentElement !== null
-                ) {
-                    addedNodes[j++] = node;
-                }
-            }
-        }
-        addedNodeLists.length = 0;
-        if ( j === 0 && removedNodes === false ) { return; }
-        processListeners();
-    };
-
-    var safeObserverHandlerTimer = new vAPI.SafeAnimationFrame(safeObserverHandler);
-
-    // https://github.com/chrisaljoudi/uBlock/issues/205
-    // Do not handle added node directly from within mutation observer.
-    var observerHandler = function(mutations) {
-        var nodeList, mutation,
-            i = mutations.length;
-        while ( i-- ) {
-            mutation = mutations[i];
-            nodeList = mutation.addedNodes;
-            if ( nodeList.length !== 0 ) {
-                addedNodeLists.push(nodeList);
-            }
-            if ( mutation.removedNodes.length !== 0 ) {
-                removedNodes = true;
-            }
-        }
-        if ( addedNodeLists.length !== 0 || removedNodes ) {
-            safeObserverHandlerTimer.start();
-        }
-    };
-
-    var startMutationObserver = function() {
-        if ( domLayoutObserver !== null || !ready ) { return; }
-        domLayoutObserver = new MutationObserver(observerHandler);
-        domLayoutObserver.observe(document.documentElement, {
-            //attributeFilter: [ 'class', 'id' ],
-            //attributes: true,
-            childList: true,
-            subtree: true
-        });
-        vAPI.shutdown.add(cleanup);
-    };
-
-    var stopMutationObserver = function() {
-        if ( domLayoutObserver === null ) { return; }
-        domLayoutObserver.disconnect();
-        domLayoutObserver = null;
-        vAPI.shutdown.remove(cleanup);
-    };
-
-    var addListener = function(listener) {
-        if ( listeners.indexOf(listener) === -1 ) {
-            listeners.push(listener);
-            startMutationObserver();
-        }
-    };
-
-    var removeListener = function(listener) {
-        var pos = listeners.indexOf(listener);
-        if ( pos === -1 ) { return; }
-        listeners.splice(pos, 1);
-        if ( listeners.length === 0 ) {
-            stopMutationObserver();
-        }
-    };
-
-    var processListeners = function() {
-        for ( var i = 0, n = listeners.length; i < n; i++ ) {
-            listeners[i](addedNodes, removedNodes);
-        }
-        addedNodes.length = 0;
-        removedNodes = false;
-    };
-
-    var cleanup = function() {
-        if ( domLayoutObserver !== null ) {
-            domLayoutObserver.disconnect();
-            domLayoutObserver = null;
-        }
-        safeObserverHandlerTimer.clear();
-    };
-
-    var domLoaded = function(ev) {
-        if ( ev !== undefined ) {
-            document.removeEventListener('DOMContentLoaded', domLoaded);
-        }
-        ready = true;
-        if ( listeners.length === 0 ) { return; }
-        startMutationObserver();
-    };
-
-    if ( document.readyState !== 'loading' ) {
-        domLoaded();
-    } else {
-        document.addEventListener('DOMContentLoaded', domLoaded);
-    }
-
-    return {
-        addListener: addListener,
-        removeListener: removeListener
-    };
-})();
 
 /******************************************************************************/
 /******************************************************************************/
@@ -905,29 +804,19 @@ vAPI.domCollapser = (function() {
 
     var onResourceFailed = function(ev) {
         if ( tagToTypeMap[ev.target.localName] !== undefined ) {
-            vAPI.domCollapser.add(ev.target);
-            vAPI.domCollapser.process();
+            add(ev.target);
+            process();
         }
     };
 
-    var domChangedHandler = function(nodes) {
-        var node;
-        for ( var i = 0, ni = nodes.length; i < ni; i++ ) {
-            node = nodes[i];
-            if ( node.localName === 'iframe' ) {
-                addIFrame(node);
+    var domCreatedHandler = function() {
+        if ( vAPI instanceof Object === false ) { return; }
+        if ( vAPI.domCollapser instanceof Object === false ) {
+            if ( vAPI.domWatcher instanceof Object ) {
+                vAPI.domWatcher.removeListener(domChangedHandler);
             }
-            if ( node.childElementCount !== 0 ) {
-                var iframes = node.getElementsByTagName('iframe');
-                if ( iframes.length !== 0 ) {
-                    addIFrames(iframes);
-                }
-            }
+            return;
         }
-        process();
-    };
-
-    var start = function() {
         // Listener to collapse blocked resources.
         // - Future requests not blocked yet
         // - Elements dynamically added to the page
@@ -949,24 +838,43 @@ vAPI.domCollapser = (function() {
         process(0);
 
         document.addEventListener('error', onResourceFailed, true);
-        vAPI.domWatcher.addListener(domChangedHandler);
 
         vAPI.shutdown.add(function() {
             document.removeEventListener('error', onResourceFailed, true);
-            vAPI.domWatcher.removeListener(domChangedHandler);
             if ( processTimer !== undefined ) {
                 clearTimeout(processTimer);
             }
         });
     };
 
+    var domChangedHandler = function(addedNodes, removedNodes) {
+        var ni = addedNodes.length;
+        if ( ni === 0 && removedNodes === false ) { return domCreatedHandler(); }
+        for ( var i = 0, node; i < ni; i++ ) {
+            node = addedNodes[i];
+            if ( node.localName === 'iframe' ) {
+                addIFrame(node);
+            }
+            if ( node.childElementCount !== 0 ) {
+                var iframes = node.getElementsByTagName('iframe');
+                if ( iframes.length !== 0 ) {
+                    addIFrames(iframes);
+                }
+            }
+        }
+        process();
+    };
+
+    if ( vAPI.domWatcher instanceof Object ) {
+        vAPI.domWatcher.addListener(domChangedHandler);
+    }
+
     return {
         add: add,
         addMany: addMany,
         addIFrame: addIFrame,
         addIFrames: addIFrames,
-        process: process,
-        start: start
+        process: process
     };
 })();
 
@@ -975,8 +883,7 @@ vAPI.domCollapser = (function() {
 /******************************************************************************/
 
 vAPI.domSurveyor = (function() {
-    var domFilterer = null,
-        messaging = vAPI.messaging,
+    var messaging = vAPI.messaging,
         cosmeticSurveyingMissCount = 0,
         queriedSelectors = new Set(),
         surveyCost = 0;
@@ -988,11 +895,11 @@ vAPI.domSurveyor = (function() {
             selectors = result && result.hide || [];
 
         if ( selectors.length ) {
-            domFilterer.addCSSRule(
+            vAPI.domFilterer.addCSSRule(
                 selectors,
                 'display: none !important;'
             );
-            domFilterer.commit();
+            vAPI.domFilterer.commit();
         }
 
         // Need to do this before committing DOM filterer, as needed info
@@ -1105,86 +1012,192 @@ vAPI.domSurveyor = (function() {
     };
     var reWhitespace = /\s/;
 
-    var domChangedHandler = function(addedNodes) {
+    var domCreatedHandler = function() {
+        if ( vAPI instanceof Object === false ) { return; }
+        if (
+            vAPI.domSurveyor instanceof Object === false ||
+            vAPI.domFilterer instanceof Object === false
+        ) {
+            if ( vAPI.domWatcher instanceof Object ) {
+                vAPI.domWatcher.removeListener(domChangedHandler);
+            }
+            return;
+        }
+        surveyPhase1([ document.documentElement ]);
+    };
+
+    var domChangedHandler = function(addedNodes, removedNodes) {
+        if ( addedNodes.length === 0 && removedNodes === false ) {
+            return domCreatedHandler();
+        }
         if ( cosmeticSurveyingMissCount > 255 ) {
             vAPI.domWatcher.removeListener(domChangedHandler);
             vAPI.domSurveyor = null;
             return;
         }
-
         surveyPhase1(addedNodes);
     };
 
-    var start = function() {
-        domFilterer = vAPI.domFilterer;
-        domChangedHandler([ document.documentElement ]);
+    if ( vAPI.domWatcher instanceof Object ) {
         vAPI.domWatcher.addListener(domChangedHandler);
-        vAPI.shutdown.add(function() {
-            vAPI.domWatcher.removeListener(domChangedHandler);
-        });
-    };
+    }
 
-    return {
-        start: start
-    };
+    return {};
 })();
 
 /******************************************************************************/
 /******************************************************************************/
 /******************************************************************************/
 
-vAPI.domIsLoaded = function(ev) {
-    // This can happen on Firefox. For instance:
-    // https://github.com/gorhill/uBlock/issues/1893
-    if ( window.location === null ) { return; }
+// This is executed once, and since no hooks are left behind once the response
+// is received, I expect this code to be garbage collected by the browser.
 
-    var slowLoad = ev instanceof Event;
-    if ( slowLoad ) {
-        document.removeEventListener('DOMContentLoaded', vAPI.domIsLoaded);
-    }
-    vAPI.domIsLoaded = null;
+(function domIsLoading() {
 
-    vAPI.domCollapser.start();
+    var domLoadedHandler = function(ev) {
+        // This can happen on Firefox. For instance:
+        // https://github.com/gorhill/uBlock/issues/1893
+        if ( window.location === null ) { return; }
 
-    if ( vAPI.domFilterer && vAPI.domSurveyor ) {
-        vAPI.domSurveyor.start();
-    }
-
-    // To send mouse coordinates to main process, as the chrome API fails
-    // to provide the mouse position to context menu listeners.
-    // https://github.com/chrisaljoudi/uBlock/issues/1143
-    // Also, find a link under the mouse, to try to avoid confusing new tabs
-    // as nuisance popups.
-    // Ref.: https://developer.mozilla.org/en-US/docs/Web/Events/contextmenu
-
-    var onMouseClick = function(ev) {
-        var elem = ev.target;
-        while ( elem !== null && elem.localName !== 'a' ) {
-            elem = elem.parentElement;
+        if ( ev ) {
+            document.removeEventListener('DOMContentLoaded', domLoadedHandler);
         }
-        vAPI.messaging.send(
-            'contentscript',
-            {
-                what: 'mouseClick',
-                x: ev.clientX,
-                y: ev.clientY,
-                url: elem !== null && ev.isTrusted !== false ? elem.href : ''
+
+        if ( vAPI instanceof Object && vAPI.domWatcher instanceof Object ) {
+            vAPI.domWatcher.start();
+        }
+
+        // To send mouse coordinates to main process, as the chrome API fails
+        // to provide the mouse position to context menu listeners.
+        // https://github.com/chrisaljoudi/uBlock/issues/1143
+        // Also, find a link under the mouse, to try to avoid confusing new tabs
+        // as nuisance popups.
+        // Ref.: https://developer.mozilla.org/en-US/docs/Web/Events/contextmenu
+
+        var onMouseClick = function(ev) {
+            var elem = ev.target;
+            while ( elem !== null && elem.localName !== 'a' ) {
+                elem = elem.parentElement;
             }
-        );
+            vAPI.messaging.send(
+                'contentscript',
+                {
+                    what: 'mouseClick',
+                    x: ev.clientX,
+                    y: ev.clientY,
+                    url: elem !== null && ev.isTrusted !== false ? elem.href : ''
+                }
+            );
+        };
+
+        (function() {
+            if ( window !== window.top || !vAPI.domFilterer ) {
+                return;
+            }
+            document.addEventListener('mousedown', onMouseClick, true);
+
+            // https://github.com/gorhill/uMatrix/issues/144
+            vAPI.shutdown.add(function() {
+                document.removeEventListener('mousedown', onMouseClick, true);
+            });
+        })();
     };
 
-    (function() {
-        if ( window !== window.top || !vAPI.domFilterer ) {
+    var responseHandler = function(response) {
+        // cosmetic filtering engine aka 'cfe'
+        var cfeDetails = response && response.specificCosmeticFilters;
+        if ( !cfeDetails || !cfeDetails.ready ) {
+            vAPI.domWatcher = vAPI.domCollapser = vAPI.domFilterer =
+            vAPI.domSurveyor = vAPI.domIsLoaded = null;
             return;
         }
-        document.addEventListener('mousedown', onMouseClick, true);
 
-        // https://github.com/gorhill/uMatrix/issues/144
-        vAPI.shutdown.add(function() {
-            document.removeEventListener('mousedown', onMouseClick, true);
-        });
-    })();
-};
+        if ( response.noCosmeticFiltering ) {
+            vAPI.domFilterer = null;
+            vAPI.domSurveyor = null;
+        } else {
+            var domFilterer = vAPI.domFilterer;
+            domFilterer.toggleLogging(response.loggerEnabled);
+            if ( response.noGenericCosmeticFiltering || cfeDetails.noDOMSurveying ) {
+                vAPI.domSurveyor = null;
+            }
+            //domFilterer.addExceptionSelectors(cfeDetails.exceptionFilters);
+            domFilterer.addCSSRule(
+                cfeDetails.declarativeFilters,
+                'display: none !important;'
+            );
+            domFilterer.addCSSRule(
+                cfeDetails.highGenericHideSimple,
+                'display: none !important;',
+                { type: 'simple', lazy: true }
+            );
+            domFilterer.addCSSRule(
+                cfeDetails.highGenericHideComplex,
+                'display: none !important;',
+                { type: 'complex', lazy: true }
+            );
+            domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
+            domFilterer.commit();
+        }
+
+        var parent = document.head || document.documentElement;
+        if ( parent ) {
+            var elem, text;
+            if ( cfeDetails.netHide.length !== 0 ) {
+                elem = document.createElement('style');
+                elem.setAttribute('type', 'text/css');
+                text = cfeDetails.netHide.join(',\n');
+                text += response.collapseBlocked ?
+                    '\n{ display:none !important; }' :
+                    '\n{ visibility:hidden !important; }';
+                elem.appendChild(document.createTextNode(text));
+                parent.appendChild(elem);
+            }
+            // Library of resources is located at:
+            // https://github.com/gorhill/uBlock/blob/master/assets/ublock/resources.txt
+            if ( cfeDetails.scripts ) {
+                // Have the injected script tag remove itself when execution completes:
+                // to keep DOM as clean as possible.
+                text = cfeDetails.scripts +
+                    "\n" +
+                    "(function() {\n" +
+                    "    var c = document.currentScript,\n" +
+                    "        p = c && c.parentNode;\n" +
+                    "    if ( p ) {\n" +
+                    "        p.removeChild(c);\n" +
+                    "    }\n" +
+                    "})();";
+                vAPI.injectScriptlet(document, text);
+                vAPI.injectedScripts = text;
+            }
+        }
+
+        // https://github.com/chrisaljoudi/uBlock/issues/587
+        // If no filters were found, maybe the script was injected before
+        // uBlock's process was fully initialized. When this happens, pages
+        // won't be cleaned right after browser launch.
+        if (
+            typeof document.readyState === 'string' &&
+            document.readyState !== 'loading'
+        ) {
+            domLoadedHandler();
+        } else {
+            document.addEventListener('DOMContentLoaded', domLoadedHandler);
+        }
+    };
+
+    var url = window.location.href;
+    vAPI.messaging.send(
+        'contentscript',
+        {
+            what: 'retrieveContentScriptParameters',
+            pageURL: url,
+            locationURL: url
+        },
+        responseHandler
+    );
+
+})();
 
 /******************************************************************************/
 /******************************************************************************/

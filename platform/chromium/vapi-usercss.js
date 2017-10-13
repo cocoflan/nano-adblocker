@@ -26,117 +26,105 @@
 /******************************************************************************/
 
 vAPI.DOMFilterer = function() {
-        this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
-        this.domIsReady = document.readyState !== 'loading';
-        this.hideNodeId = vAPI.randomToken();
-        this.hideNodeStylesheet = false;
-        this.addedNodes = new Set();
-        this.removedNodes = false;
+    this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
+    this.domIsReady = document.readyState !== 'loading';
+    this.hideNodeId = vAPI.randomToken();
+    this.hideNodeStylesheet = false;
+    this.addedNodes = new Set();
+    this.removedNodes = false;
 
-        this.specificSimpleHide = new Set();
-        this.specificSimpleHideAggregated = undefined;
-        this.addedSpecificSimpleHide = [];
-        this.specificComplexHide = new Set();
-        this.specificComplexHideAggregated = undefined;
-        this.addedSpecificComplexHide = [];
+    this.specificSimpleHide = new Set();
+    this.specificSimpleHideAggregated = undefined;
+    this.addedSpecificSimpleHide = [];
+    this.specificComplexHide = new Set();
+    this.specificComplexHideAggregated = undefined;
+    this.addedSpecificComplexHide = [];
 
-        this.genericSimpleHide = new Set();
-        this.genericComplexHide = new Set();
+    this.genericSimpleHide = new Set();
+    this.genericComplexHide = new Set();
 
-        this.userStylesheet = {
-            style: null,
-            css: new Set(),
-            disabled: false,
-            add: function(cssText) {
-                if ( cssText === '' || this.css.has(cssText) ) { return; }
-                if ( this.style === null ) {
-                    this.style = document.createElement('style');
-                    this.style.disabled = this.disabled;
-                    var parent = document.head || document.documentElement;
-                    if ( parent !== null ) {
-                        parent.appendChild(this.style);
-                    }
+    this.userStylesheet = {
+        style: null,
+        css: new Set(),
+        disabled: false,
+        add: function(cssText) {
+            if ( cssText === '' || this.css.has(cssText) ) { return; }
+            if ( this.style === null ) {
+                this.style = document.createElement('style');
+                this.style.disabled = this.disabled;
+                var parent = document.head || document.documentElement;
+                if ( parent !== null ) {
+                    parent.appendChild(this.style);
                 }
-                this.style.sheet.insertRule(
-                    cssText,
-                    this.style.sheet.cssRules.length
-                );
-            },
-            remove: function(cssText) {
-                if ( cssText === '' ) { return; }
-                if ( this.css.has(cssText) === false ) { return; }
-                if ( this.style === null ) { return; }
-                this.css.delete(cssText);
-                var rules = this.style.sheet.cssRules,
-                    i = rules.length;
-                while ( i-- ) {
-                    if ( rules[i].cssText === cssText ) {
-                        this.style.sheet.deleteRule(i);
-                    }
-                }
-                if ( rules.length === 0 ) {
-                    var parent = this.style.parentNode;
-                    if ( parent !== null ) {
-                        parent.removeChild(this.style);
-                    }
-                    this.style = null;
-                }
-            },
-            toggle: function(state) {
-                if ( state === undefined ) { state = this.disabled; }
-                if ( state !== this.disabled ) { return; }
-                this.disabled = !state;
-                if ( this.style !== null ) {
-                    this.style.disabled = this.disabled;
-                }
-            },
-            getAllSelectors: function() {
-                var out = [];
-                var rules = this.style.sheet &&
-                            this.style.sheet &&
-                            this.style.sheet.cssRules;
-                if ( rules instanceof Object === false ) { return out; }
-                var i = rules.length;
-                while ( i-- ) {
-                    out.push(rules.item(i).selectorText);
-                }
-                return out;
             }
-        };
-
-        this.hideNodeExpando = undefined;
-        this.hideNodeBatchProcessTimer = undefined;
-        this.hiddenNodeObserver = undefined;
-        this.hiddenNodesetToProcess = new Set();
-        this.hiddenNodeset = new Set();
-
-        if ( this.domIsReady !== true ) {
-            document.addEventListener('DOMContentLoaded', () => {
-                this.domReadyHandler();
-            });
-        } else {
-            this.domReadyHandler();
+            this.style.sheet.insertRule(
+                cssText,
+                this.style.sheet.cssRules.length
+            );
+        },
+        remove: function(cssText) {
+            if ( cssText === '' ) { return; }
+            if ( this.css.has(cssText) === false ) { return; }
+            if ( this.style === null ) { return; }
+            this.css.delete(cssText);
+            var rules = this.style.sheet.cssRules,
+                i = rules.length;
+            while ( i-- ) {
+                if ( rules[i].cssText === cssText ) {
+                    this.style.sheet.deleteRule(i);
+                }
+            }
+            if ( rules.length === 0 ) {
+                var parent = this.style.parentNode;
+                if ( parent !== null ) {
+                    parent.removeChild(this.style);
+                }
+                this.style = null;
+            }
+        },
+        toggle: function(state) {
+            if ( state === undefined ) { state = this.disabled; }
+            if ( state !== this.disabled ) { return; }
+            this.disabled = !state;
+            if ( this.style !== null ) {
+                this.style.disabled = this.disabled;
+            }
+        },
+        getAllSelectors: function() {
+            var out = [];
+            var rules = this.style.sheet &&
+                        this.style.sheet &&
+                        this.style.sheet.cssRules;
+            if ( rules instanceof Object === false ) { return out; }
+            var i = rules.length;
+            while ( i-- ) {
+                out.push(rules.item(i).selectorText);
+            }
+            return out;
         }
     };
+
+    this.hideNodeExpando = undefined;
+    this.hideNodeBatchProcessTimer = undefined;
+    this.hiddenNodeObserver = undefined;
+    this.hiddenNodesetToProcess = new Set();
+    this.hiddenNodeset = new Set();
+
+    if ( vAPI.domWatcher instanceof Object ) {
+        this.domChangedHandlerBound = this.domChangedHandler.bind(this);
+        vAPI.domWatcher.addListener(this.domChangedHandlerBound);
+        vAPI.shutdown.add(() => {
+            vAPI.domWatcher.removeListener(this.domChangedHandlerBound);
+            this.domChangedHandlerBound = null;
+        });
+    }
+};
 
 vAPI.DOMFilterer.prototype = {
     reHideStyle: /^display: none !important;$/,
 
     // https://www.w3.org/community/webed/wiki/CSS/Selectors#Combinators
     reCSSCombinators: /[ >+~]/,
-
-    domReadyHandler: function() {
-        this.domIsReady = true;
-        this.commit();
-        if ( vAPI.domWatcher ) {
-            this.domChangedHandlerBound = this.domChangedHandler.bind(this);
-            vAPI.domWatcher.addListener(this.domChangedHandlerBound);
-            vAPI.shutdown.add(() => {
-                vAPI.domWatcher.removeListener(this.domChangedHandlerBound);
-                this.domChangedHandlerBound = null;
-            });
-        }
-    },
 
     commitNow: function() {
         this.commitTimer.clear();
@@ -149,9 +137,8 @@ vAPI.DOMFilterer.prototype = {
 
         // Filterset changed.
 
-        console.time('specific filterset changed');
-
         if ( this.addedSpecificSimpleHide.length !== 0 ) {
+            console.time('specific simple filterset changed');
             console.log('added %d specific simple selectors', this.addedSpecificSimpleHide.length);
             nodes = document.querySelectorAll(this.addedSpecificSimpleHide.join(','));
             for ( node of nodes ) {
@@ -159,9 +146,11 @@ vAPI.DOMFilterer.prototype = {
             }
             this.addedSpecificSimpleHide = [];
             this.specificSimpleHideAggregated = undefined;
+            console.timeEnd('specific simple filterset changed');
         }
 
         if ( this.addedSpecificComplexHide.length !== 0 ) {
+            console.time('specific complex filterset changed');
             console.log('added %d specific complex selectors', this.addedSpecificComplexHide.length);
             nodes = document.querySelectorAll(this.addedSpecificComplexHide.join(','));
             for ( node of nodes ) {
@@ -169,13 +158,10 @@ vAPI.DOMFilterer.prototype = {
             }
             this.addedSpecificComplexHide = [];
             this.specificComplexHideAggregated = undefined;
+            console.timeEnd('specific complex filterset changed');
         }
 
-        console.timeEnd('specific filterset changed');
-
         // DOM layout changed.
-
-        console.time('dom layout changed/specific selectors');
 
         var domNodesAdded = this.addedNodes.size !== 0,
             domLayoutChanged = domNodesAdded || this.removedNodes;
@@ -187,6 +173,7 @@ vAPI.DOMFilterer.prototype = {
         console.log('%d nodes added', this.addedNodes.size);
 
         if ( this.specificSimpleHide.size !== 0 && domNodesAdded ) {
+            console.time('dom layout changed/specific simple selectors');
             if ( this.specificSimpleHideAggregated === undefined ) {
                 this.specificSimpleHideAggregated =
                     Array.from(this.specificSimpleHide).join(',\n');
@@ -200,9 +187,11 @@ vAPI.DOMFilterer.prototype = {
                     this.hideNode(node);
                 }
             }
+            console.timeEnd('dom layout changed/specific simple selectors');
         }
 
         if ( this.specificComplexHide.size !== 0 && domLayoutChanged ) {
+            console.time('dom layout changed/specific complex selectors');
             if ( this.specificComplexHideAggregated === undefined ) {
                 this.specificComplexHideAggregated =
                     Array.from(this.specificComplexHide).join(',\n');
@@ -211,9 +200,8 @@ vAPI.DOMFilterer.prototype = {
             for ( node of nodes ) {
                 this.hideNode(node);
             }
+            console.timeEnd('dom layout changed/specific complex selectors');
         }
-
-        console.timeEnd('dom layout changed/specific selectors');
 
         this.addedNodes.clear();
         this.removedNodes = false;
@@ -325,10 +313,10 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    domChangedHandler: function(
-        addedNodes,
-        removedNodes
-    ) {
+    domChangedHandler: function(addedNodes, removedNodes) {
+        if ( addedNodes.length === 0 && removedNodes === false ) {
+            this.domIsReady = true;
+        }
         for ( var node of addedNodes ) {
             this.addedNodes.add(node);
         }
@@ -460,7 +448,7 @@ vAPI.DOMFilterer.prototype = {
                 this.unshowNode(node);
             }
         }
-        if ( disabled === false && this.hideNodeExpando !== false ) {
+        if ( disabled === false && this.hideNodeExpando !== undefined ) {
             this.hideNodeBatchProcessTimer.start();
         }
     },
