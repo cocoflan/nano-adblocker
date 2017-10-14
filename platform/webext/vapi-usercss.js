@@ -23,6 +23,9 @@
 
 // For content pages
 
+if ( typeof vAPI !== 'undefined' ) { // >>>>>>>> start of HUGE-IF-BLOCK
+
+/******************************************************************************/
 /******************************************************************************/
 
 vAPI.DOMFilterer = function() {
@@ -142,7 +145,7 @@ vAPI.DOMFilterer.prototype = {
     getFilteredElementCount: function() {
         let resultset = new Set();
         for ( var sheet of this.userStylesheets.sheets ) {
-            let nodes = document.querySelectorAll(sheet.replace(/^\{[^\n]+\}\n?/gm, ''));
+            let nodes = document.querySelectorAll(sheet.replace(/\n\{[^\n]+/g, ',').trim().slice(0, -1));
             let i = nodes.length;
             while ( i-- ) {
                 resultset.add(nodes[i]);
@@ -151,3 +154,8 @@ vAPI.DOMFilterer.prototype = {
         return resultset.size;
     }
 };
+
+/******************************************************************************/
+/******************************************************************************/
+
+} // <<<<<<<< end of HUGE-IF-BLOCK

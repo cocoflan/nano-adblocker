@@ -107,8 +107,6 @@ var onMessage = function(request, sender, callback) {
 
     case 'cosmeticFiltersInjected':
         µb.cosmeticFilteringEngine.addToSelectorCache(request);
-        /* falls through */
-    case 'cosmeticFiltersActivated':
         // Net-based cosmetic filters are of no interest for logging purpose.
         if ( µb.logger.isEnabled() && request.type !== 'net' ) {
             µb.logCosmeticFilters(tabId);

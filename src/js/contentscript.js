@@ -114,16 +114,19 @@ vAPI.SafeAnimationFrame.prototype = {
 
 vAPI.domWatcher = (function() {
 
-    var domIsReady = false,
+    var addedNodeLists = [],
+        addedNodes = [],
+        domIsReady = false,
         domLayoutObserver,
         ignoreTags = new Set([ 'br', 'head', 'link', 'meta', 'script', 'style' ]),
-        addedNodeLists = [],
-        addedNodes = [],
-        removedNodes = false,
         listeners = [],
+        listenerIterator = [], listenerIteratorDirty = false,
+        removedNodeLists = [],
+        removedNodes = false,
         safeObserverHandlerTimer;
 
     var safeObserverHandler = function() {
+        console.time('dom watcher/safe observer handler');
         safeObserverHandlerTimer.clear();
         var i = addedNodeLists.length,
             j = addedNodes.length,
@@ -133,23 +136,37 @@ vAPI.domWatcher = (function() {
             iNode = nodeList.length;
             while ( iNode-- ) {
                 node = nodeList[iNode];
-                if (
-                    node.nodeType === 1 &&
-                    ignoreTags.has(node.localName) === false &&
-                    node.parentElement !== null
-                ) {
-                    addedNodes[j++] = node;
-                }
+                if ( node.nodeType !== 1 ) { continue; }
+                if ( ignoreTags.has(node.localName) ) { continue; }
+                if ( node.parentElement === null ) { continue; }
+                addedNodes[j++] = node;
             }
         }
         addedNodeLists.length = 0;
-        if ( j === 0 && removedNodes === false ) { return; }
-        processListeners();
+        i = removedNodeLists.length;
+        while ( i-- && removedNodes === false ) {
+            nodeList = removedNodeLists[i];
+            iNode = nodeList.length;
+            while ( iNode-- ) {
+                if ( nodeList[iNode].nodeType !== 1 ) { continue; }
+                removedNodes = true;
+                break;
+            }
+        }
+        removedNodeLists.length = 0;
+        console.timeEnd('dom watcher/safe observer handler');
+        if ( addedNodes.length === 0 && removedNodes === false ) { return; }
+        for ( var listener of getListenerIterator() ) {
+            listener.onDOMChanged(addedNodes, removedNodes);
+        }
+        addedNodes.length = 0;
+        removedNodes = false;
     };
 
     // https://github.com/chrisaljoudi/uBlock/issues/205
     // Do not handle added node directly from within mutation observer.
     var observerHandler = function(mutations) {
+        console.time('dom watcher/observer handler');
         var nodeList, mutation,
             i = mutations.length;
         while ( i-- ) {
@@ -158,13 +175,16 @@ vAPI.domWatcher = (function() {
             if ( nodeList.length !== 0 ) {
                 addedNodeLists.push(nodeList);
             }
-            if ( mutation.removedNodes.length !== 0 ) {
-                removedNodes = true;
+            if ( removedNodes ) { continue; }
+            nodeList = mutation.removedNodes;
+            if ( nodeList.length !== 0 ) {
+                removedNodeLists.push(nodeList);
             }
         }
         if ( addedNodeLists.length !== 0 || removedNodes ) {
             safeObserverHandlerTimer.start();
         }
+        console.timeEnd('dom watcher/observer handler');
     };
 
     var startMutationObserver = function() {
@@ -186,11 +206,20 @@ vAPI.domWatcher = (function() {
         vAPI.shutdown.remove(cleanup);
     };
 
+    var getListenerIterator = function() {
+        if ( listenerIteratorDirty ) {
+            listenerIterator = listeners.slice();
+            listenerIteratorDirty = false;
+        }
+        return listenerIterator;
+    };
+
     var addListener = function(listener) {
         if ( listeners.indexOf(listener) !== -1 ) { return; }
         listeners.push(listener);
+        listenerIteratorDirty = true;
         if ( domIsReady ) {
-            listener([], false);
+            listener.onDOMCreated();
         } else {
             startMutationObserver();
         }
@@ -200,18 +229,10 @@ vAPI.domWatcher = (function() {
         var pos = listeners.indexOf(listener);
         if ( pos === -1 ) { return; }
         listeners.splice(pos, 1);
+        listenerIteratorDirty = true;
         if ( listeners.length === 0 ) {
             stopMutationObserver();
         }
-    };
-
-    var processListeners = function() {
-        var ll = listeners.slice();
-        for ( var i = 0, n = ll.length; i < n; i++ ) {
-            ll[i](addedNodes, removedNodes);
-        }
-        addedNodes.length = 0;
-        removedNodes = false;
     };
 
     var cleanup = function() {
@@ -227,7 +248,9 @@ vAPI.domWatcher = (function() {
 
     var start = function() {
         domIsReady = true;
-        processListeners();
+        for ( var listener of getListenerIterator() ) {
+            listener.onDOMCreated();
+        }
         startMutationObserver();
     };
 
@@ -272,9 +295,16 @@ vAPI.injectScriptlet = function(doc, text) {
 
 /******************************************************************************/
 /******************************************************************************/
-/******************************************************************************/
+/*******************************************************************************
 
-// The DOM filterer is the heart of uBO's cosmetic filtering.
+  The DOM filterer is the heart of uBO's cosmetic filtering.
+
+  DOMBaseFilterer: platform-specific
+  |
+  |
+  +---- DOMFilterer: adds procedural cosmetic filtering
+
+*/
 
 vAPI.DOMFilterer = (function() {
 
@@ -439,6 +469,7 @@ vAPI.DOMFilterer = (function() {
     var DOMProceduralFilterer = function(domFilterer) {
         this.domFilterer = domFilterer;
         this.domIsReady = false;
+        this.domIsWatched = false;
         this.addedSelectors = new Map();
         this.addedNodes = false;
         this.removedNodes = false;
@@ -451,7 +482,7 @@ vAPI.DOMFilterer = (function() {
 
         addProceduralSelectors: function(aa) {
             var raw, o, pselector,
-                mustCommit = this.domChangedHandlerBound !== null;
+                mustCommit = this.domIsWatched;
             for ( var i = 0, n = aa.length; i < n; i++ ) {
                 raw = aa[i];
                 o = JSON.parse(raw);
@@ -481,13 +512,12 @@ vAPI.DOMFilterer = (function() {
             if ( mustCommit ) {
                 this.domFilterer.commit();
             }
-            if ( this.domChangedHandlerBound === null ) {
-                this.domChangedHandlerInit();
-            }
         },
 
         commitNow: function() {
-            if ( this.domIsReady === false ) { return; }
+            if ( this.selectors.size === 0 || this.domIsReady === false ) {
+                return;
+            }
 
             if ( this.addedNodes || this.removedNodes ) {
                 this.addedSelectors.clear();
@@ -512,11 +542,9 @@ vAPI.DOMFilterer = (function() {
                 return;
             }
 
-            this.addedNodes = this.removedNodes = false;
-
-            if ( this.selectors.size === 0 ) { return; }
-
             console.time('dom layout changed/procedural selectors');
+
+            this.addedNodes = this.removedNodes = false;
 
             var afterResultset = new Set();
 
@@ -549,28 +577,16 @@ vAPI.DOMFilterer = (function() {
             return new PSelector(o);
         },
 
-        domCreatedHandler: function() {
+        onDOMCreated: function() {
             this.domIsReady = true;
-        },
-
-        domChangedHandler: function(addedNodes, removedNodes) {
-            if ( addedNodes.length === 0 && removedNodes === false ) {
-                this.domCreatedHandler();
-            }
-            this.addedNodes = this.addedNodes || addedNodes.length !== 0;
-            this.removedNodes = this.removedNodes || removedNodes;
             this.domFilterer.commit();
         },
 
-        domChangedHandlerBound: null,
-
-        domChangedHandlerInit: function() {
-            if ( this.domChangedHandlerBound !== null ) { return; }
-            if ( this.selectors.length === 0 ) { return; }
-            if ( vAPI.domWatcher instanceof Object ) {
-                this.domChangedHandlerBound = this.domChangedHandler.bind(this);
-                vAPI.domWatcher.addListener(this.domChangedHandlerBound);
-            }
+        onDOMChanged: function(addedNodes, removedNodes) {
+            if ( this.selectors.size === 0 ) { return; }
+            this.addedNodes = this.addedNodes || addedNodes.length !== 0;
+            this.removedNodes = this.removedNodes || removedNodes;
+            this.domFilterer.commit();
         }
     };
 
@@ -579,6 +595,13 @@ vAPI.DOMFilterer = (function() {
     var domFilterer = function() {
         DOMFiltererBase.call(this);
         this.proceduralFilterer = new DOMProceduralFilterer(this);
+
+        // May or may not exist: cache locally since this may be called often.
+        this.baseOnDOMChanged = DOMFiltererBase.prototype.onDOMChanged;
+
+        if ( vAPI.domWatcher instanceof Object ) {
+            vAPI.domWatcher.addListener(this);
+        }
     };
     domFilterer.prototype = Object.create(DOMFiltererBase.prototype);
     domFilterer.prototype.constructor = domFilterer;
@@ -597,6 +620,23 @@ vAPI.DOMFilterer = (function() {
     };
 
     domFilterer.prototype.toggleLogging = function() {
+    };
+
+    domFilterer.prototype.onDOMCreated = function() {
+        if ( DOMFiltererBase.prototype.onDOMCreated !== undefined ) {
+            DOMFiltererBase.prototype.onDOMCreated.call(this);
+        }
+        this.proceduralFilterer.onDOMCreated();
+    };
+
+    domFilterer.prototype.onDOMChanged = function() {
+        if ( this.baseOnDOMChanged !== undefined ) {
+            this.baseOnDOMChanged.apply(this, arguments);
+        }
+        this.proceduralFilterer.onDOMChanged.apply(
+            this.proceduralFilterer,
+            arguments
+        );
     };
 
     return domFilterer;
@@ -809,63 +849,64 @@ vAPI.domCollapser = (function() {
         }
     };
 
-    var domCreatedHandler = function() {
-        if ( vAPI instanceof Object === false ) { return; }
-        if ( vAPI.domCollapser instanceof Object === false ) {
-            if ( vAPI.domWatcher instanceof Object ) {
-                vAPI.domWatcher.removeListener(domChangedHandler);
+    var domWatcherInterface = {
+        onDOMCreated: function() {
+            if ( vAPI instanceof Object === false ) { return; }
+            if ( vAPI.domCollapser instanceof Object === false ) {
+                if ( vAPI.domWatcher instanceof Object ) {
+                    vAPI.domWatcher.removeListener(domWatcherInterface);
+                }
+                return;
             }
-            return;
-        }
-        // Listener to collapse blocked resources.
-        // - Future requests not blocked yet
-        // - Elements dynamically added to the page
-        // - Elements which resource URL changes
-        // https://github.com/chrisaljoudi/uBlock/issues/7
-        // Preferring getElementsByTagName over querySelectorAll:
-        //   http://jsperf.com/queryselectorall-vs-getelementsbytagname/145
-        var elems = document.images || document.getElementsByTagName('img'),
-            i = elems.length, elem;
-        while ( i-- ) {
-            elem = elems[i];
-            if ( elem.complete ) {
-                add(elem);
+            // Listener to collapse blocked resources.
+            // - Future requests not blocked yet
+            // - Elements dynamically added to the page
+            // - Elements which resource URL changes
+            // https://github.com/chrisaljoudi/uBlock/issues/7
+            // Preferring getElementsByTagName over querySelectorAll:
+            //   http://jsperf.com/queryselectorall-vs-getelementsbytagname/145
+            var elems = document.images || document.getElementsByTagName('img'),
+                i = elems.length, elem;
+            while ( i-- ) {
+                elem = elems[i];
+                if ( elem.complete ) {
+                    add(elem);
+                }
             }
-        }
-        addMany(document.embeds || document.getElementsByTagName('embed'));
-        addMany(document.getElementsByTagName('object'));
-        addIFrames(document.getElementsByTagName('iframe'));
-        process(0);
+            addMany(document.embeds || document.getElementsByTagName('embed'));
+            addMany(document.getElementsByTagName('object'));
+            addIFrames(document.getElementsByTagName('iframe'));
+            process(0);
 
-        document.addEventListener('error', onResourceFailed, true);
+            document.addEventListener('error', onResourceFailed, true);
 
-        vAPI.shutdown.add(function() {
-            document.removeEventListener('error', onResourceFailed, true);
-            if ( processTimer !== undefined ) {
-                clearTimeout(processTimer);
+            vAPI.shutdown.add(function() {
+                document.removeEventListener('error', onResourceFailed, true);
+                if ( processTimer !== undefined ) {
+                    clearTimeout(processTimer);
+                }
+            });
+        },
+        onDOMChanged: function(addedNodes) {
+            var ni = addedNodes.length;
+            if ( ni === 0 ) { return; }
+            for ( var i = 0, node; i < ni; i++ ) {
+                node = addedNodes[i];
+                if ( node.localName === 'iframe' ) {
+                    addIFrame(node);
+                }
+                if ( node.childElementCount === 0 ) { continue; }
+                var iframes = node.getElementsByTagName('iframe');
+                if ( iframes.length !== 0 ) {
+                    addIFrames(iframes);
+                }
             }
-        });
-    };
-
-    var domChangedHandler = function(addedNodes, removedNodes) {
-        var ni = addedNodes.length;
-        if ( ni === 0 && removedNodes === false ) { return domCreatedHandler(); }
-        for ( var i = 0, node; i < ni; i++ ) {
-            node = addedNodes[i];
-            if ( node.localName === 'iframe' ) {
-                addIFrame(node);
-            }
-            if ( node.childElementCount === 0 ) { continue; }
-            var iframes = node.getElementsByTagName('iframe');
-            if ( iframes.length !== 0 ) {
-                addIFrames(iframes);
-            }
+            process();
         }
-        process();
     };
 
     if ( vAPI.domWatcher instanceof Object ) {
-        vAPI.domWatcher.addListener(domChangedHandler);
+        vAPI.domWatcher.addListener(domWatcherInterface);
     }
 
     return {
@@ -883,10 +924,13 @@ vAPI.domCollapser = (function() {
 
 vAPI.domSurveyor = (function() {
     var messaging = vAPI.messaging,
-        cosmeticSurveyingMissCount = 0,
         queriedIds = new Set(),
         queriedClasses = new Set(),
         surveyCost = 0;
+
+    // This is to shutdown the surveyor if result of surveying keeps being
+    // fruitless. This is useful on long-lived web page.
+    var surveyingMissCount = 0;
 
     // Handle main process' response.
 
@@ -915,32 +959,21 @@ vAPI.domSurveyor = (function() {
                 );
                 mustCommit = true;
             }
-            if ( mustCommit ) {
-                vAPI.domFilterer.commit();
-            }
         }
 
-/*
-        if ( selectors.length !== 0 ) {
-            messaging.send(
-                'contentscript',
-                {
-                    what: 'cosmeticFiltersInjected',
-                    type: 'cosmetic',
-                    hostname: window.location.hostname,
-                    selectors: selectors,
-                    cost: surveyCost
-                }
-            );
+        if ( mustCommit ) {
+            vAPI.domFilterer.commit();
+            surveyingMissCount = 0;
+            return;
         }
 
-        // Shutdown surveyor if too many consecutive empty resultsets.
-        if ( selectors.length === 0 ) {
-            cosmeticSurveyingMissCount += 1;
-        } else {
-            cosmeticSurveyingMissCount = 0;
-        }
-*/
+        surveyingMissCount += 1;
+        if ( surveyingMissCount < 256 ) { return; }
+
+        console.log('dom surveyor shutting down: too many misses.');
+
+        vAPI.domWatcher.removeListener(domWatcherInterface);
+        vAPI.domSurveyor = null;
     };
 
     // Extract all classes/ids: these will be passed to the cosmetic
@@ -1013,61 +1046,55 @@ vAPI.domSurveyor = (function() {
     };
     var reWhitespace = /\s/;
 
-    var domCreatedHandler = function() {
-        if ( vAPI instanceof Object === false ) { return; }
-        if (
-            vAPI.domSurveyor instanceof Object === false ||
-            vAPI.domFilterer instanceof Object === false
-        ) {
-            if ( vAPI.domWatcher instanceof Object ) {
-                vAPI.domWatcher.removeListener(domChangedHandler);
+    var domWatcherInterface = {
+        onDOMCreated: function() {
+            if ( vAPI instanceof Object === false ) { return; }
+            if (
+                vAPI.domSurveyor instanceof Object === false ||
+                vAPI.domFilterer instanceof Object === false
+            ) {
+                if ( vAPI.domWatcher instanceof Object ) {
+                    vAPI.domWatcher.removeListener(domWatcherInterface);
+                }
+                return;
             }
-            return;
-        }
-        console.time('dom layout created/dom surveyor');
-        surveyPhase1(
-            document.querySelectorAll('[id]'),
-            document.querySelectorAll('[class]')
-        );
-        console.timeEnd('dom layout created/dom surveyor');
-    };
-
-    var domChangedHandler = function(addedNodes, removedNodes) {
-        if ( addedNodes.length === 0 && removedNodes === false ) {
-            return domCreatedHandler();
-        }
-        if ( cosmeticSurveyingMissCount > 255 ) {
-            vAPI.domWatcher.removeListener(domChangedHandler);
-            vAPI.domSurveyor = null;
-            return;
-        }
-        console.time('dom layout changed/dom surveyor');
-        var idNodes = [], iid = 0,
-            classNodes = [], iclass = 0;
-        var i = addedNodes.length,
-            node, nodeList, j;
-        while ( i-- ) {
-            node = addedNodes[i];
-            idNodes[iid++] = node;
-            classNodes[iclass++] = node;
-            if ( node.childElementCount === 0 ) { continue; }
-            nodeList = node.querySelectorAll('[id]');
-            j = nodeList.length;
-            while ( j-- ) {
-                idNodes[iid++] = nodeList[j];
+            console.time('dom layout created/dom surveyor');
+            surveyPhase1(
+                document.querySelectorAll('[id]'),
+                document.querySelectorAll('[class]')
+            );
+            console.timeEnd('dom layout created/dom surveyor');
+        },
+        onDOMChanged: function(addedNodes) {
+            if ( addedNodes.length === 0 ) { return; }
+            console.time('dom layout changed/dom surveyor');
+            var idNodes = [], iid = 0,
+                classNodes = [], iclass = 0;
+            var i = addedNodes.length,
+                node, nodeList, j;
+            while ( i-- ) {
+                node = addedNodes[i];
+                idNodes[iid++] = node;
+                classNodes[iclass++] = node;
+                if ( node.childElementCount === 0 ) { continue; }
+                nodeList = node.querySelectorAll('[id]');
+                j = nodeList.length;
+                while ( j-- ) {
+                    idNodes[iid++] = nodeList[j];
+                }
+                nodeList = node.querySelectorAll('[class]');
+                j = nodeList.length;
+                while ( j-- ) {
+                    classNodes[iclass++] = nodeList[j];
+                }
             }
-            nodeList = node.querySelectorAll('[class]');
-            j = nodeList.length;
-            while ( j-- ) {
-                classNodes[iclass++] = nodeList[j];
-            }
+            surveyPhase1(idNodes, classNodes);
+            console.timeEnd('dom layout changed/dom surveyor');
         }
-        surveyPhase1(idNodes, classNodes);
-        console.timeEnd('dom layout changed/dom surveyor');
     };
 
     if ( vAPI.domWatcher instanceof Object ) {
-        vAPI.domWatcher.addListener(domChangedHandler);
+        vAPI.domWatcher.addListener(domWatcherInterface);
     }
 
     return {};

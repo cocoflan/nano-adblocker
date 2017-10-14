@@ -23,6 +23,13 @@
 
 // For content pages
 
+// Abort execution if our global vAPI object does not exist.
+//   https://github.com/chrisaljoudi/uBlock/issues/456
+//   https://github.com/gorhill/uBlock/issues/2029
+
+if ( typeof vAPI !== 'undefined' ) { // >>>>>>>> start of HUGE-IF-BLOCK
+
+/******************************************************************************/
 /******************************************************************************/
 
 vAPI.DOMFilterer = function() {
@@ -92,7 +99,7 @@ vAPI.DOMFilterer = function() {
         },
         getAllSelectors: function() {
             var out = [];
-            var rules = this.style.sheet &&
+            var rules = this.style &&
                         this.style.sheet &&
                         this.style.sheet.cssRules;
             if ( rules instanceof Object === false ) { return out; }
@@ -111,12 +118,7 @@ vAPI.DOMFilterer = function() {
     this.hiddenNodeset = new Set();
 
     if ( vAPI.domWatcher instanceof Object ) {
-        this.domChangedHandlerBound = this.domChangedHandler.bind(this);
-        vAPI.domWatcher.addListener(this.domChangedHandlerBound);
-        vAPI.shutdown.add(() => {
-            vAPI.domWatcher.removeListener(this.domChangedHandlerBound);
-            this.domChangedHandlerBound = null;
-        });
+        vAPI.domWatcher.addListener(this);
     }
 };
 
@@ -207,8 +209,8 @@ vAPI.DOMFilterer.prototype = {
         this.removedNodes = false;
     },
 
-    commit: function(commitNow) {
-        if ( commitNow ) {
+    commit: function(now) {
+        if ( now ) {
             this.commitTimer.clear();
             this.commitNow();
         } else {
@@ -216,11 +218,9 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    addCSSRule: function(
-        selectors,
-        declarations,
-        options
-    ) {
+    addCSSRule: function(selectors, declarations, options) {
+        if ( selectors === undefined ) { return; }
+
         if ( options === undefined ) { options = {}; }
 
         var isSpecific = options.lazy !== true,
@@ -313,18 +313,20 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    domChangedHandler: function(addedNodes, removedNodes) {
-        if ( addedNodes.length === 0 && removedNodes === false ) {
-            this.domIsReady = true;
-        }
+    onDOMCreated: function() {
+        this.domIsReady = true;
+        this.addedNodes.clear();
+        this.removedNodes = false;
+        this.commit();
+    },
+
+    onDOMChanged: function(addedNodes, removedNodes) {
         for ( var node of addedNodes ) {
             this.addedNodes.add(node);
         }
         this.removedNodes = this.removedNodes || removedNodes;
         this.commit();
     },
-
-    domChangedHandlerBound: null,
 
     // https://jsperf.com/clientheight-and-clientwidth-vs-getcomputedstyle
     //   Avoid getComputedStyle(), detecting whether a node is visible can be
@@ -465,3 +467,8 @@ vAPI.DOMFilterer.prototype = {
         return resultset.size;
     },
 };
+
+/******************************************************************************/
+/******************************************************************************/
+
+} // <<<<<<<< end of HUGE-IF-BLOCK

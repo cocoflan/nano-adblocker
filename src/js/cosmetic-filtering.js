@@ -650,20 +650,20 @@ FilterContainer.prototype.reset = function() {
     // generic filters
     this.hasGenericHide = false;
 
-    this.lowlyGeneric = {
-        sid: new Set(),
-        cid: new Map(),
-        scl: new Set(),
-        ccl: new Map()
+    // low generic cosmetic filters, organized by id/class then simple/complex.
+    this.lowlyGeneric = Object.create(null);
+    this.lowlyGeneric.id = {
+        canonical: 'ids',
+        prefix: '#',
+        simple: new Set(),
+        complex: new Map()
     };
-
-    // low generic cosmetic filters, id-based.
-    this.lowlyGenericSimpleIdHideSet = new Set();
-    this.lowlyGenericComplexIdHideMap = new Map();
-
-    // low generic cosmetic filters, class-based.
-    this.lowlyGenericSimpleClassHideSet = new Set();
-    this.lowlyGenericComplexClassHideMap = new Map();
+    this.lowlyGeneric.cl = {
+        canonical: 'classes',
+        prefix: '.',
+        simple: new Set(),
+        complex: new Map()
+    };
 
     // highly generic simple selectors
     this.highlyGenericSimpleHideSet = new Set();
@@ -691,10 +691,10 @@ FilterContainer.prototype.freeze = function() {
     this.duplicateBuster = new Set();
 
     this.hasGenericHide =
-        this.lowlyGeneric.sid.size !== 0 ||
-        this.lowlyGeneric.cid.size !== 0 ||
-        this.lowlyGeneric.scl.size !== 0 ||
-        this.lowlyGeneric.ccl.size !== 0 ||
+        this.lowlyGeneric.id.simple.size !== 0 ||
+        this.lowlyGeneric.id.complex.size !== 0 ||
+        this.lowlyGeneric.cl.simple.size !== 0 ||
+        this.lowlyGeneric.cl.complex.size !== 0 ||
         this.highlyGenericSimpleHideSet.size !== 0 ||
         this.highlyGenericComplexHideSet.size !== 0;
 
@@ -702,12 +702,13 @@ FilterContainer.prototype.freeze = function() {
         for ( var selector of this.genericDonthideSet ) {
             var type = selector.charCodeAt(0);
             if ( type === 0x23 /* '#' */ ) {
-                this.lowlyGeneric.sid.delete(selector);
+                this.lowlyGeneric.id.simple.delete(selector.slice(1));
             } else if ( type === 0x2E /* '.' */ ) {
-                this.lowlyGeneric.scl.delete(selector);
+                this.lowlyGeneric.cl.simple.delete(selector.slice(1));
             }
             // TODO:
-            //  this.lowlyGeneric.sid.delete(selector);
+            //  this.lowlyGeneric.id.complex.delete(selector);
+            //  this.lowlyGeneric.cl.complex.delete(selector);
             this.highlyGenericSimpleHideSet.delete(selector);
             this.highlyGenericComplexHideSet.delete(selector);
         }
@@ -1306,7 +1307,7 @@ FilterContainer.prototype.fromCompiledContent = function(
         return;
     }
 
-    var fingerprint, args, filter, bucket;
+    var fingerprint, args, db, filter, bucket;
 
     while ( reader.next() === true ) {
         this.acceptedCount += 1;
@@ -1321,61 +1322,36 @@ FilterContainer.prototype.fromCompiledContent = function(
 
         switch ( args[0] ) {
 
-        // #AdBanner
-        case 0:
-            bucket = this.lowlyGeneric.cid.get(args[1]);
+        // low generic, simple
+        case 0: // #AdBanner
+        case 2: // .largeAd
+            db = args[0] === 0 ? this.lowlyGeneric.id : this.lowlyGeneric.cl;
+            bucket = db.complex.get(args[1]);
             if ( bucket === undefined ) {
-                this.lowlyGeneric.sid.add(args[1]);
+                db.simple.add(args[1]);
             } else if ( Array.isArray(bucket) ) {
                 bucket.push(args[1]);
             } else {
-                this.lowlyGeneric.cid.set(args[1], [ bucket, args[1] ]);
+                db.complex.set(args[1], [ bucket, args[1] ]);
             }
             break;
 
-        // #tads + div + .c
-        case 1:
-            bucket = this.lowlyGeneric.cid.get(args[1]);
+        // low generic, complex
+        case 1: // #tads + div + .c
+        case 3: // .Mpopup + #Mad > #MadZone
+            db = args[0] === 0 ? this.lowlyGeneric.id : this.lowlyGeneric.cl;
+            bucket = db.complex.get(args[1]);
             if ( bucket === undefined ) {
-                if ( this.lowlyGeneric.sid.has(args[1]) ) {
-                    this.lowlyGeneric.cid.set(args[1], [ args[1], args[2] ]);
+                if ( db.simple.has(args[1]) ) {
+                    db.complex.set(args[1], [ args[1], args[2] ]);
                 } else {
-                    this.lowlyGeneric.cid.set(args[1], args[2]);
-                    this.lowlyGeneric.sid.add(args[1]);
+                    db.complex.set(args[1], args[2]);
+                    db.simple.add(args[1]);
                 }
             } else if ( Array.isArray(bucket) ) {
                 bucket.push(args[2]);
             } else {
-                this.lowlyGeneric.cid.set(args[1], [ bucket, args[2] ]);
-            }
-            break;
-
-        // .largeAd
-        case 2:
-            bucket = this.lowlyGeneric.ccl.get(args[1]);
-            if ( bucket === undefined ) {
-                this.lowlyGeneric.scl.add(args[1]);
-            } else if ( Array.isArray(bucket) ) {
-                bucket.push(args[1]);
-            } else {
-                this.lowlyGeneric.ccl.set(args[1], [ bucket, args[1] ]);
-            }
-            break;
-
-        // .Mpopup + #Mad > #MadZone
-        case 3:
-            bucket = this.lowlyGeneric.ccl.get(args[1]);
-            if ( bucket === undefined ) {
-                if ( this.lowlyGeneric.scl.has(args[1]) ) {
-                    this.lowlyGeneric.ccl.set(args[1], [ args[1], args[2] ]);
-                } else {
-                    this.lowlyGeneric.ccl.set(args[1], args[2]);
-                    this.lowlyGeneric.scl.add(args[1]);
-                }
-            } else if ( Array.isArray(bucket) ) {
-                bucket.push(args[2]);
-            } else {
-                this.lowlyGeneric.ccl.set(args[1], [ bucket, args[2] ]);
+                db.complex.set(args[1], [ bucket, args[2] ]);
             }
             break;
 
@@ -1731,10 +1707,10 @@ FilterContainer.prototype.toSelfie = function() {
         discardedCount: this.discardedCount,
         specificFilters: selfieFromMap(this.specificFilters),
         hasGenericHide: this.hasGenericHide,
-        lowlyGenericSID: µb.setToArray(this.lowlyGeneric.sid),
-        lowlyGenericCID: µb.mapToArray(this.lowlyGeneric.cid),
-        lowlyGenericSCL: µb.setToArray(this.lowlyGeneric.scl),
-        lowlyGenericCCL: µb.mapToArray(this.lowlyGeneric.ccl),
+        lowlyGenericSID: µb.setToArray(this.lowlyGeneric.id.simple),
+        lowlyGenericCID: µb.mapToArray(this.lowlyGeneric.id.complex),
+        lowlyGenericSCL: µb.setToArray(this.lowlyGeneric.cl.simple),
+        lowlyGenericCCL: µb.mapToArray(this.lowlyGeneric.cl.complex),
         highSimpleGenericHideArray: µb.setToArray(this.highlyGenericSimpleHideSet),
         highComplexGenericHideArray: µb.setToArray(this.highlyGenericComplexHideSet),
         genericDonthideString: this.genericDonthideString,
@@ -1763,10 +1739,10 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
     this.discardedCount = selfie.discardedCount;
     this.specificFilters = mapFromSelfie(selfie.specificFilters);
     this.hasGenericHide = selfie.hasGenericHide;
-    this.lowlyGeneric.sid = µb.setFromArray(selfie.lowlyGenericSID);
-    this.lowlyGeneric.cid = µb.mapFromArray(selfie.lowlyGenericCID);
-    this.lowlyGeneric.scl = µb.setFromArray(selfie.lowlyGenericSCL);
-    this.lowlyGeneric.ccl = µb.mapFromArray(selfie.lowlyGenericCCL);
+    this.lowlyGeneric.id.simple = µb.setFromArray(selfie.lowlyGenericSID);
+    this.lowlyGeneric.id.complex = µb.mapFromArray(selfie.lowlyGenericCID);
+    this.lowlyGeneric.cl.simple = µb.setFromArray(selfie.lowlyGenericSCL);
+    this.lowlyGeneric.cl.complex = µb.mapFromArray(selfie.lowlyGenericCCL);
     this.highlyGenericSimpleHideSet = µb.setFromArray(selfie.highSimpleGenericHideArray);
     this.highlyGenericSimpleHideString = selfie.highSimpleGenericHideArray.join(',\n');
     this.highlyGenericComplexHideSet = µb.setFromArray(selfie.highComplexGenericHideArray);
@@ -1886,19 +1862,16 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     if ( this.acceptedCount === 0 ) { return; }
     if ( !request.ids && !request.classes ) { return; }
 
-    var r = {
-        simple: [],
-        complex: []
-    };
+    console.time('cosmeticFilteringEngine.retrieveGenericSelectors');
 
-    var simpleSelectors = r.simple,
-        complexSelectors = r.complex,
-        selectors,
-        strEnd, sliceBeg, sliceEnd,
-        selector, bucket;
+    var simpleSelectors = [],
+        complexSelectors = [];
+    var entry, selectors, strEnd, sliceBeg, sliceEnd, selector, bucket;
 
-    if ( request.ids ) {
-        selectors = request.ids;
+    for ( var type in this.lowlyGeneric ) {
+        entry = this.lowlyGeneric[type];
+        selectors = request[entry.canonical];
+        if ( typeof selectors !== 'string' ) { continue; }
         strEnd = selectors.length;
         sliceBeg = 0;
         do {
@@ -1906,45 +1879,20 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
             if ( sliceEnd === -1 ) { sliceEnd = strEnd; }
             selector = selectors.slice(sliceBeg, sliceEnd);
             sliceBeg = sliceEnd + 1;
-            if ( this.lowlyGeneric.sid.has(selector) === false ) { continue; }
-            if ( (bucket = this.lowlyGeneric.cid.get(selector)) !== undefined ) {
+            if ( entry.simple.has(selector) === false ) { continue; }
+            if ( (bucket = entry.complex.get(selector)) !== undefined ) {
                 if ( Array.isArray(bucket) ) {
                     complexSelectors = complexSelectors.concat(bucket);
                 } else {
                     complexSelectors.push(bucket);
                 }
             } else {
-                simpleSelectors.push('#' + selector);
+                simpleSelectors.push(entry.prefix + selector);
             }
         } while ( sliceBeg < strEnd );
     }
 
-    if ( request.classes ) {
-        selectors = request.classes;
-        strEnd = selectors.length;
-        sliceBeg = 0;
-        do {
-            sliceEnd = selectors.indexOf('\n', sliceBeg);
-            if ( sliceEnd === -1 ) { sliceEnd = strEnd; }
-            selector = selectors.slice(sliceBeg, sliceEnd);
-            sliceBeg = sliceEnd + 1;
-            if ( this.lowlyGeneric.scl.has(selector) === false ) { continue; }
-            if ( (bucket = this.lowlyGeneric.ccl.get(selector)) !== undefined ) {
-                if ( Array.isArray(bucket) ) {
-                    complexSelectors = complexSelectors.concat(bucket);
-                } else {
-                    complexSelectors.push(bucket);
-                }
-            } else {
-                simpleSelectors.push('.' + selector);
-            }
-        } while ( sliceBeg < strEnd );
-    }
-
-    // This is needed because possible call to Array.concat() above.
-    r.simple = simpleSelectors;
-    r.complex = complexSelectors;
-
+    // Cache looked-up low generic cosmetic filters.
     if (
         (simpleSelectors.length !== 0 || complexSelectors.length !== 0) &&
         (typeof request.frameURL === 'string')
@@ -1960,7 +1908,12 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
         }
     }
 
-    return r;
+    console.timeEnd('cosmeticFilteringEngine.retrieveGenericSelectors');
+
+    return {
+        simple: simpleSelectors,
+        complex: complexSelectors
+    };
 };
 
 /******************************************************************************/
@@ -1971,6 +1924,8 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     options
 ) {
     if ( !request.locationURL ) { return; }
+
+    console.time('cosmeticFilteringEngine.retrieveDomainSelectors');
 
     var hostname = this.µburi.hostnameFromURI(request.locationURL),
         domain = this.µburi.domainFromHostname(hostname) || hostname,
@@ -2076,6 +2031,8 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     //if ( cacheEntry ) {
     //    cacheEntry.retrieve('net', r.netHide);
     //}
+
+    console.timeEnd('cosmeticFilteringEngine.retrieveDomainSelectors');
 
     return r;
 };
