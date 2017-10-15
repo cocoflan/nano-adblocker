@@ -320,33 +320,15 @@
 
 /******************************************************************************/
 
-µBlock.mapToArray = typeof Array.from === 'function'
+µBlock.arrayFrom = typeof Array.from === 'function'
     ? Array.from
-    : function(map) {
-        var out = [];
-        for ( var entry of map ) {
-            out.push(entry);
+    : function(iterable) {
+        var out = [], i = 0;
+        for ( var value of iterable ) {
+            out[i++] = value;
         }
         return out;
     };
-
-µBlock.mapFromArray = function(arr) {
-    return new Map(arr);
-};
-
-µBlock.setToArray = typeof Array.from === 'function'
-    ? Array.from
-    : function(dict) {
-        var out = [];
-        for ( var value of dict ) {
-            out.push(value);
-        }
-        return out;
-    };
-
-µBlock.setFromArray = function(arr) {
-    return new Set(arr);
-};
 
 /******************************************************************************/
 

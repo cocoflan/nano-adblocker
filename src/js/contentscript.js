@@ -95,15 +95,21 @@ vAPI.SafeAnimationFrame = function(callback) {
 };
 
 vAPI.SafeAnimationFrame.prototype = {
-    start: function() {
-        if ( this.fid !== null ) { return; }
-        this.fid = requestAnimationFrame(this.callback);
-        this.tid = vAPI.setTimeout(this.callback, 1200000);
+    start: function(delay) {
+        if ( delay === undefined ) {
+            if ( this.fid === null ) {
+                this.fid = requestAnimationFrame(this.callback);
+            }
+            if ( this.tid === null ) {
+                this.tid = vAPI.setTimeout(this.callback, 1200000);
+            }
+        } else if ( this.fid === null && this.tid === null ) {
+            this.tid = vAPI.setTimeout(this.callback, delay);
+        }
     },
     clear: function() {
-        if ( this.fid === null ) { return; }
-        cancelAnimationFrame(this.fid);
-        clearTimeout(this.tid);
+        if ( this.fid !== null ) { cancelAnimationFrame(this.fid); }
+        if ( this.tid !== null ) { clearTimeout(this.tid); }
         this.fid = this.tid = null;
     }
 };
@@ -927,6 +933,8 @@ vAPI.domSurveyor = (function() {
         domFilterer,
         queriedIds = new Set(),
         queriedClasses = new Set(),
+        pendingIdNodes = { nodes: [], added: [] },
+        pendingClassNodes = { nodes: [], added: [] },
         surveyCost = 0;
 
     // This is to shutdown the surveyor if result of surveying keeps being
@@ -960,6 +968,10 @@ vAPI.domSurveyor = (function() {
             }
         }
 
+        if ( hasChunk(pendingIdNodes) || hasChunk(pendingClassNodes) ) {
+            surveyTimer.start(1);
+        }
+
         if ( mustCommit ) {
             domFilterer.commit();
             surveyingMissCount = 0;
@@ -975,6 +987,56 @@ vAPI.domSurveyor = (function() {
         vAPI.domSurveyor = null;
     };
 
+    var surveyTimer = new vAPI.SafeAnimationFrame(function() {
+        surveyPhase1();
+    });
+
+    // The purpose of "chunkification" is to ensure the surveyor won't unduly
+    // block the main event loop.
+
+    var hasChunk = function(pending) {
+        return pending.nodes.length !== 0 ||
+               pending.added.length !== 0;
+    };
+
+    var addChunk = function(pending, added) {
+        if ( added.length === 0 ) { return; }
+        if (
+            Array.isArray(added) === false ||
+            pending.added.length === 0 ||
+            Array.isArray(pending.added[0]) === false ||
+            pending.added[0].length >= 1000
+        ) {
+            pending.added.push(added);
+        } else {
+            pending.added = pending.added.concat(added);
+        }
+    };
+
+    var nextChunk = function(pending) {
+        var added = pending.added.length !== 0 ? pending.added.shift() : [],
+            nodes;
+        if ( pending.nodes.length === 0 ) {
+            if ( added.length <= 1000 ) { return added; }
+            nodes = Array.isArray(added)
+                ? added
+                : Array.prototype.slice.call(added);
+            pending.nodes = nodes.splice(1000);
+            return nodes;
+        }
+        if ( Array.isArray(added) === false ) {
+            added = Array.prototype.slice.call(added);
+        }
+        if ( pending.nodes.length < 1000 ) {
+            nodes = pending.nodes.concat(added.splice(0, 1000 - pending.nodes.length));
+            pending.nodes = added;
+        } else {
+            nodes = pending.nodes.splice(0, 1000);
+            pending.nodes = pending.nodes.concat(added);
+        }
+        return nodes;
+    };
+
     // Extract all classes/ids: these will be passed to the cosmetic
     // filtering engine, and in return we will obtain only the relevant
     // CSS selectors.
@@ -983,14 +1045,16 @@ vAPI.domSurveyor = (function() {
     // http://www.w3.org/TR/2014/REC-html5-20141028/infrastructure.html#space-separated-tokens
     // http://jsperf.com/enumerate-classes/6
 
-    var surveyPhase1 = function(idNodes, classNodes) {
-        var t0 = window.performance.now(),
-            rews = reWhitespace,
+    var surveyPhase1 = function() {
+        console.time('dom surveyor/surveying');
+        surveyTimer.clear();
+        var t0 = window.performance.now();
+        var rews = reWhitespace,
             qq, iout, nodes, i, node, v, vv, j;
         var ids = [];
         iout = 0;
         qq = queriedIds;
-        nodes = idNodes;
+        nodes = nextChunk(pendingIdNodes);
         i = nodes.length;
         while ( i-- ) {
             node = nodes[i];
@@ -1004,7 +1068,7 @@ vAPI.domSurveyor = (function() {
         var classes = [];
         iout = 0;
         qq = queriedClasses;
-        nodes = classNodes;
+        nodes = nextChunk(pendingClassNodes);
         i = nodes.length;
         while ( i-- ) {
             node = nodes[i];
@@ -1043,6 +1107,7 @@ vAPI.domSurveyor = (function() {
         } else {
             surveyPhase3(null);
         }
+        console.timeEnd('dom surveyor/surveying');
     };
     var reWhitespace = /\s/;
 
@@ -1061,17 +1126,16 @@ vAPI.domSurveyor = (function() {
                 }
                 return;
             }
+            console.time('dom surveyor/dom layout created');
             domFilterer = vAPI.domFilterer;
-            console.time('dom layout created/dom surveyor');
-            surveyPhase1(
-                document.querySelectorAll('[id]'),
-                document.querySelectorAll('[class]')
-            );
-            console.timeEnd('dom layout created/dom surveyor');
+            addChunk(pendingIdNodes, document.querySelectorAll('[id]'));
+            addChunk(pendingClassNodes, document.querySelectorAll('[class]'));
+            surveyTimer.start();
+            console.timeEnd('dom surveyor/dom layout created');
         },
         onDOMChanged: function(addedNodes) {
             if ( addedNodes.length === 0 ) { return; }
-            console.time('dom layout changed/dom surveyor');
+            console.time('dom surveyor/dom layout changed');
             var idNodes = [], iid = 0,
                 classNodes = [], iclass = 0;
             var i = addedNodes.length,
@@ -1092,8 +1156,12 @@ vAPI.domSurveyor = (function() {
                     classNodes[iclass++] = nodeList[j];
                 }
             }
-            surveyPhase1(idNodes, classNodes);
-            console.timeEnd('dom layout changed/dom surveyor');
+            if ( idNodes.length !== 0 || classNodes.lengh !== 0 ) {
+                addChunk(pendingIdNodes, idNodes);
+                addChunk(pendingClassNodes, classNodes);
+                surveyTimer.start(1);
+            }
+            console.timeEnd('dom surveyor/dom layout changed');
         }
     };
 

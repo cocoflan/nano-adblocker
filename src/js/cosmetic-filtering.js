@@ -463,7 +463,7 @@ SelectorCacheEntry.prototype.addNet = function(/* selectors */) {
     // exact same URL.
     if ( this.net.size < netSelectorCacheHighWaterMark ) { return; }
     var dict = this.net;
-    var keys = Array.from(dict.keys()).sort(function(a, b) {
+    var keys = µb.arrayFrom(dict.keys()).sort(function(a, b) {
         return dict.get(b) - dict.get(a);
     }).slice(netSelectorCacheLowWaterMark);
     var i = keys.length;
@@ -1716,13 +1716,13 @@ FilterContainer.prototype.toSelfie = function() {
         specificFilters: selfieFromMap(this.specificFilters),
         proceduralFilters: selfieFromMap(this.proceduralFilters),
         hasGenericHide: this.hasGenericHide,
-        lowlyGenericSID: µb.setToArray(this.lowlyGeneric.id.simple),
-        lowlyGenericCID: µb.mapToArray(this.lowlyGeneric.id.complex),
-        lowlyGenericSCL: µb.setToArray(this.lowlyGeneric.cl.simple),
-        lowlyGenericCCL: µb.mapToArray(this.lowlyGeneric.cl.complex),
-        highSimpleGenericHideArray: µb.setToArray(this.highlyGenericSimpleHideSet),
-        highComplexGenericHideArray: µb.setToArray(this.highlyGenericComplexHideSet),
-        genericDonthideArray: µb.setToArray(this.genericDonthideSet),
+        lowlyGenericSID: µb.arrayFrom(this.lowlyGeneric.id.simple),
+        lowlyGenericCID: µb.arrayFrom(this.lowlyGeneric.id.complex),
+        lowlyGenericSCL: µb.arrayFrom(this.lowlyGeneric.cl.simple),
+        lowlyGenericCCL: µb.arrayFrom(this.lowlyGeneric.cl.complex),
+        highSimpleGenericHideArray: µb.arrayFrom(this.highlyGenericSimpleHideSet),
+        highComplexGenericHideArray: µb.arrayFrom(this.highlyGenericComplexHideSet),
+        genericDonthideArray: µb.arrayFrom(this.genericDonthideSet),
         scriptTagFilters: this.scriptTagFilters,
         scriptTagFilterCount: this.scriptTagFilterCount,
         userScripts: selfieFromMap(this.userScripts),
@@ -1749,13 +1749,13 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
     this.specificFilters = mapFromSelfie(selfie.specificFilters);
     this.proceduralFilters = mapFromSelfie(selfie.proceduralFilters);
     this.hasGenericHide = selfie.hasGenericHide;
-    this.lowlyGeneric.id.simple = µb.setFromArray(selfie.lowlyGenericSID);
-    this.lowlyGeneric.id.complex = µb.mapFromArray(selfie.lowlyGenericCID);
-    this.lowlyGeneric.cl.simple = µb.setFromArray(selfie.lowlyGenericSCL);
-    this.lowlyGeneric.cl.complex = µb.mapFromArray(selfie.lowlyGenericCCL);
-    this.highlyGenericSimpleHideSet = µb.setFromArray(selfie.highSimpleGenericHideArray);
-    this.highlyGenericComplexHideSet = µb.setFromArray(selfie.highComplexGenericHideArray);
-    this.genericDonthideSet = µb.setFromArray(selfie.genericDonthideArray);
+    this.lowlyGeneric.id.simple = new Set(selfie.lowlyGenericSID);
+    this.lowlyGeneric.id.complex = new Map(selfie.lowlyGenericCID);
+    this.lowlyGeneric.cl.simple = new Set(selfie.lowlyGenericSCL);
+    this.lowlyGeneric.cl.complex = new Map(selfie.lowlyGenericCCL);
+    this.highlyGenericSimpleHideSet = new Set(selfie.highSimpleGenericHideArray);
+    this.highlyGenericComplexHideSet = new Set(selfie.highComplexGenericHideArray);
+    this.genericDonthideSet = new Set(selfie.genericDonthideArray);
     this.scriptTagFilters = selfie.scriptTagFilters;
     this.scriptTagFilterCount = selfie.scriptTagFilterCount;
     this.userScripts = mapFromSelfie(selfie.userScripts);
@@ -1841,7 +1841,7 @@ FilterContainer.prototype.pruneSelectorCacheAsync = function() {
     //   we loop beginning at the end below.
     // We can't avoid sorting because we have to keep a minimum number of
     //   entries, and these entries should always be the most-recently-used.
-    var hostnames = Array.from(cache.keys())
+    var hostnames = µb.arrayFrom(cache.keys())
             .sort(function(a, b) {
                 return cache.get(b).lastAccessTime -
                        cache.get(a).lastAccessTime;
@@ -1913,8 +1913,8 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     }
 
     var out = {
-        simple: Array.from(simpleSelectors),
-        complex: Array.from(complexSelectors)
+        simple: µb.arrayFrom(simpleSelectors),
+        complex: µb.arrayFrom(complexSelectors)
     };
 
     // Cache looked-up low generic cosmetic filters.
@@ -1998,7 +1998,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
             bucket.retrieve(hostname, exceptionSet);
         }
         if ( exceptionSet.size !== 0 ) {
-            r.exceptionFilters = Array.from(exceptionSet);
+            r.exceptionFilters = µb.arrayFrom(exceptionSet);
         }
 
         // Declarative cosmetic filters.
@@ -2055,18 +2055,16 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
             proceduralSet.delete(exception);
         }
         if ( specificSet.size !== 0 ) {
-            r.declarativeFilters = Array.from(specificSet);
+            r.declarativeFilters = µb.arrayFrom(specificSet);
         }
         if ( proceduralSet.size !== 0 ) {
-            r.proceduralFilters = Array.from(proceduralSet);
+            r.proceduralFilters = µb.arrayFrom(proceduralSet);
         }
 
         // Highly generic cosmetic filters: sent once along with specific ones.
         if ( options.noGenericCosmeticFiltering !== true ) {
-            var exceptionHash = exceptionSet.size === 0
-                ? ''
-                : r.exceptionFilters.join(',');
-            var entry = this.mruHighlyGenericHideStrings.lookup(exceptionHash);
+            var exceptionHash = r.exceptionFilters.join(),
+                entry = this.mruHighlyGenericHideStrings.lookup(exceptionHash);
             if ( entry === undefined ) {
                 var simpleSet = new Set(this.highlyGenericSimpleHideSet),
                     complexSet = new Set(this.highlyGenericComplexHideSet);
@@ -2075,8 +2073,8 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
                     complexSet.delete(exception);
                 }
                 entry = {
-                    simple: Array.from(simpleSet).join(',\n'),
-                    complex: Array.from(complexSet).join(',\n')
+                    simple: µb.arrayFrom(simpleSet).join(',\n'),
+                    complex: µb.arrayFrom(complexSet).join(',\n')
                 };
                 this.mruHighlyGenericHideStrings.add(exceptionHash, entry);
             }

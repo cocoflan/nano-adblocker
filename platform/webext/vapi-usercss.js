@@ -116,7 +116,7 @@ vAPI.DOMFilterer.prototype = {
         if ( selectorsStr.length === 0 ) { return; }
 
         this.stagedCSSRules.push({
-            selectorsStr,
+            selectors: selectorsStr,
             declarations,
             lazy: options && options.lazy === true
         });
