@@ -50,6 +50,8 @@ vAPI.DOMFilterer = function() {
     this.genericSimpleHide = new Set();
     this.genericComplexHide = new Set();
 
+    this.exceptions = [];
+
     this.userStylesheet = {
         style: null,
         css: new Set(),

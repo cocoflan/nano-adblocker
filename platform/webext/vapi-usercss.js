@@ -35,6 +35,8 @@ vAPI.DOMFilterer = function() {
     this.hideNodeStylesheet = false;
     this.stagedCSSRules = [];
 
+    this.exceptions = [];
+
     this.userStylesheets = {
         sheets: new Set(),
         disabled: false,
@@ -105,19 +107,16 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    addCSSRule: function(
-        selectors,
-        declarations,
-        options
-    ) {
-        if ( Array.isArray(selectors) ) {
-            selectors = selectors.join(',\n');
-        }
-        if ( typeof selectors !== 'string' || selectors.length === 0 ) {
-            return;
-        }
+    addCSSRule: function(selectors, declarations, options) {
+        if ( selectors === undefined ) { return; }
+
+        var selectorsStr = Array.isArray(selectors)
+                ? selectors.join(',\n')
+                : selectors;
+        if ( selectorsStr.length === 0 ) { return; }
+
         this.stagedCSSRules.push({
-            selectors,
+            selectorsStr,
             declarations,
             lazy: options && options.lazy === true
         });

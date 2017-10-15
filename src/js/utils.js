@@ -376,3 +376,41 @@
 };
 
 /******************************************************************************/
+
+µBlock.MRUCache = function(size) {
+    this.size = size;
+    this.array = [];
+    this.map = new Map();
+};
+
+µBlock.MRUCache.prototype = {
+    add: function(key, value) {
+        var found = this.map.has(key);
+        this.map.set(key, value);
+        if ( !found ) {
+            if ( this.array.length === this.size ) {
+                this.map.delete(this.array.pop());
+            }
+            this.array.unshift(key);
+        }
+    },
+    remove: function(key) {
+        if ( this.map.has(key) ) {
+            this.array.splice(this.array.indexOf(key), 1);
+        }
+    },
+    lookup: function(key) {
+        var value = this.map.get(key);
+        if ( value !== undefined && this.array[0] !== key ) {
+            this.array.splice(this.array.indexOf(key), 1);
+            this.array.unshift(key);
+        }
+        return value;
+    },
+    reset: function() {
+        this.array = [];
+        this.map.clear();
+    }
+};
+
+/******************************************************************************/

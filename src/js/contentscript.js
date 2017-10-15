@@ -924,6 +924,7 @@ vAPI.domCollapser = (function() {
 
 vAPI.domSurveyor = (function() {
     var messaging = vAPI.messaging,
+        domFilterer,
         queriedIds = new Set(),
         queriedClasses = new Set(),
         surveyCost = 0;
@@ -936,24 +937,22 @@ vAPI.domSurveyor = (function() {
 
     var surveyPhase3 = function(response) {
         var result = response && response.result,
-            simpleSelectors,
-            complexSelectors,
             mustCommit = false;
 
         if ( result ) {
-            simpleSelectors = result.simple || [];
-            if ( simpleSelectors.length ) {
-                vAPI.domFilterer.addCSSRule(
-                    simpleSelectors,
+            var selectors = result.simple;
+            if ( Array.isArray(selectors) && selectors.length !== 0 ) {
+                domFilterer.addCSSRule(
+                    selectors,
                     'display: none !important;',
                     { type: 'simple' }
                 );
                 mustCommit = true;
             }
-            complexSelectors = result.complex || [];
-            if ( complexSelectors.length ) {
-                vAPI.domFilterer.addCSSRule(
-                    complexSelectors,
+            selectors = result.complex;
+            if ( Array.isArray(selectors) && selectors.length !== 0 ) {
+                domFilterer.addCSSRule(
+                    selectors,
                     'display: none !important;',
                     { type: 'complex' }
                 );
@@ -962,7 +961,7 @@ vAPI.domSurveyor = (function() {
         }
 
         if ( mustCommit ) {
-            vAPI.domFilterer.commit();
+            domFilterer.commit();
             surveyingMissCount = 0;
             return;
         }
@@ -1036,6 +1035,7 @@ vAPI.domSurveyor = (function() {
                     frameURL: window.location.href,
                     ids: ids.join('\n'),
                     classes: classes.join('\n'),
+                    exceptions: domFilterer.exceptions,
                     cost: surveyCost
                 },
                 surveyPhase3
@@ -1048,16 +1048,20 @@ vAPI.domSurveyor = (function() {
 
     var domWatcherInterface = {
         onDOMCreated: function() {
-            if ( vAPI instanceof Object === false ) { return; }
             if (
+                vAPI instanceof Object === false ||
                 vAPI.domSurveyor instanceof Object === false ||
                 vAPI.domFilterer instanceof Object === false
             ) {
-                if ( vAPI.domWatcher instanceof Object ) {
-                    vAPI.domWatcher.removeListener(domWatcherInterface);
+                if ( vAPI instanceof Object ) {
+                    if ( vAPI.domWatcher instanceof Object ) {
+                        vAPI.domWatcher.removeListener(domWatcherInterface);
+                    }
+                    vAPI.domSurveyor = null;
                 }
                 return;
             }
+            domFilterer = vAPI.domFilterer;
             console.time('dom layout created/dom surveyor');
             surveyPhase1(
                 document.querySelectorAll('[id]'),
@@ -1104,23 +1108,25 @@ vAPI.domSurveyor = (function() {
 /******************************************************************************/
 /******************************************************************************/
 
-// This is executed once, and since no hooks are left behind once the response
-// is received, I expect this code to be garbage collected by the browser.
+// Bootstrapping allows all components of the content script to be launched
+// if/when needed.
 
-(function domIsLoading() {
+(function bootstrap() {
 
-    var domLoadedHandler = function(ev) {
+    var bootstrapPhase2 = function(ev) {
         // This can happen on Firefox. For instance:
         // https://github.com/gorhill/uBlock/issues/1893
         if ( window.location === null ) { return; }
 
         if ( ev ) {
-            document.removeEventListener('DOMContentLoaded', domLoadedHandler);
+            document.removeEventListener('DOMContentLoaded', bootstrapPhase2);
         }
 
         if ( vAPI instanceof Object && vAPI.domWatcher instanceof Object ) {
             vAPI.domWatcher.start();
         }
+
+        if ( window !== window.top || !vAPI.domFilterer ) { return; }
 
         // To send mouse coordinates to main process, as the chrome API fails
         // to provide the mouse position to context menu listeners.
@@ -1145,20 +1151,15 @@ vAPI.domSurveyor = (function() {
             );
         };
 
-        (function() {
-            if ( window !== window.top || !vAPI.domFilterer ) {
-                return;
-            }
-            document.addEventListener('mousedown', onMouseClick, true);
+        document.addEventListener('mousedown', onMouseClick, true);
 
-            // https://github.com/gorhill/uMatrix/issues/144
-            vAPI.shutdown.add(function() {
-                document.removeEventListener('mousedown', onMouseClick, true);
-            });
-        })();
+        // https://github.com/gorhill/uMatrix/issues/144
+        vAPI.shutdown.add(function() {
+            document.removeEventListener('mousedown', onMouseClick, true);
+        });
     };
 
-    var responseHandler = function(response) {
+    var bootstrapPhase1 = function(response) {
         // cosmetic filtering engine aka 'cfe'
         var cfeDetails = response && response.specificCosmeticFilters;
         if ( !cfeDetails || !cfeDetails.ready ) {
@@ -1176,7 +1177,7 @@ vAPI.domSurveyor = (function() {
             if ( response.noGenericCosmeticFiltering || cfeDetails.noDOMSurveying ) {
                 vAPI.domSurveyor = null;
             }
-            //domFilterer.addExceptionSelectors(cfeDetails.exceptionFilters);
+            domFilterer.exceptions = cfeDetails.exceptionFilters;
             domFilterer.addCSSRule(
                 cfeDetails.declarativeFilters,
                 'display: none !important;'
@@ -1235,12 +1236,13 @@ vAPI.domSurveyor = (function() {
             typeof document.readyState === 'string' &&
             document.readyState !== 'loading'
         ) {
-            domLoadedHandler();
+            bootstrapPhase2();
         } else {
-            document.addEventListener('DOMContentLoaded', domLoadedHandler);
+            document.addEventListener('DOMContentLoaded', bootstrapPhase2);
         }
     };
 
+    // This starts bootstrap process.
     var url = window.location.href;
     vAPI.messaging.send(
         'contentscript',
@@ -1249,9 +1251,8 @@ vAPI.domSurveyor = (function() {
             pageURL: url,
             locationURL: url
         },
-        responseHandler
+        bootstrapPhase1
     );
-
 })();
 
 /******************************************************************************/
