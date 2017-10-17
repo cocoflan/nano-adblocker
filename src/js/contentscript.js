@@ -600,6 +600,7 @@ vAPI.DOMFilterer = (function() {
 
     var domFilterer = function() {
         DOMFiltererBase.call(this);
+        this.exceptions = [];
         this.proceduralFilterer = new DOMProceduralFilterer(this);
 
         // May or may not exist: cache locally since this may be called often.
@@ -626,6 +627,10 @@ vAPI.DOMFilterer = (function() {
     };
 
     domFilterer.prototype.toggleLogging = function() {
+    };
+
+    domFilterer.prototype.getAllProceduralSelectors = function() {
+        return new Map(this.proceduralFilterer.selectors);
     };
 
     domFilterer.prototype.onDOMCreated = function() {
@@ -745,6 +750,7 @@ vAPI.domCollapser = (function() {
                 iframeLoadEventPatch(target);
             }
         }
+        /*
         if ( selectors.length !== 0 ) {
             messaging.send(
                 'contentscript',
@@ -756,6 +762,7 @@ vAPI.domCollapser = (function() {
                 }
             );
         }
+        */
     };
 
     var send = function() {
@@ -1241,7 +1248,6 @@ vAPI.domSurveyor = (function() {
             vAPI.domSurveyor = null;
         } else {
             var domFilterer = vAPI.domFilterer;
-            domFilterer.toggleLogging(response.loggerEnabled);
             if ( response.noGenericCosmeticFiltering || cfeDetails.noDOMSurveying ) {
                 vAPI.domSurveyor = null;
             }
@@ -1317,7 +1323,8 @@ vAPI.domSurveyor = (function() {
         {
             what: 'retrieveContentScriptParameters',
             pageURL: url,
-            locationURL: url
+            locationURL: url,
+            isRootFrame: window === window.top
         },
         bootstrapPhase1
     );

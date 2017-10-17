@@ -27,7 +27,7 @@
 //   https://github.com/chrisaljoudi/uBlock/issues/456
 //   https://github.com/gorhill/uBlock/issues/2029
 
-if ( typeof vAPI !== 'undefined' ) { // >>>>>>>> start of HUGE-IF-BLOCK
+if ( typeof vAPI === 'object' ) { // >>>>>>>> start of HUGE-IF-BLOCK
 
 /******************************************************************************/
 /******************************************************************************/
@@ -49,8 +49,6 @@ vAPI.DOMFilterer = function() {
 
     this.genericSimpleHide = new Set();
     this.genericComplexHide = new Set();
-
-    this.exceptions = [];
 
     this.userStylesheet = {
         style: null,
@@ -458,16 +456,21 @@ vAPI.DOMFilterer.prototype = {
     },
 
     getFilteredElementCount: function() {
-        let resultset = new Set();
-        for ( var selector of this.userStylesheet.getAllSelectors() ) {
-            var nodes = document.querySelectorAll(selector);
-            var i = nodes.length;
-            while ( i-- ) {
-                resultset.add(nodes[i]);
-            }
-        }
-        return resultset.size;
+        return document.querySelectorAll(
+            this.userStylesheet.getAllSelectors().join(',\n')
+        ).length;
     },
+
+    // TODO: remove CSS pseudo-classes which are incompatible with
+    //       static profile.
+    getAllDeclarativeSelectors: function() {
+        return [].concat(
+            Array.from(this.specificSimpleHide),
+            Array.from(this.specificComplexHide),
+            Array.from(this.genericSimpleHide),
+            Array.from(this.genericComplexHide)
+        ).join(',\n');
+    }
 };
 
 /******************************************************************************/

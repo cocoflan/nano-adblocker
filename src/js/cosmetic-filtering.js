@@ -642,6 +642,14 @@ var FilterContainer = function() {
 
     this.userScripts = new Map();
 
+    // Short-lived: content is valid only during one function call. These
+    // is to prevent repeated allocation/deallocation overheads -- the
+    // constructors/destructors of javascript Set/Map is assumed to be costlier
+    // than just calling clear() on these.
+    this.setRegister0 = new Set();
+    this.setRegister1 = new Set();
+    this.setRegister2 = new Set();
+
     this.reset();
 };
 
@@ -1871,8 +1879,8 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
 
     console.time('cosmeticFilteringEngine.retrieveGenericSelectors');
 
-    var simpleSelectors = new Set(),
-        complexSelectors = new Set();
+    var simpleSelectors = this.setRegister0,
+        complexSelectors = this.setRegister1;
     var entry, selectors,
         strEnd, sliceBeg, sliceEnd,
         selector, bucket, item;
@@ -1933,6 +1941,10 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
         }
     }
 
+    // Important: always clear used registers before leaving.
+    this.setRegister0.clear();
+    this.setRegister1.clear();
+
     console.timeEnd('cosmeticFilteringEngine.retrieveGenericSelectors');
 
     return out;
@@ -1978,10 +1990,14 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     if ( options.noCosmeticFiltering !== true ) {
         var domainHash = makeHash(domain),
             entityHash = entity !== '' ? makeHash(entity) : undefined,
-            bucket;
+            exception, bucket;
 
         // Exception cosmetic filters: prime with generic exception filters.
-        var exceptionSet = new Set(this.genericDonthideSet);
+        var exceptionSet = this.setRegister0;
+        // Genetic exceptions (should be extremely rare).
+        for ( exception of this.genericDonthideSet ) {
+            exceptionSet.add(exception);
+        }
         // Specific exception cosmetic filters.
         if ( (bucket = this.specificFilters.get('!' + domainHash)) ) {
             bucket.retrieve(hostname, exceptionSet);
@@ -2005,7 +2021,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         // TODO: Should I go one step further and store specific simple and
         //       specific complex in different collections? This could simplify
         //       slightly content script code.
-        var specificSet = new Set();
+        var specificSet = this.setRegister1;
         // Specific cosmetic filters.
         if ( (bucket = this.specificFilters.get(domainHash)) ) {
             bucket.retrieve(hostname, specificSet);
@@ -2032,7 +2048,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         }
 
         // Procedural cosmetic filters.
-        var proceduralSet = new Set();
+        var proceduralSet = this.setRegister2;
         // Specific cosmetic filters.
         if ( (bucket = this.proceduralFilters.get(domainHash)) ) {
             bucket.retrieve(hostname, proceduralSet);
@@ -2050,7 +2066,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         }
 
         // Apply exceptions.
-        for ( var exception of exceptionSet ) {
+        for ( exception of exceptionSet ) {
             specificSet.delete(exception);
             proceduralSet.delete(exception);
         }
@@ -2081,6 +2097,11 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
             r.highGenericHideSimple = entry.simple;
             r.highGenericHideComplex = entry.complex;
         }
+
+        // Important: always clear used registers before leaving.
+        this.setRegister0.clear();
+        this.setRegister1.clear();
+        this.setRegister2.clear();
     }
 
     // Scriptlet injection.

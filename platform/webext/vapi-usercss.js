@@ -23,7 +23,7 @@
 
 // For content pages
 
-if ( typeof vAPI !== 'undefined' ) { // >>>>>>>> start of HUGE-IF-BLOCK
+if ( typeof vAPI === 'object' ) { // >>>>>>>> start of HUGE-IF-BLOCK
 
 /******************************************************************************/
 /******************************************************************************/
@@ -34,8 +34,6 @@ vAPI.DOMFilterer = function() {
     this.hideNodeId = vAPI.randomToken();
     this.hideNodeStylesheet = false;
     this.stagedCSSRules = [];
-
-    this.exceptions = [];
 
     this.userStylesheets = {
         sheets: new Set(),
@@ -77,11 +75,15 @@ vAPI.DOMFilterer = function() {
 };
 
 vAPI.DOMFilterer.prototype = {
+    reOnlySelectors: /\n\{[^\n]+/g,
     commitNow: function() {
         this.commitTimer.clear();
 
-        var stylesheetParts = [], cssRule,
-            i = this.stagedCSSRules.length;
+        var i = this.stagedCSSRules.length;
+        if ( i === 0 ) { return; }
+
+        var stylesheetParts = [],
+            cssRule;
         while ( i-- ) {
             cssRule = this.stagedCSSRules[i];
             if ( cssRule.lazy !== true || this.domIsReady ) {
@@ -107,7 +109,7 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    addCSSRule: function(selectors, declarations, options) {
+    addCSSRule: function(selectors, declarations, details) {
         if ( selectors === undefined ) { return; }
 
         var selectorsStr = Array.isArray(selectors)
@@ -118,7 +120,7 @@ vAPI.DOMFilterer.prototype = {
         this.stagedCSSRules.push({
             selectors: selectorsStr,
             declarations,
-            lazy: options && options.lazy === true
+            lazy: details && details.lazy === true
         });
     },
 
@@ -142,16 +144,20 @@ vAPI.DOMFilterer.prototype = {
     },
 
     getFilteredElementCount: function() {
-        let resultset = new Set();
+        return document.querySelectorAll(this.getAllDeclarativeSelectors()).length;
+    },
+
+    // TODO: remove CSS pseudo-classes which are incompatible with
+    //       static profile.
+    getAllDeclarativeSelectors: function() {
+        let selectors = [];
         for ( var sheet of this.userStylesheets.sheets ) {
-            let nodes = document.querySelectorAll(sheet.replace(/\n\{[^\n]+/g, ',').trim().slice(0, -1));
-            let i = nodes.length;
-            while ( i-- ) {
-                resultset.add(nodes[i]);
-            }
+            selectors.push(sheet.replace(this.reOnlySelectors, ',').trim().slice(0, -1));
         }
-        return resultset.size;
+        return selectors.join(',\n');
     }
+
+    // TODO: support for internal CSS stylesheets (for element picker, etc.)
 };
 
 /******************************************************************************/

@@ -27,62 +27,165 @@
 
 /******************************************************************************/
 
-if ( typeof vAPI !== 'object' || !vAPI.domFilterer ) {
+if (
+    typeof vAPI !== 'object' ||
+    vAPI.domFilterer instanceof Object === false ||
+    vAPI.domWatcher instanceof Object === false
+) {
     return;
 }
 
-var loggedSelectors = vAPI.loggedSelectors || {},
-    matchedSelectors = [];
+var reCSSCombinators = /[ >+~]/,
+    matchProp = vAPI.matchesProp,
+    simple = { dict: new Set(), str: undefined },
+    complex = { dict: new Set(), str:  undefined },
+    procedural = { dict: new Map() },
+    jobQueue = [];
 
-
-var evaluateSelector = function(selector) {
+var DeclarativeSimpleJob = function(node) {
+    this.node = node;
+};
+DeclarativeSimpleJob.prototype.lookup = function(out) {
+    if ( simple.dict.size === 0 ) { return; }
+    if ( simple.str === undefined ) {
+        simple.str = Array.from(simple.dict).join(',\n');
+    }
     if (
-        loggedSelectors.hasOwnProperty(selector) === false &&
-        document.querySelector(selector) !== null
+        (this.node === document || this.node[matchProp](simple.str) === false) &&
+        (this.node.querySelector(simple.str) === null)
     ) {
-        loggedSelectors[selector] = true;
-        matchedSelectors.push(selector);
+        return;
+    }
+    for ( var selector of simple.dict ) {
+        if (
+            this.node !== document && this.node[matchProp](selector) ||
+            this.node.querySelector(selector) !== null
+        ) {
+            out.push(selector);
+            simple.dict.delete(selector);
+            simple.str = undefined;
+            if ( simple.dict.size === 0 ) { return; }
+        }
     }
 };
 
-// Simple CSS selector-based cosmetic filters.
-vAPI.domFilterer.simpleHideSelectors.entries.forEach(evaluateSelector);
-
-// Complex CSS selector-based cosmetic filters.
-vAPI.domFilterer.complexHideSelectors.entries.forEach(evaluateSelector);
-
-// Non-querySelector-able filters.
-vAPI.domFilterer.nqsSelectors.forEach(function(filter) {
-    if ( loggedSelectors.hasOwnProperty(filter) === false ) {
-        loggedSelectors[filter] = true;
-        matchedSelectors.push(filter);
+var DeclarativeComplexJob = function() {
+};
+DeclarativeComplexJob.prototype.lookup = function(out) {
+    if ( complex.dict.size === 0 ) { return; }
+    if ( complex.str === undefined ) {
+        complex.str = Array.from(complex.dict).join(',\n');
     }
-});
-
-// Procedural cosmetic filters.
-vAPI.domFilterer.proceduralSelectors.entries.forEach(function(pfilter) {
-    if (
-        loggedSelectors.hasOwnProperty(pfilter.raw) === false &&
-        pfilter.exec().length !== 0
-    ) {
-        loggedSelectors[pfilter.raw] = true;
-        matchedSelectors.push(pfilter.raw);
-    }
-});
-
-vAPI.loggedSelectors = loggedSelectors;
-
-if ( matchedSelectors.length ) {
-    vAPI.messaging.send(
-        'scriptlets',
-        {
-            what: 'logCosmeticFilteringData',
-            frameURL: window.location.href,
-            frameHostname: window.location.hostname,
-            matchedSelectors: matchedSelectors
+    if ( document.querySelector(complex.str) === null ) { return; }
+    for ( var selector of complex.dict ) {
+        if ( document.querySelector(selector) !== null ) {
+            out.push(selector);
+            complex.dict.delete(selector);
+            complex.str = undefined;
+            if ( complex.dict.size === 0 ) { return; }
         }
-    );
-}
+    }
+};
+
+var ProceduralJob = function() {
+};
+ProceduralJob.prototype.lookup = function(out) {
+    if ( procedural.dict.size === 0 ) { return; }
+    for ( var entry of procedural.dict ) {
+        if ( entry[1].test() ) {
+            procedural.dict.delete(entry[0]);
+            out.push(entry[1].raw);
+            if ( procedural.dict.size === 0 ) { return; }
+        }
+    }
+};
+
+var processJobQueue = function() {
+    jobQueueTimer.clear();
+
+    var toLog = [],
+        t0 = Date.now(),
+        job;
+
+    while ( (job = jobQueue.shift()) ) {
+        job.lookup(toLog);
+        if ( (Date.now() - t0) > 10 ) { break; }
+    }
+
+    if ( toLog.length ) {
+        vAPI.messaging.send(
+            'scriptlets',
+            {
+                what: 'logCosmeticFilteringData',
+                frameURL: window.location.href,
+                frameHostname: window.location.hostname,
+                matchedSelectors: toLog
+            }
+        );
+    }
+
+    if ( simple.dict.size === 0 && complex.dict.size === 0 ) {
+        jobQueue = [];
+    }
+
+    if ( jobQueue.length !== 0 ) {
+        jobQueueTimer.start(100);
+    }
+};
+
+var jobQueueTimer = new vAPI.SafeAnimationFrame(processJobQueue);
+
+var domWatcherInterface = {
+    onDOMCreated: function() {
+        var selectors = vAPI.domFilterer.getAllDeclarativeSelectors().split(',\n');
+        for ( var selector of selectors ) {
+            if ( reCSSCombinators.test(selector) ) {
+                complex.dict.add(selector);
+            } else {
+                simple.dict.add(selector);
+            }
+        }
+        if ( simple.dict.size !== 0 ) {
+            jobQueue.push(new DeclarativeSimpleJob(document));
+        }
+        if ( complex.dict.size !== 0 ) {
+            complex.str = Array.from(complex.dict).join(',\n');
+            jobQueue.push(new DeclarativeComplexJob());
+        }
+        procedural.dict = vAPI.domFilterer.getAllProceduralSelectors();
+        if ( procedural.dict.size !== 0 ) {
+            jobQueue.push(new ProceduralJob());
+        }
+        if ( jobQueue.length !== 0 ) {
+            jobQueueTimer.start(1);
+        }
+    },
+    onDOMChanged: function(addedNodes) {
+        if ( simple.dict.size === 0 && complex.dict.size === 0 ) { return; }
+        // This is to guard against runaway job queue. I suspect this could
+        // occur on slower devices.
+        if ( jobQueue.length <= 300 ) {
+            if ( simple.dict.size !== 0 ) {
+                for ( var node of addedNodes ) {
+                    jobQueue.push(new DeclarativeSimpleJob(node));
+                }
+            }
+            if ( complex.dict.size !== 0 ) {
+                jobQueue.push(new DeclarativeComplexJob());
+            }
+            if ( procedural.dict.size !== 0 ) {
+                jobQueue.push(new ProceduralJob());
+            }
+        }
+        if ( jobQueue.length !== 0 ) {
+            jobQueueTimer.start(100);
+        }
+    }
+};
+
+vAPI.domWatcher.addListener(domWatcherInterface);
+
+// TODO: be notified of filterset changes.
 
 /******************************************************************************/
 
