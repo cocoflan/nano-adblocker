@@ -623,10 +623,7 @@ vAPI.DOMFilterer = (function() {
     };
 
     domFilterer.prototype.createProceduralFilter = function(o) {
-        this.proceduralFilterer.createProceduralFilter(o);
-    };
-
-    domFilterer.prototype.toggleLogging = function() {
+        return this.proceduralFilterer.createProceduralFilter(o);
     };
 
     domFilterer.prototype.getAllProceduralSelectors = function() {

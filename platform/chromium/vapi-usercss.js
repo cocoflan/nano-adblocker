@@ -37,6 +37,7 @@ vAPI.DOMFilterer = function() {
     this.domIsReady = document.readyState !== 'loading';
     this.hideNodeId = vAPI.randomToken();
     this.hideNodeStylesheet = false;
+    this.excludedNodeSet = new WeakSet();
     this.addedNodes = new Set();
     this.removedNodes = false;
 
@@ -52,7 +53,7 @@ vAPI.DOMFilterer = function() {
 
     this.userStylesheet = {
         style: null,
-        css: new Set(),
+        css: new Map(),
         disabled: false,
         add: function(cssText) {
             if ( cssText === '' || this.css.has(cssText) ) { return; }
@@ -64,22 +65,24 @@ vAPI.DOMFilterer = function() {
                     parent.appendChild(this.style);
                 }
             }
-            this.style.sheet.insertRule(
-                cssText,
-                this.style.sheet.cssRules.length
-            );
+            var sheet = this.style.sheet,
+                i = sheet.cssRules.length;
+            if ( !sheet ) { return; }
+            sheet.insertRule(cssText, i);
+            this.css.set(cssText, sheet.cssRules[i]);
         },
         remove: function(cssText) {
             if ( cssText === '' ) { return; }
-            if ( this.css.has(cssText) === false ) { return; }
-            if ( this.style === null ) { return; }
+            var cssRule = this.css.get(cssText);
+            if ( cssRule === undefined ) { return; }
             this.css.delete(cssText);
+            if ( this.style === null ) { return; }
             var rules = this.style.sheet.cssRules,
                 i = rules.length;
             while ( i-- ) {
-                if ( rules[i].cssText === cssText ) {
-                    this.style.sheet.deleteRule(i);
-                }
+                if ( rules[i] !== cssRule ) { continue; }
+                this.style.sheet.deleteRule(i);
+                break;
             }
             if ( rules.length === 0 ) {
                 var parent = this.style.parentNode;
@@ -115,7 +118,7 @@ vAPI.DOMFilterer = function() {
     this.hideNodeBatchProcessTimer = undefined;
     this.hiddenNodeObserver = undefined;
     this.hiddenNodesetToProcess = new Set();
-    this.hiddenNodeset = new Set();
+    this.hiddenNodeset = new WeakSet();
 
     if ( vAPI.domWatcher instanceof Object ) {
         vAPI.domWatcher.addListener(this);
@@ -218,97 +221,93 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
-    addCSSRule: function(selectors, declarations, options) {
+    addCSSRule: function(selectors, declarations, details) {
         if ( selectors === undefined ) { return; }
 
-        if ( options === undefined ) { options = {}; }
+        if ( details === undefined ) { details = {}; }
 
-        var isSpecific = options.lazy !== true,
-            isHide = this.reHideStyle.test(declarations),
-            isSimple = options.type === 'simple',
-            isComplex = options.type === 'complex',
-            selectorsArr, selectorsStr, selector;
+        var isGeneric= details.lazy === true,
+            isSimple = details.type === 'simple',
+            isComplex = details.type === 'complex',
+            selector;
 
-        if ( isSpecific && isHide ) {
-            selectorsArr = Array.isArray(selectors) ?
-                selectors :
-                selectors.split(',\n');
-            var newSelectors = [];
-            for ( selector of selectorsArr ) {
-                if (
-                    isComplex ||
-                    isSimple === false && this.reCSSCombinators.test(selector)
-                ) {
-                    if ( this.specificComplexHide.has(selector) === false ) {
-                        this.specificComplexHide.add(selector);
-                        this.addedSpecificComplexHide.push(selector);
-                        newSelectors.push(selector);
-                    }
-                } else if ( this.specificSimpleHide.has(selector) === false ) {
-                    this.specificSimpleHide.add(selector);
-                    this.addedSpecificSimpleHide.push(selector);
-                    newSelectors.push(selector);
-                }
-            }
-            if ( newSelectors.length !== 0 ) {
-                this.userStylesheet.add(
-                    newSelectors.join(',\n') +
-                    '\n{ display: none !important; }'
-                );
-            }
-            return;
-        }
-
-        selectorsStr = Array.isArray(selectors) ?
+        var selectorsStr = Array.isArray(selectors) ?
             selectors.join(',\n') :
             selectors;
         if ( selectorsStr.length === 0 ) { return; }
 
-        if ( isHide === false ) {
-            this.userStylesheet.add(
-                selectorsStr +
-                '\n{ ' + declarations + ' }'
-            );
+        this.userStylesheet.add(
+            selectorsStr +
+            '\n{ ' + declarations + ' }'
+        );
+
+        if ( this.reHideStyle.test(declarations) === false ) {
             return;
         }
 
-        // At this point, it should always been hiding filters -- because only
-        // these can be generic.
-
-        if ( isSimple ) {
-            if ( this.genericSimpleHide.has(selectorsStr) === false ) {
+        if ( isGeneric ) {
+            if ( isSimple ) {
                 this.genericSimpleHide.add(selectorsStr);
-                this.userStylesheet.add(
-                    selectorsStr +
-                    '\n{ display: none !important; }'
-                );
+                return;
             }
-            return;
-        }
-
-        if ( isComplex ) {
-            if ( this.genericComplexHide.has(selectorsStr) === false ) {
+            if ( isComplex ) {
                 this.genericComplexHide.add(selectorsStr);
-                this.userStylesheet.add(
-                    selectorsStr +
-                    '\n{ display: none !important; }'
-                );
+                return;
             }
-            return;
         }
 
-        selectorsArr = Array.isArray(selectors) ?
+        var selectorsArr = Array.isArray(selectors) ?
             selectors :
             selectors.split(',\n');
-        var i = selectorsArr.length;
-        while ( i-- ) {
-            selector = selectorsArr[i];
-            if ( this.reCSSCombinators.test(selector) ) {
-                if ( this.genericComplexHide.has(selector) === false ) {
+
+        if ( isGeneric ) {
+            for ( selector of selectorsArr ) {
+                if ( this.reCSSCombinators.test(selector) ) {
                     this.genericComplexHide.add(selector);
+                } else {
+                    this.genericSimpleHide.add(selector);
                 }
-            } else if ( this.genericSimpleHide.has(selector) === false ) {
-                this.genericSimpleHide.add(selector);
+            }
+            return;
+        }
+
+        // Specific cosmetic filters.
+        for ( selector of selectorsArr ) {
+            if (
+                isComplex ||
+                isSimple === false && this.reCSSCombinators.test(selector)
+            ) {
+                if ( this.specificComplexHide.has(selector) === false ) {
+                    this.specificComplexHide.add(selector);
+                    this.addedSpecificComplexHide.push(selector);
+                }
+            } else if ( this.specificSimpleHide.has(selector) === false ) {
+                this.specificSimpleHide.add(selector);
+                this.addedSpecificSimpleHide.push(selector);
+            }
+        }
+    },
+
+    removeCSSRule: function(selectors, declarations) {
+        var selectorsStr = Array.isArray(selectors)
+                ? selectors.join(',\n')
+                : selectors;
+        if ( selectorsStr.length === 0 ) { return; }
+        this.userStylesheet.remove(
+            selectorsStr +
+            '\n{ ' + declarations + ' }'
+        );
+        if ( this.reHideStyle.test(declarations) === false ) { return; }
+        var selectorsArr = Array.isArray(selectors) ?
+            selectors :
+            selectors.split(',\n');
+        for ( var selector of selectorsArr ) {
+            if ( this.reCSSCombinators.test(selector) ) {
+                this.specificComplexHide.remove(selector);
+                this.genericComplexHide.remove(selector);
+            } else {
+                this.specificSimpleHide.remove(selector);
+                this.genericSimpleHide.remove(selector);
             }
         }
     },
@@ -348,6 +347,7 @@ vAPI.DOMFilterer.prototype = {
         var expando = this.hideNodeExpando;
         for ( var node of this.hiddenNodesetToProcess ) {
             if (
+                this.hiddenNodeset.has(node) === false ||
                 node[expando] === undefined ||
                 node.clientHeight === 0 || node.clientWidth === 0
             ) {
@@ -396,7 +396,13 @@ vAPI.DOMFilterer.prototype = {
         }
     },
 
+    excludeNode: function(node) {
+        this.excludedNodeSet.add(node);
+        this.unhideNode(node);
+    },
+
     hideNode: function(node) {
+        if ( this.excludedNodeSet.has(node) ) { return; }
         if ( this.hiddenNodeset.has(node) ) { return; }
         this.hiddenNodeset.add(node);
         if ( this.hideNodeExpando === undefined ) { this.hideNodeInit(); }

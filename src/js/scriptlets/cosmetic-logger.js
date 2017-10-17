@@ -45,6 +45,9 @@ var reCSSCombinators = /[ >+~]/,
 var DeclarativeSimpleJob = function(node) {
     this.node = node;
 };
+DeclarativeSimpleJob.create = function(node) {
+    return new DeclarativeSimpleJob(node);
+};
 DeclarativeSimpleJob.prototype.lookup = function(out) {
     if ( simple.dict.size === 0 ) { return; }
     if ( simple.str === undefined ) {
@@ -71,6 +74,13 @@ DeclarativeSimpleJob.prototype.lookup = function(out) {
 
 var DeclarativeComplexJob = function() {
 };
+DeclarativeComplexJob.instance = null;
+DeclarativeComplexJob.create = function() {
+    if ( DeclarativeComplexJob.instance === null ) {
+        DeclarativeComplexJob.instance = new DeclarativeComplexJob();
+    }
+    return DeclarativeComplexJob.instance;
+};
 DeclarativeComplexJob.prototype.lookup = function(out) {
     if ( complex.dict.size === 0 ) { return; }
     if ( complex.str === undefined ) {
@@ -89,8 +99,14 @@ DeclarativeComplexJob.prototype.lookup = function(out) {
 
 var ProceduralJob = function() {
 };
+ProceduralJob.instance = null;
+ProceduralJob.create = function() {
+    if ( ProceduralJob.instance === null ) {
+        ProceduralJob.instance = new ProceduralJob();
+    }
+    return ProceduralJob.instance;
+};
 ProceduralJob.prototype.lookup = function(out) {
-    if ( procedural.dict.size === 0 ) { return; }
     for ( var entry of procedural.dict ) {
         if ( entry[1].test() ) {
             procedural.dict.delete(entry[0]);
@@ -100,19 +116,17 @@ ProceduralJob.prototype.lookup = function(out) {
     }
 };
 
-var processJobQueue = function() {
+var jobQueueTimer = new vAPI.SafeAnimationFrame(function processJobQueue() {
+    console.time('dom logger/scanning for matches');
     jobQueueTimer.clear();
-
     var toLog = [],
         t0 = Date.now(),
         job;
-
     while ( (job = jobQueue.shift()) ) {
         job.lookup(toLog);
         if ( (Date.now() - t0) > 10 ) { break; }
     }
-
-    if ( toLog.length ) {
+    if ( toLog.length !== 0 ) {
         vAPI.messaging.send(
             'scriptlets',
             {
@@ -123,19 +137,16 @@ var processJobQueue = function() {
             }
         );
     }
-
     if ( simple.dict.size === 0 && complex.dict.size === 0 ) {
         jobQueue = [];
     }
-
     if ( jobQueue.length !== 0 ) {
         jobQueueTimer.start(100);
     }
-};
+    console.timeEnd('dom logger/scanning for matches');
+});
 
-var jobQueueTimer = new vAPI.SafeAnimationFrame(processJobQueue);
-
-var domWatcherInterface = {
+vAPI.domWatcher.addListener({
     onDOMCreated: function() {
         var selectors = vAPI.domFilterer.getAllDeclarativeSelectors().split(',\n');
         for ( var selector of selectors ) {
@@ -146,15 +157,15 @@ var domWatcherInterface = {
             }
         }
         if ( simple.dict.size !== 0 ) {
-            jobQueue.push(new DeclarativeSimpleJob(document));
+            jobQueue.push(DeclarativeSimpleJob.create(document));
         }
         if ( complex.dict.size !== 0 ) {
             complex.str = Array.from(complex.dict).join(',\n');
-            jobQueue.push(new DeclarativeComplexJob());
+            jobQueue.push(DeclarativeComplexJob.create());
         }
         procedural.dict = vAPI.domFilterer.getAllProceduralSelectors();
         if ( procedural.dict.size !== 0 ) {
-            jobQueue.push(new ProceduralJob());
+            jobQueue.push(ProceduralJob.create());
         }
         if ( jobQueue.length !== 0 ) {
             jobQueueTimer.start(1);
@@ -167,23 +178,21 @@ var domWatcherInterface = {
         if ( jobQueue.length <= 300 ) {
             if ( simple.dict.size !== 0 ) {
                 for ( var node of addedNodes ) {
-                    jobQueue.push(new DeclarativeSimpleJob(node));
+                    jobQueue.push(DeclarativeSimpleJob.create(node));
                 }
             }
             if ( complex.dict.size !== 0 ) {
-                jobQueue.push(new DeclarativeComplexJob());
+                jobQueue.push(DeclarativeComplexJob.create());
             }
             if ( procedural.dict.size !== 0 ) {
-                jobQueue.push(new ProceduralJob());
+                jobQueue.push(ProceduralJob.create());
             }
         }
         if ( jobQueue.length !== 0 ) {
             jobQueueTimer.start(100);
         }
     }
-};
-
-vAPI.domWatcher.addListener(domWatcherInterface);
+});
 
 // TODO: be notified of filterset changes.
 

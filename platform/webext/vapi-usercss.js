@@ -33,36 +33,75 @@ vAPI.DOMFilterer = function() {
     this.domIsReady = document.readyState !== 'loading';
     this.hideNodeId = vAPI.randomToken();
     this.hideNodeStylesheet = false;
-    this.stagedCSSRules = [];
+    this.excludedNodeSet = new WeakSet();
+    this.addedCSSRules = [];
+    this.removedCSSRules = [];
+    this.internalRules = new Set();
 
     this.userStylesheets = {
-        sheets: new Set(),
+        current: new Set(),
+        added: new Set(),
+        removed: new Set(),
+        saved: undefined,
         disabled: false,
-        apply: function(add, css) {
+        apply: function() {
+            var current = this.saved !== undefined ? this.saved : this.current;
+            for ( let cssText of this.added ) {
+                if ( current.has(cssText) || this.removed.has(cssText) ) {
+                    this.added.delete(cssText);
+                } else {
+                    current.add(cssText);
+                }
+            }
+            for ( let cssText of this.removed ) {
+                if ( current.has(cssText) === false ) {
+                    this.removed.delete(cssText);
+                } else {
+                    current.delete(cssText);
+                }
+            }
+            if (
+                this.disabled ||
+                this.added.size === 0 && this.removed.size === 0
+            ) {
+                return;
+            }
             vAPI.messaging.send('vapi-background', {
                 what: 'userCSS',
-                add: add,
-                css: css
+                add: Array.from(this.added),
+                remove: Array.from(this.removed)
             });
+            this.added.clear();
+            this.removed.clear();
         },
         add: function(cssText) {
-            if ( cssText === '' || this.sheets.has(cssText) ) { return; }
-            this.sheets.add(cssText);
-            if ( this.disabled ) { return; }
-            this.apply(true, cssText);
+            if ( cssText === '' ) { return; }
+            this.added.add(cssText);
         },
         remove: function(cssText) {
             if ( cssText === '' ) { return; }
-            if ( this.sheets.delete(cssText) ) {
-                this.apply(false, cssText);
-            }
+            this.removed.add(cssText);
         },
         toggle: function(state) {
             if ( state === undefined ) { state = this.disabled; }
             if ( state !== this.disabled ) { return; }
             this.disabled = !state;
-            if ( this.sheets.size === 0 ) { return; }
-            this.apply(state, Array.from(this.sheets));
+            var toAdd = [], toRemove = [];
+            if ( this.disabled ) {
+                toRemove = Array.from(this.current);
+                this.saved = this.current;
+                this.current = undefined;
+            } else {
+                toAdd = Array.from(this.saved);
+                this.current = this.saved;
+                this.saved = undefined;
+            }
+            if ( toAdd.length === 0 && toRemove.length === 0 ) { return; }
+            vAPI.messaging.send('vapi-background', {
+                what: 'userCSS',
+                add: toAdd,
+                remove: toRemove
+            });
         }
     };
 
@@ -79,25 +118,28 @@ vAPI.DOMFilterer.prototype = {
     commitNow: function() {
         this.commitTimer.clear();
 
-        var i = this.stagedCSSRules.length;
-        if ( i === 0 ) { return; }
+        var i, entry, ruleText;
 
-        var stylesheetParts = [],
-            cssRule;
+        i = this.addedCSSRules.length;
         while ( i-- ) {
-            cssRule = this.stagedCSSRules[i];
-            if ( cssRule.lazy !== true || this.domIsReady ) {
-                stylesheetParts.push(
-                    cssRule.selectors,
-                    '{ ' + cssRule.declarations + ' }'
-                );
-                this.stagedCSSRules.splice(i, 1);
+            entry = this.addedCSSRules[i];
+            if ( entry.lazy !== true || this.domIsReady ) {
+                ruleText = entry.selectors + '\n{ ' + entry.declarations + ' }';
+                this.userStylesheets.add(ruleText);
+                this.addedCSSRules.splice(i, 1);
+                if ( entry.internal ) {
+                    this.internalRules.add(ruleText);
+                }
             }
         }
-
-        if ( stylesheetParts.length !== 0 ) {
-            this.userStylesheets.add(stylesheetParts.join('\n'));
+        i = this.removedCSSRules.length;
+        while ( i-- ) {
+            entry = this.removedCSSRules[i];
+            ruleText = entry.selectors + '\n{ ' + entry.declarations + ' }';
+            this.userStylesheets.remove(ruleText);
         }
+        this.removedCSSRules = [];
+        this.userStylesheets.apply();
     },
 
     commit: function(commitNow) {
@@ -116,21 +158,39 @@ vAPI.DOMFilterer.prototype = {
                 ? selectors.join(',\n')
                 : selectors;
         if ( selectorsStr.length === 0 ) { return; }
-
-        this.stagedCSSRules.push({
+        this.addedCSSRules.push({
             selectors: selectorsStr,
             declarations,
-            lazy: details && details.lazy === true
+            lazy: details && details.lazy === true,
+            internal: details && details.internal === true
         });
     },
 
+    removeCSSRule: function(selectors, declarations) {
+        var selectorsStr = Array.isArray(selectors)
+                ? selectors.join(',\n')
+                : selectors;
+        if ( selectorsStr.length === 0 ) { return; }
+        this.removedCSSRules.push({
+            selectors: selectorsStr,
+            declarations,
+        });
+    },
+
+    excludeNode: function(node) {
+        this.excludedNodeSet.add(node);
+        this.unhideNode(node);
+    },
+
     hideNode: function(node) {
+        if ( this.excludedNodeSet.has(node) ) { return; }
         node.setAttribute(this.hideNodeId, '');
         if ( this.hideNodeStylesheet === false ) {
             this.hideNodeStylesheet = true;
             this.addCSSRule(
                 '[' + this.hideNodeId + ']',
-                'display: none !important;'
+                'display: none !important;',
+                { internal: true }
             );
         }
     },
@@ -151,7 +211,8 @@ vAPI.DOMFilterer.prototype = {
     //       static profile.
     getAllDeclarativeSelectors: function() {
         let selectors = [];
-        for ( var sheet of this.userStylesheets.sheets ) {
+        for ( var sheet of this.userStylesheets.current ) {
+            if ( this.internalRules.has(sheet) ) { continue; }
             selectors.push(sheet.replace(this.reOnlySelectors, ',').trim().slice(0, -1));
         }
         return selectors.join(',\n');
