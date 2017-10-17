@@ -1573,27 +1573,7 @@ var pickerCSSSelector2 = '[' + pickerRoot.id + '-clickblind]';
 var pickerCSSDeclaration2 = 'pointer-events: none !important;';
 
 
-pickerRoot.style.cssText = [
-    'background: transparent',
-    'border: 0',
-    'border-radius: 0',
-    'box-shadow: none',
-    'display: block',
-    'height: 100%',
-    'left: 0',
-    'margin: 0',
-    'max-height: none',
-    'max-width: none',
-    'opacity: 1',
-    'outline: 0',
-    'padding: 0',
-    'position: fixed',
-    'top: 0',
-    'visibility: visible',
-    'width: 100%',
-    'z-index: 2147483647',
-    ''
-].join(' !important;');
+pickerRoot.style.cssText = pickerCSSDeclaration1;
 
 // https://github.com/gorhill/uBlock/issues/1529
 //   In addition to inline styles, harden the element picker styles by using
