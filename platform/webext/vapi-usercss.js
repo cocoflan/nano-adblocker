@@ -217,14 +217,14 @@ vAPI.DOMFilterer.prototype = {
     getFilteredElementCount: function() {
         let selectors = this.getAllDeclarativeSelectors_(true);
         return selectors.length !== 0
-            ? document.querySelectorAll(selectors.join('\n')).length
+            ? document.querySelectorAll(selectors).length
             : 0;
     },
 
     // TODO: remove CSS pseudo-classes which are incompatible with
     //       static profile.
     getAllDeclarativeSelectors: function() {
-        return this.getAllDeclarativeSelectors_(false).join(',\n');
+        return this.getAllDeclarativeSelectors_(false);
     }
 };
 

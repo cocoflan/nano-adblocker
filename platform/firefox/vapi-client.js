@@ -119,6 +119,36 @@ vAPI.shutdown = {
 
 /******************************************************************************/
 
+var insertUserCSS = self.injectCSS || function(){},
+    removeUserCSS = self.removeCSS || function(){};
+
+var processUserCSS = function(details, callback) {
+    var cssText;
+    var aa = details.add;
+    if ( Array.isArray(aa) ) {
+        for ( cssText of aa ) {
+            insertUserCSS(
+                'data:text/css;charset=utf-8,' +
+                encodeURIComponent(cssText)
+            );
+        }
+    }
+    aa = details.remove;
+    if ( Array.isArray(aa) ) {
+        for ( cssText of aa ) {
+            removeUserCSS(
+                'data:text/css;charset=utf-8,' +
+                encodeURIComponent(cssText)
+            );
+        }
+    }
+    if ( typeof callback === 'function' ) {
+        callback();
+    }
+};
+
+/******************************************************************************/
+
 vAPI.messaging = {
     channels: Object.create(null),
     channelCount: 0,
@@ -276,6 +306,10 @@ vAPI.messaging = {
     },
 
     send: function(channelName, message, callback) {
+        // User stylesheets are handled content-side on legacy Firefox.
+        if ( channelName === 'vapi-background' && message.what === 'userCSS' ) {
+            return processUserCSS(message, callback);
+        }
         this.sendTo(channelName, message, undefined, undefined, callback);
     },
 
