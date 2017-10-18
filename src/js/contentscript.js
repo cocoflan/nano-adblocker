@@ -977,7 +977,6 @@ vAPI.domSurveyor = (function() {
         }
 
         if ( mustCommit ) {
-            domFilterer.commit();
             surveyingMissCount = 0;
             return;
         }
@@ -1264,7 +1263,6 @@ vAPI.domSurveyor = (function() {
                 { type: 'complex', lazy: true }
             );
             domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
-            domFilterer.commit();
         }
 
         var parent = document.head || document.documentElement;

@@ -19,11 +19,22 @@
     Home: https://github.com/gorhill/uBlock
 */
 
+/* global injectCSS, removeCSS */
+
 'use strict';
 
 // For content pages
 
 if ( typeof vAPI === 'object' ) { // >>>>>>>> start of HUGE-IF-BLOCK
+
+/******************************************************************************/
+/******************************************************************************/
+
+// Worst case scenario: user stylesheets are not available and cosmetic
+// filtering does not work, while the rest of uBO still work fine.
+
+var insertUserCSS = injectCSS || function(){},
+    removeUserCSS = removeCSS || function(){};
 
 /******************************************************************************/
 /******************************************************************************/
@@ -39,69 +50,39 @@ vAPI.DOMFilterer = function() {
     this.internalRules = new Set();
 
     this.userStylesheets = {
-        current: new Set(),
-        added: new Set(),
-        removed: new Set(),
-        saved: undefined,
-        disabled: false,
+        sheets: new Set(),
+        _sheetURI: '',
+        _load: function() {
+            if ( this.sheets.size === 0 || this._sheetURI !== '' ) { return; }
+            this._sheetURI = 'data:text/css;charset=utf-8,' +
+                             encodeURIComponent(Array.from(this.sheets));
+            insertUserCSS(this._sheetURI);
+        },
+        _unload: function() {
+            if ( this._sheetURI === '' ) { return; }
+            removeUserCSS(this._sheetURI);
+            this._sheetURI = '';
+        },
         apply: function() {
-            var current = this.saved !== undefined ? this.saved : this.current;
-            for ( let cssText of this.added ) {
-                if ( current.has(cssText) || this.removed.has(cssText) ) {
-                    this.added.delete(cssText);
-                } else {
-                    current.add(cssText);
-                }
-            }
-            for ( let cssText of this.removed ) {
-                if ( current.has(cssText) === false ) {
-                    this.removed.delete(cssText);
-                } else {
-                    current.delete(cssText);
-                }
-            }
-            if (
-                this.disabled ||
-                this.added.size === 0 && this.removed.size === 0
-            ) {
-                return;
-            }
-            vAPI.messaging.send('vapi-background', {
-                what: 'userCSS',
-                add: Array.from(this.added),
-                remove: Array.from(this.removed)
-            });
-            this.added.clear();
-            this.removed.clear();
+            this._unload();
+            this._load();
         },
         add: function(cssText) {
-            if ( cssText === '' ) { return; }
-            this.added.add(cssText);
+            if ( cssText === '' || this.sheets.has(cssText) ) { return; }
+            this.sheets.add(cssText);
+            this.dirty = true;
         },
         remove: function(cssText) {
-            if ( cssText === '' ) { return; }
-            this.removed.add(cssText);
+            if ( this.sheets.has(cssText) === false ) { return; }
+            this.sheets.delete(cssText);
+            this.dirty = true;
         },
         toggle: function(state) {
-            if ( state === undefined ) { state = this.disabled; }
-            if ( state !== this.disabled ) { return; }
-            this.disabled = !state;
-            var toAdd = [], toRemove = [];
-            if ( this.disabled ) {
-                toRemove = Array.from(this.current);
-                this.saved = this.current;
-                this.current = undefined;
-            } else {
-                toAdd = Array.from(this.saved);
-                this.current = this.saved;
-                this.saved = undefined;
+            if ( this.sheets.size === 0 ) { return; }
+            if ( state === undefined ) {
+                state = this._sheetURI === '';
             }
-            if ( toAdd.length === 0 && toRemove.length === 0 ) { return; }
-            vAPI.messaging.send('vapi-background', {
-                what: 'userCSS',
-                add: toAdd,
-                remove: toRemove
-            });
+            return state ? this._load() : this._unload();
         }
     };
 
@@ -205,7 +186,7 @@ vAPI.DOMFilterer.prototype = {
 
     getAllDeclarativeSelectors_: function(all) {
         let selectors = [];
-        for ( var sheet of this.userStylesheets.current ) {
+        for ( var sheet of this.userStylesheets.sheets ) {
             if ( all === false && this.internalRules.has(sheet) ) { continue; }
             selectors.push(
                 sheet.replace(this.reOnlySelectors, ',').trim().slice(0, -1)

@@ -378,46 +378,6 @@ vAPI.messaging.start();
 
 /******************************************************************************/
 
-if ( self.injectCSS ) {
-    vAPI.userCSS = {
-        _userCSS: '',
-        _sheetURI: '',
-        _load: function() {
-            if ( this._userCSS === '' || this._sheetURI !== '' ) { return; }
-            this._sheetURI = 'data:text/css;charset=utf-8,' + encodeURIComponent(this._userCSS);
-            self.injectCSS(this._sheetURI);
-        },
-        _unload: function() {
-            if ( this._sheetURI === '' ) { return; }
-            self.removeCSS(this._sheetURI);
-            this._sheetURI = '';
-        },
-        add: function(cssText) {
-            if ( cssText === '' ) { return; }
-            if ( this._userCSS !== '' ) { this._userCSS += '\n'; }
-            this._userCSS += cssText;
-            this._unload();
-            this._load();
-        },
-        remove: function(cssText) {
-            if ( cssText === '' || this._userCSS === '' ) { return; }
-            this._userCSS = this._userCSS.replace(cssText, '').trim();
-            this._unload();
-            this._load();
-        },
-        toggle: function(state) {
-            if ( this._userCSS === '' ) { return; }
-            if ( state === undefined ) {
-                state = this._sheetURI === '';
-            }
-            return state ? this._load() : this._unload();
-        }
-    };
-    vAPI.hideNode = vAPI.unhideNode = function(){};
-}
-
-/******************************************************************************/
-
 // https://bugzilla.mozilla.org/show_bug.cgi?id=444165
 // https://github.com/gorhill/uBlock/issues/2256
 //   Not the prettiest solution, but that's the safest/simplest I can think

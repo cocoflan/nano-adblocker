@@ -1402,7 +1402,6 @@ var stopPicker = function() {
     if ( vAPI.domFilterer instanceof Object ) {
         vAPI.domFilterer.removeCSSRule(pickerCSSSelector1, pickerCSSDeclaration1);
         vAPI.domFilterer.removeCSSRule(pickerCSSSelector2, pickerCSSDeclaration2);
-        vAPI.domFilterer.commit();
     }
 
     window.removeEventListener('scroll', onScrolled, true);
@@ -1588,7 +1587,6 @@ vAPI.domFilterer.addCSSRule(
     pickerCSSDeclaration2,
     { internal: true }
 );
-vAPI.domFilterer.commit();
 
 // https://github.com/gorhill/uBlock/issues/2060
 vAPI.domFilterer.excludeNode(pickerRoot);

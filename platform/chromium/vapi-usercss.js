@@ -240,6 +240,7 @@ vAPI.DOMFilterer.prototype = {
             selectorsStr +
             '\n{ ' + declarations + ' }'
         );
+        this.commit();
 
         if ( this.reHideStyle.test(declarations) === false ) {
             return;
@@ -310,6 +311,7 @@ vAPI.DOMFilterer.prototype = {
                 this.genericSimpleHide.remove(selector);
             }
         }
+        this.commit();
     },
 
     onDOMCreated: function() {
