@@ -23,9 +23,15 @@
 
 /*******************************************************************************
 
-              +--> [[domSurveyor] --> domFilterer]
-  domWatcher--|
-              +--> [domCollapser]
+              +--> domCollapser
+              |
+              |
+  domWatcher--+
+              |                  +-- domSurveyor
+              |                  |
+              +--> domFilterer --+-- domLogger
+                                 |
+                                 +-- domInspector
 
   domWatcher:
     Watches for changes in the DOM, and notify the other components about these
@@ -41,11 +47,18 @@
   domSurveyor:
     Surveys the DOM to find new cosmetic filters to apply to the current page.
 
+  domLogger:
+    Surveys the page to find and report the injected cosmetic filters blocking
+    actual elements on the current page. This component is dynamically loaded
+    IF AND ONLY IF uBO's logger is opened.
+
   If page is whitelisted:
     - domWatcher: off
     - domCollapser: off
     - domFilterer: off
     - domSurveyor: off
+    - domLogger: off
+
   I verified that the code in this file is completely flushed out of memory
   when a page is whitelisted.
 
@@ -54,25 +67,36 @@
     - domCollapser: on
     - domFilterer: off
     - domSurveyor: off
+    - domLogger: off
 
   If generic cosmetic filtering is disabled:
     - domWatcher: on
     - domCollapser: on
     - domFilterer: on
     - domSurveyor: off
+    - domLogger: on if uBO logger is opened
+
+  If generic cosmetic filtering is enabled:
+    - domWatcher: on
+    - domCollapser: on
+    - domFilterer: on
+    - domSurveyor: on
+    - domLogger: on if uBO logger is opened
 
   Additionally, the domSurveyor can turn itself off once it decides that
   it has become pointless (repeatedly not finding new cosmetic filters).
 
-  The domFilterer makes use of platform-dependent user styles[1] code, or
-  provide a default generic implementation if none is present.
+  The domFilterer makes use of platform-dependent user stylesheets[1].
+
   At time of writing, only modern Firefox provides a custom implementation,
   which makes for solid, reliable and low overhead cosmetic filtering on
   Firefox.
+
   The generic implementation[2] performs as best as can be, but won't ever be
-  as reliable as real user styles.
-  [1] "user styles" refer to local CSS rules which have priority over, and
-      can't be overriden by a web page's own CSS rules.
+  as reliable and accurate as real user stylesheets.
+
+  [1] "user stylesheets" refer to local CSS rules which have priority over,
+       and can't be overriden by a web page's own CSS rules.
   [2] below, see platformUserCSS / platformHideNode / platformUnhideNode
 
 */
@@ -450,16 +474,13 @@ vAPI.DOMFilterer = (function() {
         return [ root ];
     };
     PSelector.prototype.exec = function(input) {
-        //var t0 = window.performance.now();
         var tasks = this.tasks, nodes = this.prime(input);
         for ( var i = 0, n = tasks.length; i < n && nodes.length !== 0; i++ ) {
             nodes = tasks[i].exec(nodes);
         }
-        //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
         return nodes;
     };
     PSelector.prototype.test = function(input) {
-        //var t0 = window.performance.now();
         var tasks = this.tasks, nodes = this.prime(input), AA = [ null ], aa;
         for ( var i = 0, ni = nodes.length; i < ni; i++ ) {
             AA[0] = nodes[i]; aa = AA;
@@ -468,7 +489,6 @@ vAPI.DOMFilterer = (function() {
             }
             if ( aa.length !== 0 ) { return true; }
         }
-        //console.log('%s: %s ms', this.raw, (window.performance.now() - t0).toFixed(2));
         return false;
     };
 
@@ -515,9 +535,12 @@ vAPI.DOMFilterer = (function() {
                     continue;
                 }
             }
-            if ( mustCommit ) {
-                this.domFilterer.commit();
-            }
+            if ( mustCommit === false ) { return; }
+            this.domFilterer.commit();
+            this.domFilterer.triggerListeners(
+                'procedural',
+                new Map(this.addedSelectors)
+            );
         },
 
         commitNow: function() {
@@ -628,6 +651,10 @@ vAPI.DOMFilterer = (function() {
 
     domFilterer.prototype.getAllProceduralSelectors = function() {
         return new Map(this.proceduralFilterer.selectors);
+    };
+
+    domFilterer.prototype.getAllExceptionSelectors = function() {
+        return this.exceptions.join(',\n');
     };
 
     domFilterer.prototype.onDOMCreated = function() {

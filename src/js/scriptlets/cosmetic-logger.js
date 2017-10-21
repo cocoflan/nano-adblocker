@@ -35,7 +35,9 @@ if (
     return;
 }
 
-var reCSSCombinators = /[ >+~]/,
+var reHasCSSCombinators = /[ >+~]/,
+    reHasPseudoClass = /:+(?:after|before)$/,
+    sanitizedSelectors = new Map(),
     matchProp = vAPI.matchesProp,
     simple = { dict: new Set(), str: undefined },
     complex = { dict: new Set(), str:  undefined },
@@ -64,7 +66,7 @@ DeclarativeSimpleJob.prototype.lookup = function(out) {
             this.node !== document && this.node[matchProp](selector) ||
             this.node.querySelector(selector) !== null
         ) {
-            out.push(selector);
+            out.push(sanitizedSelectors.get(selector) || selector);
             simple.dict.delete(selector);
             simple.str = undefined;
             if ( simple.dict.size === 0 ) { return; }
@@ -89,7 +91,7 @@ DeclarativeComplexJob.prototype.lookup = function(out) {
     if ( document.querySelector(complex.str) === null ) { return; }
     for ( var selector of complex.dict ) {
         if ( document.querySelector(selector) !== null ) {
-            out.push(selector);
+            out.push(sanitizedSelectors.get(selector) || selector);
             complex.dict.delete(selector);
             complex.str = undefined;
             if ( complex.dict.size === 0 ) { return; }
@@ -146,31 +148,62 @@ var jobQueueTimer = new vAPI.SafeAnimationFrame(function processJobQueue() {
     console.timeEnd('dom logger/scanning for matches');
 });
 
-vAPI.domWatcher.addListener({
-    onDOMCreated: function() {
-        var selectors = vAPI.domFilterer.getAllDeclarativeSelectors().split(',\n');
-        for ( var selector of selectors ) {
-            if ( reCSSCombinators.test(selector) ) {
-                complex.dict.add(selector);
-            } else {
-                simple.dict.add(selector);
+var handlers = {
+
+    onFiltersetChanged: function(type, selectors) {
+        console.time('dom logger/filterset changed');
+        var selector,
+            sanitized;
+        if ( type === 'declarative' ) {
+            var simpleSizeBefore = simple.dict.size,
+                complexSizeBefore = complex.dict.size;
+            for ( selector of selectors.split(',\n') ) {
+                if ( reHasPseudoClass.test(selector) ) {
+                    sanitized = selector.replace(reHasPseudoClass, '');
+                    sanitizedSelectors.set(sanitized, selector);
+                    selector = sanitized;
+                }
+                if ( reHasCSSCombinators.test(selector) ) {
+                    complex.dict.add(selector);
+                    complex.str = undefined;
+                } else {
+                    simple.dict.add(selector);
+                    simple.str = undefined;
+                }
             }
-        }
-        if ( simple.dict.size !== 0 ) {
-            jobQueue.push(DeclarativeSimpleJob.create(document));
-        }
-        if ( complex.dict.size !== 0 ) {
-            complex.str = Array.from(complex.dict).join(',\n');
-            jobQueue.push(DeclarativeComplexJob.create());
-        }
-        procedural.dict = vAPI.domFilterer.getAllProceduralSelectors();
-        if ( procedural.dict.size !== 0 ) {
-            jobQueue.push(ProceduralJob.create());
+            if ( simple.dict.size !== simpleSizeBefore ) {
+                jobQueue.push(DeclarativeSimpleJob.create(document));
+            }
+            if ( complex.dict.size !== complexSizeBefore ) {
+                complex.str = Array.from(complex.dict).join(',\n');
+                jobQueue.push(DeclarativeComplexJob.create());
+            }
+        } else if ( type === 'procedural' ) {
+            for ( selector of selectors ) {
+                procedural.dict.set(selector[0], selector[1]);
+            }
+            if ( selectors.size !== 0 ) {
+                jobQueue.push(ProceduralJob.create());
+            }
         }
         if ( jobQueue.length !== 0 ) {
             jobQueueTimer.start(1);
         }
+        console.timeEnd('dom logger/filterset changed');
     },
+
+    onDOMCreated: function() {
+        handlers.onFiltersetChanged(
+            'declarative',
+            vAPI.domFilterer.getAllDeclarativeSelectors()
+        );
+        handlers.onFiltersetChanged(
+            'procedural',
+            vAPI.domFilterer.getAllProceduralSelectors()
+        );
+        vAPI.domFilterer.addListener(handlers);
+    },
+
     onDOMChanged: function(addedNodes) {
         if ( simple.dict.size === 0 && complex.dict.size === 0 ) { return; }
         // This is to guard against runaway job queue. I suspect this could
@@ -192,9 +225,22 @@ vAPI.domWatcher.addListener({
             jobQueueTimer.start(100);
         }
     }
-});
 
-// TODO: be notified of filterset changes.
+};
+
+/******************************************************************************/
+
+var onMessage = function(msg) {
+    if ( msg.what === 'loggerDisabled' ) {
+        jobQueueTimer.clear();
+        vAPI.domFilterer.removeListener(handlers);
+        vAPI.domWatcher.removeListener(handlers);
+        vAPI.messaging.removeChannelListener('domLogger', onMessage);
+    }
+};
+vAPI.messaging.addChannelListener('domLogger', onMessage);
+
+vAPI.domWatcher.addListener(handlers);
 
 /******************************************************************************/
 

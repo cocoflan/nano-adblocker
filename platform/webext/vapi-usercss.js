@@ -31,6 +31,7 @@ if ( typeof vAPI === 'object' ) { // >>>>>>>> start of HUGE-IF-BLOCK
 vAPI.DOMFilterer = function() {
     this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
     this.domIsReady = document.readyState !== 'loading';
+    this.listeners = [];
     this.hideNodeId = vAPI.randomToken();
     this.hideNodeStylesheet = false;
     this.excludedNodeSet = new WeakSet();
@@ -42,35 +43,30 @@ vAPI.DOMFilterer = function() {
         current: new Set(),
         added: new Set(),
         removed: new Set(),
-        saved: undefined,
         disabled: false,
         apply: function() {
-            var current = this.saved !== undefined ? this.saved : this.current;
             for ( let cssText of this.added ) {
-                if ( current.has(cssText) || this.removed.has(cssText) ) {
+                if ( this.current.has(cssText) || this.removed.has(cssText) ) {
                     this.added.delete(cssText);
                 } else {
-                    current.add(cssText);
+                    this.current.add(cssText);
                 }
             }
             for ( let cssText of this.removed ) {
-                if ( current.has(cssText) === false ) {
+                if ( this.current.has(cssText) === false ) {
                     this.removed.delete(cssText);
                 } else {
-                    current.delete(cssText);
+                    this.current.delete(cssText);
                 }
             }
-            if (
-                this.disabled ||
-                this.added.size === 0 && this.removed.size === 0
-            ) {
-                return;
+            if ( this.added.size === 0 && this.removed.size === 0 ) { return; }
+            if ( this.disabled === false ) {
+                vAPI.messaging.send('vapi-background', {
+                    what: 'userCSS',
+                    add: Array.from(this.added),
+                    remove: Array.from(this.removed)
+                });
             }
-            vAPI.messaging.send('vapi-background', {
-                what: 'userCSS',
-                add: Array.from(this.added),
-                remove: Array.from(this.removed)
-            });
             this.added.clear();
             this.removed.clear();
         },
@@ -86,17 +82,14 @@ vAPI.DOMFilterer = function() {
             if ( state === undefined ) { state = this.disabled; }
             if ( state !== this.disabled ) { return; }
             this.disabled = !state;
+            if ( this.current.size === 0 ) { return; }
+            var all = Array.from(this.current);
             var toAdd = [], toRemove = [];
             if ( this.disabled ) {
-                toRemove = Array.from(this.current);
-                this.saved = this.current;
-                this.current = undefined;
+                toRemove = all;
             } else {
-                toAdd = Array.from(this.saved);
-                this.current = this.saved;
-                this.saved = undefined;
+                toAdd = all;
             }
-            if ( toAdd.length === 0 && toRemove.length === 0 ) { return; }
             vAPI.messaging.send('vapi-background', {
                 what: 'userCSS',
                 add: toAdd,
@@ -163,6 +156,7 @@ vAPI.DOMFilterer.prototype = {
             internal: details && details.internal === true
         });
         this.commit();
+        this.triggerListeners('declarative', selectorsStr);
     },
 
     removeCSSRule: function(selectors, declarations) {
@@ -175,6 +169,24 @@ vAPI.DOMFilterer.prototype = {
             declarations,
         });
         this.commit();
+    },
+
+    addListener: function(listener) {
+        if ( this.listeners.indexOf(listener) !== -1 ) { return; }
+        this.listeners.push(listener);
+    },
+
+    removeListener: function(listener) {
+        var pos = this.listeners.indexOf(listener);
+        if ( pos === -1 ) { return; }
+        this.listeners.splice(pos, 1);
+    },
+
+    triggerListeners: function(type, selectors) {
+        var i = this.listeners.length;
+        while ( i-- ) {
+            this.listeners[i].onFiltersetChanged(type, selectors);
+        }
     },
 
     excludeNode: function(node) {
@@ -221,8 +233,6 @@ vAPI.DOMFilterer.prototype = {
             : 0;
     },
 
-    // TODO: remove CSS pseudo-classes which are incompatible with
-    //       static profile.
     getAllDeclarativeSelectors: function() {
         return this.getAllDeclarativeSelectors_(false);
     }

@@ -35,6 +35,7 @@ if ( typeof vAPI === 'object' ) { // >>>>>>>> start of HUGE-IF-BLOCK
 vAPI.DOMFilterer = function() {
     this.commitTimer = new vAPI.SafeAnimationFrame(this.commitNow.bind(this));
     this.domIsReady = document.readyState !== 'loading';
+    this.listeners = [];
     this.hideNodeId = vAPI.randomToken();
     this.hideNodeStylesheet = false;
     this.excludedNodeSet = new WeakSet();
@@ -242,6 +243,8 @@ vAPI.DOMFilterer.prototype = {
         );
         this.commit();
 
+        this.triggerListeners('declarative', selectorsStr);
+
         if ( this.reHideStyle.test(declarations) === false ) {
             return;
         }
@@ -327,6 +330,24 @@ vAPI.DOMFilterer.prototype = {
         }
         this.removedNodes = this.removedNodes || removedNodes;
         this.commit();
+    },
+
+    addListener: function(listener) {
+        if ( this.listeners.indexOf(listener) !== -1 ) { return; }
+        this.listeners.push(listener);
+    },
+
+    removeListener: function(listener) {
+        var pos = this.listeners.indexOf(listener);
+        if ( pos === -1 ) { return; }
+        this.listeners.splice(pos, 1);
+    },
+
+    triggerListeners: function(type, selectors) {
+        var i = this.listeners.length;
+        while ( i-- ) {
+            this.listeners[i].onFiltersetChanged(type, selectors);
+        }
     },
 
     // https://jsperf.com/clientheight-and-clientwidth-vs-getcomputedstyle
@@ -469,8 +490,6 @@ vAPI.DOMFilterer.prototype = {
         ).length;
     },
 
-    // TODO: remove CSS pseudo-classes which are incompatible with
-    //       static profile.
     getAllDeclarativeSelectors: function() {
         return [].concat(
             Array.from(this.specificSimpleHide),

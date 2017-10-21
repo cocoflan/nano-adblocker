@@ -392,15 +392,12 @@ vAPI.messaging = {
 
     sendToChannelListeners: function(channelName, msg) {
         var listeners = this.channels[channelName];
-        if ( listeners === undefined ) {
-            return;
-        }
+        if ( listeners === undefined ) { return; }
+        listeners = listeners.slice(0);
         var response;
-        for ( var i = 0, n = listeners.length; i < n; i++ ) {
-            response = listeners[i](msg);
-            if ( response !== undefined ) {
-                break;
-            }
+        for ( var listener of listeners ) {
+            response = listener(msg);
+            if ( response !== undefined ) { break; }
         }
         return response;
     }
