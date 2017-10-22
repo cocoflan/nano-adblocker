@@ -114,11 +114,12 @@ vAPI.DOMFilterer.prototype = {
                 ? selectors.join(',\n')
                 : selectors;
         if ( selectorsStr.length === 0 ) { return; }
+        if ( details === undefined ) { details = {}; }
         var entry = {
             selectors: selectorsStr,
             declarations,
-            lazy: details !== undefined && details.lazy === true,
-            internal: details && details.internal === true
+            lazy: details.lazy === true,
+            internal: details.internal === true
         };
         this.addedCSSRules.add(entry);
         this.filterset.add(entry);
