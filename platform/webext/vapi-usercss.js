@@ -122,7 +122,11 @@ vAPI.DOMFilterer.prototype = {
         };
         this.addedCSSRules.add(entry);
         this.filterset.add(entry);
-        if ( this.disabled === false && entry.lazy !== true ) {
+        if (
+            this.disabled === false &&
+            entry.lazy !== true &&
+            details.injected !== true
+        ) {
             vAPI.userStylesheet.add(selectorsStr + '\n{' + declarations + '}');
         }
         this.commit();
@@ -162,7 +166,7 @@ vAPI.DOMFilterer.prototype = {
             this.hideNodeStylesheet = true;
             this.addCSSRule(
                 '[' + this.hideNodeId + ']',
-                'display: none !important;',
+                'display:none!important;',
                 { internal: true }
             );
         }

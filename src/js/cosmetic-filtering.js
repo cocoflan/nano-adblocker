@@ -625,6 +625,8 @@ var FilterContainer = function() {
     this.netSelectorCacheCountMax = netSelectorCacheHighWaterMark;
     this.selectorCacheTimer = null;
 
+    this.supportsUserStylesheets = vAPI.supportsUserStylesheets;
+
     // generic exception filters
     this.genericDonthideSet = new Set();
 
@@ -1964,6 +1966,25 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
 
 /******************************************************************************/
 
+FilterContainer.prototype.injectHideRules = function(
+    tabId,
+    frameId,
+    selectors
+) {
+    var details = {
+        code: '',
+        cssOrigin: 'user',
+        frameId: frameId,
+        runAt: 'document_start'
+    };
+    for ( var selector of selectors ) {
+        details.code = selector + '\n{display:none!important;}';
+        vAPI.insertCSS(tabId, details);
+    }
+};
+
+/******************************************************************************/
+
 FilterContainer.prototype.retrieveDomainSelectors = function(
     request,
     sender,
@@ -1972,6 +1993,9 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     if ( !request.locationURL ) { return; }
 
     console.time('cosmeticFilteringEngine.retrieveDomainSelectors');
+
+    // TODO: consider using MRUCache to quickly lookup all the previously
+    //       looked-up data.
 
     var hostname = this.µburi.hostnameFromURI(request.locationURL),
         domain = this.µburi.domainFromHostname(hostname) || hostname,
@@ -1998,7 +2022,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         netFilters: '',
         proceduralFilters: [],
         scripts: undefined,
-        cssRulesInjected: false
+        specificsInjected: false
     };
 
     if ( options.noCosmeticFiltering !== true ) {
@@ -2124,6 +2148,23 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         var netFilters = [];
         cacheEntry.retrieve('net', netFilters);
         r.netFilters = netFilters.join(',\n');
+    }
+
+    if (
+        this.supportsUserStylesheets &&
+        sender instanceof Object &&
+        sender.tab instanceof Object &&
+        typeof sender.frameId === 'number'
+    ) {
+        this.injectHideRules(
+            sender.tab.id,
+            sender.frameId,
+            [
+                r.declarativeFilters.join(',\n'),
+                r.netFilters
+            ]
+        );
+        r.specificsInjected = true;
     }
 
     console.timeEnd('cosmeticFilteringEngine.retrieveDomainSelectors');

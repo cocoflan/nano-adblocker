@@ -520,7 +520,7 @@ vAPI.DOMFilterer = (function() {
                 if ( o.pseudoclass ) {
                     this.domFilterer.addCSSRule(
                         o.raw,
-                        'display: none !important;'
+                        'display:none!important;'
                     );
                     mustCommit = true;
                     continue;
@@ -982,7 +982,7 @@ vAPI.domSurveyor = (function() {
             if ( Array.isArray(selectors) && selectors.length !== 0 ) {
                 domFilterer.addCSSRule(
                     selectors,
-                    'display: none !important;',
+                    'display:none!important;',
                     { type: 'simple' }
                 );
                 mustCommit = true;
@@ -991,7 +991,7 @@ vAPI.domSurveyor = (function() {
             if ( Array.isArray(selectors) && selectors.length !== 0 ) {
                 domFilterer.addCSSRule(
                     selectors,
-                    'display: none !important;',
+                    'display:none!important;',
                     { type: 'complex' }
                 );
                 mustCommit = true;
@@ -1276,24 +1276,28 @@ vAPI.domSurveyor = (function() {
             domFilterer.exceptions = cfeDetails.exceptionFilters;
             domFilterer.addCSSRule(
                 cfeDetails.declarativeFilters,
-                'display: none !important;'
+                'display:none!important;',
+                { injected: cfeDetails.specificsInjected === true }
             );
             domFilterer.addCSSRule(
                 cfeDetails.highGenericHideSimple,
-                'display: none !important;',
+                'display:none!important;',
                 { type: 'simple', lazy: true }
             );
             domFilterer.addCSSRule(
                 cfeDetails.highGenericHideComplex,
-                'display: none !important;',
+                'display:none!important;',
                 { type: 'complex', lazy: true }
             );
             domFilterer.addProceduralSelectors(cfeDetails.proceduralFilters);
         }
 
-        if ( cfeDetails.netFilters.length !== 0 ) {
+        if (
+            cfeDetails.netFilters.length !== 0 &&
+            cfeDetails.specificsInjected !== true
+        ) {
             vAPI.userStylesheet.add(
-                cfeDetails.netFilters + '\n{ display: none !important; }');
+                cfeDetails.netFilters + '\n{display:none!important;}');
         }
 
         vAPI.userStylesheet.apply();
