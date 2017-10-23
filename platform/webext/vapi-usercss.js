@@ -85,7 +85,11 @@ vAPI.DOMFilterer.prototype = {
         var userStylesheet = vAPI.userStylesheet,
             addedSelectors = [];
         for ( var entry of this.addedCSSRules ) {
-            if ( this.disabled === false && entry.lazy ) {
+            if (
+                this.disabled === false &&
+                entry.lazy &&
+                entry.injected === false
+            ) {
                 userStylesheet.add(
                     entry.selectors + '\n{' + entry.declarations + '}'
                 );
@@ -119,14 +123,15 @@ vAPI.DOMFilterer.prototype = {
             selectors: selectorsStr,
             declarations,
             lazy: details.lazy === true,
-            internal: details.internal === true
+            internal: details.internal === true,
+            injected: details.injected === true
         };
         this.addedCSSRules.add(entry);
         this.filterset.add(entry);
         if (
             this.disabled === false &&
             entry.lazy !== true &&
-            details.injected !== true
+            entry.injected !== true
         ) {
             vAPI.userStylesheet.add(selectorsStr + '\n{' + declarations + '}');
         }

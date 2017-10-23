@@ -1257,8 +1257,8 @@ FilterContainer.prototype.compileGenericUnhideSelector = function(parsed, writer
     if ( compiled === undefined ) { return; }
 
     // https://github.com/chrisaljoudi/uBlock/issues/497
-    // All generic exception filters are put in the same bucket: they are
-    // expected to be very rare.
+    //   All generic exception filters are put in the same bucket: they are
+    //   expected to be very rare.
     writer.push([ 7 /* g1 */, compiled ]);
 };
 
@@ -1969,13 +1969,14 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
 FilterContainer.prototype.injectHideRules = function(
     tabId,
     frameId,
-    selectors
+    selectors,
+    runAt
 ) {
     var details = {
         code: '',
         cssOrigin: 'user',
         frameId: frameId,
-        runAt: 'document_start'
+        runAt: runAt
     };
     for ( var selector of selectors ) {
         details.code = selector + '\n{display:none!important;}';
@@ -2022,7 +2023,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         netFilters: '',
         proceduralFilters: [],
         scripts: undefined,
-        specificsInjected: false
+        rulesInjected: false
     };
 
     if ( options.noCosmeticFiltering !== true ) {
@@ -2049,6 +2050,22 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         // Special bucket for those filters without a valid
         // domain name as per PSL.
         if ( (bucket = this.specificFilters.get('!' + this.noDomainHash)) ) {
+            bucket.retrieve(hostname, exceptionSet);
+        }
+
+        // Specific exception procedural cosmetic filters.
+        if ( (bucket = this.proceduralFilters.get('!' + domainHash)) ) {
+            bucket.retrieve(hostname, exceptionSet);
+        }
+        // Specific entity-based exception procedural cosmetic filters.
+        if ( entityHash !== undefined ) {
+            if ( (bucket = this.proceduralFilters.get('!' + entityHash)) ) {
+                bucket.retrieve(entity, exceptionSet);
+            }
+        }
+        // Special bucket for those filters without a valid
+        // domain name as per PSL.
+        if ( (bucket = this.proceduralFilters.get('!' + this.noDomainHash)) ) {
             bucket.retrieve(hostname, exceptionSet);
         }
         if ( exceptionSet.size !== 0 ) {
@@ -2159,12 +2176,16 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         this.injectHideRules(
             sender.tab.id,
             sender.frameId,
-            [
-                r.declarativeFilters.join(',\n'),
-                r.netFilters
-            ]
+            [ r.declarativeFilters.join(',\n'), r.netFilters ],
+            'document_start'
         );
-        r.specificsInjected = true;
+        this.injectHideRules(
+            sender.tab.id,
+            sender.frameId,
+            [ r.highGenericHideSimple, r.highGenericHideComplex ],
+            'document_end'
+        );
+        r.rulesInjected = true;
     }
 
     console.timeEnd('cosmeticFilteringEngine.retrieveDomainSelectors');
