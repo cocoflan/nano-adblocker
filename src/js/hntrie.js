@@ -319,16 +319,18 @@ HNTrieBuilder.prototype.matches = function(needle) {
 HNTrieBuilder.prototype.vacuum = function() {
     if ( this.bufsz === 0 ) { return null; }
     var input = this.buf,
-        output = [], outsz = 0,
+        tbuf = [], tbufsz = 0,
+        cbuf = [], cbufsz = 0,
         forks = [],
         iin = 0, iout;
     for (;;) {
-        iout = outsz;
-        output[iout+0] = 0;
-        output[iout+1] = 0;
-        output[iout+2] = input[iin+2];              // first character
-        output[iout+3] = 0;
-        outsz += 4;
+        iout = tbufsz;
+        tbuf[iout+0] = 0;
+        tbuf[iout+1] = 0;
+        tbuf[iout+2] = input[iin+2];                // first character
+        tbuf[iout+3] = 0;
+        tbufsz += 4;
+        tbuf[iout+4] = cbufsz;                      // might need this, to confirm
         if ( input[iin] !== 0 ) {                   // cell with descendant
             forks.push(iout, iin);                  // defer processing
         }
@@ -337,29 +339,30 @@ HNTrieBuilder.prototype.vacuum = function() {
             if ( iin === 0 ) { break; }             // no more sibling cell
             if ( input[iin] !== 0 ) { break; }      // cell with a descendant
             if ( input[iin+2] === 0 ) { break; }    // don't merge \x00
-            output[outsz] = input[iin+2];           // add character data
-            outsz += 1;
+            cbuf[cbufsz] = input[iin+2];            // add character data
+            cbufsz += 1;
         }
-        if ( outsz !== iout + 4 ) {                 // cells were merged
-            output[iout+3] = outsz - iout - 4;      // so adjust count
+        if ( cbufsz !== tbuf[iout+4] ) {            // cells were merged
+            tbufsz += 1;
+            tbuf[iout+3] = cbufsz - tbuf[iout+4];   // so adjust count
         }
         if ( iin !== 0 && input[iin] !== 0 ) {      // can't merge this cell
-            output[iout+1] = outsz;
+            tbuf[iout+1] = tbufsz;
             continue;
         }
         if ( forks.length === 0 ) { break; }        // no more descendants: bye
         iin = forks.pop();                          // process next descendant
         iout = forks.pop();
         iin = input[iin];
-        output[iout] = outsz;
+        tbuf[iout] = tbufsz;
     }
     var trie;                                       // pick optimal read-only
-    if ( outsz < 256 ) {                            // container array.
-        trie = new this.HNTrie8(output, outsz);
-    } else if ( outsz < 65536 ) {
-        trie = new this.HNTrie16(output, outsz);
+    if ( tbufsz < 256 ) {                           // container array.
+        trie = new this.HNTrie8(tbuf, cbuf);
+    } else if ( tbufsz < 65536 ) {
+        trie = new this.HNTrie16(tbuf, cbuf);
     } else {
-        trie = new this.HNTrie32(output, outsz);
+        trie = new this.HNTrie32(tbuf, cbuf);
     }
     this.reset();                                   // free working array
     return trie;
@@ -383,8 +386,9 @@ HNTrieBuilder.prototype.vacuum = function() {
 
 */
 
-HNTrieBuilder.prototype.HNTrie8 = function(buf, bufsz) {
-    this.buf = new Uint8Array(buf.slice(0, bufsz));
+HNTrieBuilder.prototype.HNTrie8 = function(tbuf, cbuf) {
+    this.tbuf = new Uint8Array(tbuf.concat(cbuf));
+    this.cbufOffset = this.tbuf.length;
 };
 
 HNTrieBuilder.prototype.HNTrie8.prototype.matches = function(needle) {
@@ -393,29 +397,30 @@ HNTrieBuilder.prototype.HNTrie8.prototype.matches = function(needle) {
     for (;;) {
         ichar -= 1;
         c1 = ichar === -1 ? 0 : needle.charCodeAt(ichar);
-        while ( (c2 = this.buf[i+2]) !== c1 ) {     // quick test: first character
+        while ( (c2 = this.tbuf[i+2]) !== c1 ) {    // quick test: first character
             if ( c2 === 0 && c1 === 0x2E ) { return true; }
-            i = this.buf[i];                        // next descendant
+            i = this.tbuf[i];                       // next descendant
             if ( i === 0 ) { return false; }        // no more descendants
         }
         if ( c1 === 0 ) { return true; }
-        ccnt = this.buf[i+3];
+        ccnt = this.tbuf[i+3];
         if ( ccnt > ichar ) { return false; }
-        if ( ccnt !== 0 ) {                         // cell is only one character
-            ic = ccnt; i1 = ichar-1; i2 = i+4;
-            while ( ic-- && needle.charCodeAt(i1-ic) === this.buf[i2+ic] );
+        if ( ccnt !== 0 ) {                         // cell has more characters
+            ic = ccnt; i1 = ichar-1; i2 = this.cbufOffset + this.tbuf[i+4];
+            while ( ic-- && needle.charCodeAt(i1--) === this.tbuf[i2++] );
             if ( ic !== -1 ) { return false; }
             ichar -= ccnt;
         }
-        i = this.buf[i+1];                          // next sibling
+        i = this.tbuf[i+1];                         // next sibling
         if ( i === 0 ) {
             return ichar === 0 || needle.charCodeAt(ichar-1) === 0x2E;
         }
     }
 };
 
-HNTrieBuilder.prototype.HNTrie16 = function(buf, bufsz) {
-    this.buf = new Uint16Array(buf.slice(0, bufsz));
+HNTrieBuilder.prototype.HNTrie16 = function(tbuf, cbuf) {
+    this.tbuf = new Uint16Array(tbuf);
+    this.cbuf = new Uint8Array(cbuf);
 };
 
 HNTrieBuilder.prototype.HNTrie16.prototype.matches = function(needle) {
@@ -424,29 +429,30 @@ HNTrieBuilder.prototype.HNTrie16.prototype.matches = function(needle) {
     for (;;) {
         ichar -= 1;
         c1 = ichar === -1 ? 0 : needle.charCodeAt(ichar);
-        while ( (c2 = this.buf[i+2]) !== c1 ) {     // quick test: first character
+        while ( (c2 = this.tbuf[i+2]) !== c1 ) {    // quick test: first character
             if ( c2 === 0 && c1 === 0x2E ) { return true; }
-            i = this.buf[i];                        // next descendant
+            i = this.tbuf[i];                       // next descendant
             if ( i === 0 ) { return false; }        // no more descendants
         }
         if ( c1 === 0 ) { return true; }
-        ccnt = this.buf[i+3];
+        ccnt = this.tbuf[i+3];
         if ( ccnt > ichar ) { return false; }
         if ( ccnt !== 0 ) {                         // cell is only one character
-            ic = ccnt; i1 = ichar-1; i2 = i+4;
-            while ( ic-- && needle.charCodeAt(i1-ic) === this.buf[i2+ic] );
+            ic = ccnt; i1 = ichar-1; i2 = this.tbuf[i+4];
+            while ( ic-- && needle.charCodeAt(i1--) === this.cbuf[i2++] );
             if ( ic !== -1 ) { return false; }
             ichar -= ccnt;
         }
-        i = this.buf[i+1];                          // next sibling
+        i = this.tbuf[i+1];                         // next sibling
         if ( i === 0 ) {
             return ichar === 0 || needle.charCodeAt(ichar-1) === 0x2E;
         }
     }
 };
 
-HNTrieBuilder.prototype.HNTrie32 = function(buf, bufsz) {
-    this.buf = new Uint32Array(buf.slice(0, bufsz));
+HNTrieBuilder.prototype.HNTrie32 = function(tbuf, cbuf) {
+    this.tbuf = new Uint32Array(tbuf);
+    this.cbuf = new Uint8Array(cbuf);
 };
 
 HNTrieBuilder.prototype.HNTrie32.prototype.matches = function(needle) {
@@ -455,21 +461,21 @@ HNTrieBuilder.prototype.HNTrie32.prototype.matches = function(needle) {
     for (;;) {
         ichar -= 1;
         c1 = ichar === -1 ? 0 : needle.charCodeAt(ichar);
-        while ( (c2 = this.buf[i+2]) !== c1 ) {     // quick test: first character
+        while ( (c2 = this.tbuf[i+2]) !== c1 ) {    // quick test: first character
             if ( c2 === 0 && c1 === 0x2E ) { return true; }
-            i = this.buf[i];                        // next descendant
+            i = this.tbuf[i];                       // next descendant
             if ( i === 0 ) { return false; }        // no more descendants
         }
         if ( c1 === 0 ) { return true; }
-        ccnt = this.buf[i+3];
+        ccnt = this.tbuf[i+3];
         if ( ccnt > ichar ) { return false; }
         if ( ccnt !== 0 ) {                         // cell is only one character
-            ic = ccnt; i1 = ichar-1; i2 = i+4;
-            while ( ic-- && needle.charCodeAt(i1-ic) === this.buf[i2+ic] );
+            ic = ccnt; i1 = ichar-1; i2 = this.tbuf[i+4];
+            while ( ic-- && needle.charCodeAt(i1--) === this.cbuf[i2++] );
             if ( ic !== -1 ) { return false; }
             ichar -= ccnt;
         }
-        i = this.buf[i+1];                          // next sibling
+        i = this.tbuf[i+1];                         // next sibling
         if ( i === 0 ) {
             return ichar === 0 || needle.charCodeAt(ichar-1) === 0x2E;
         }
