@@ -388,7 +388,7 @@ HNTrieBuilder.prototype.vacuum = function() {
 
 HNTrieBuilder.prototype.HNTrie8 = function(tbuf, cbuf) {
     this.tbuf = new Uint8Array(tbuf.concat(cbuf));
-    this.cbufOffset = this.tbuf.length;
+    this.cbufOffset = tbuf.length;
 };
 
 HNTrieBuilder.prototype.HNTrie8.prototype.matches = function(needle) {
@@ -406,7 +406,7 @@ HNTrieBuilder.prototype.HNTrie8.prototype.matches = function(needle) {
         ccnt = this.tbuf[i+3];
         if ( ccnt !== 0 ) {                         // cell has more characters
             if ( ccnt > ichar ) { return false; }
-            ic = ccnt; i1 = ichar-1; i2 = this.cbufOffset + this.tbuf[i+4];
+            ic = ccnt; i1 = ichar-1; i2 = this.cbufOffset+this.tbuf[i+4];
             while ( ic-- && needle.charCodeAt(i1--) === this.tbuf[i2++] );
             if ( ic !== -1 ) { return false; }
             ichar -= ccnt;
