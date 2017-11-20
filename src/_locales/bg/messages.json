@@ -68,7 +68,7 @@
     "description": "Example: 15 or 13%"
   },
   "popupBlockedSinceInstallPrompt": {
-    "message": "досега",
+    "message": "общо досега",
     "description": "English: since install"
   },
   "popupOr": {
@@ -124,7 +124,7 @@
     "description": "Tooltip for the no-cosmetic-filtering per-site switch"
   },
   "popupTipNoCosmeticFiltering2": {
-    "message": "Щракнете, за да активирате козметичните филтри за този сайт",
+    "message": "Щракнете, за да включите козметичните филтри за този сайт",
     "description": "Tooltip for the no-cosmetic-filtering per-site switch"
   },
   "popupTipNoRemoteFonts": {
@@ -152,7 +152,7 @@
     "description": "Tooltip when hovering over the padlock in the dynamic filtering pane."
   },
   "popupTipRevertRules": {
-    "message": "Щракнете, за да отмените вашите промени.",
+    "message": "Щракнете, за да отмените направените промени.",
     "description": "Tooltip when hovering over the eraser in the dynamic filtering pane."
   },
   "popupAnyRulePrompt": {
@@ -316,7 +316,7 @@
     "description": "Appears aside each filter list in the _3rd-party filters_ pane"
   },
   "3pAutoUpdatePrompt1": {
-    "message": "Автоматично актуализиране на списъците с филтри.",
+    "message": "Автоматично актуализиране на списъците с филтри",
     "description": "A checkbox in the _3rd-party filters_ pane"
   },
   "3pUpdateNow": {
@@ -328,7 +328,7 @@
     "description": "A button in the in the _3rd-party filters_ pane"
   },
   "3pParseAllABPHideFiltersPrompt1": {
-    "message": "Анализиране и прилагане на козметичните филтри.",
+    "message": "Анализиране и прилагане на козметичните филтри",
     "description": "English: Parse and enforce Adblock+ element hiding filters."
   },
   "3pParseAllABPHideFiltersInfo": {
@@ -336,7 +336,7 @@
     "description": "Describes the purpose of the 'Parse and enforce cosmetic filters' feature."
   },
   "3pIgnoreGenericCosmeticFilters": {
-    "message": "Игнориране на общите козметични филтри.",
+    "message": "Игнориране на общите козметични филтри",
     "description": "This will cause uBO to ignore all generic cosmetic filters."
   },
   "3pIgnoreGenericCosmeticFiltersInfo": {
@@ -664,7 +664,7 @@
     "description": "Firefox\/Fennec-specific: Show Logger"
   },
   "fennecMenuItemBlockingOff": {
-    "message": "изключване",
+    "message": "изключен",
     "description": "Firefox-specific: appears as 'uBlock₀ (off)'"
   },
   "docblockedPrompt1": {
