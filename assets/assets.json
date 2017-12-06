@@ -3,7 +3,7 @@
 		"content": "internal",
 		"updateAfter": 13,
 		"contentURL": [
-			"https://raw.githubusercontent.com/gorhill/uBlock/master/assets/assets.json",
+			"https://raw.githubusercontent.com/NanoAdblocker/NanoCore/master/assets/assets.json",
 			"assets/assets.json"
 		]
 	},
@@ -22,6 +22,12 @@
 			"https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/resources.txt",
 			"assets/ublock/resources.txt"
 		]
+	},
+	"nano-stealth": {
+		"content": "filters",
+		"group": "default",
+		"title": "Nano Stealth Engine Integration",
+		"contentURL": "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt"
 	},
 	"ublock-filters": {
 		"content": "filters",
@@ -86,7 +92,6 @@
 	"awrl-0": {
 		"content": "filters",
 		"group": "ads",
-		"off": true,
 		"title": "Adblock Warning Removal List",
 		"contentURL": "https://easylist-downloads.adblockplus.org/antiadblockfilters.txt",
 		"supportURL": "https://forums.lanik.us/"
