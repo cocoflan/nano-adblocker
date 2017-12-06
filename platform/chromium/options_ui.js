@@ -27,18 +27,8 @@
 
 'use strict';
 
-vAPI.messaging.send(
-    'default',
-    {
-        what: 'gotoURL',
-        details: {
-            url: 'dashboard.html',
-            select: true,
-            index: -1
-        }
-    }
-);
-window.close();
+// Patch 2017-12-06: Do not open a new tab for the dashboard
+vAPI.openHere('dashboard.html');
 
 /******************************************************************************/
 

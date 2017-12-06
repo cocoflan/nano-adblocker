@@ -433,6 +433,15 @@ vAPI.messaging.Connection.prototype = {
 
 /******************************************************************************/
 
+// Patch 2017-12-06: Replace the current tab
+vAPI.openHere = function(path) {
+    if (chrome.tabs !== undefined) {
+        chrome.tabs.update({ url: path });
+    }
+};
+
+/******************************************************************************/
+
 vAPI.shutdown.add(function() {
     vAPI.messaging.shutdown();
     window.vAPI = undefined;
