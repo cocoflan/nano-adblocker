@@ -65,7 +65,18 @@ vAPI.getURL = chrome.runtime.getURL;
 
 /******************************************************************************/
 
-vAPI.i18n = chrome.i18n.getMessage;
+// Patch 2017-12-06: Patch name, this has a slight performance overhead but there
+// are way too many locale files
+var i18nReplaceMatcher = /uBlock\u2080|uBO/g;
+vAPI.i18n = function(name, substitutions) {
+    var data;
+    if ( substitutions === undefined ) {
+        data = chrome.i18n.getMessage(name);
+    } else {
+        data = chrome.i18n.getMessage(name, substitutions);
+    }
+    return data.replace(i18nReplaceMatcher, 'Nano Adblocker');
+};
 
 setScriptDirection(vAPI.i18n('@@ui_locale'));
 
