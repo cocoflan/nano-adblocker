@@ -27,7 +27,9 @@
 		"content": "filters",
 		"group": "default",
 		"title": "Nano Stealth Engine Integration",
-		"contentURL": "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt"
+		"off": true,
+		"contentURL": "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt",
+		"instructionURL": "https://jspenguin2017.github.io/uBlockProtector/"
 	},
 	"ublock-filters": {
 		"content": "filters",
