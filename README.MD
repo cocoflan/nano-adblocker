@@ -10,7 +10,7 @@ Please open an issue if there is something you want me to know.
 
 Housekeeping changes are not listed here. 
 
-- Faster filter download but longer timeout delay
+- Make filter update delay shorter and timeout delay longer
   - [`1089b2e4fc95d0dccf2068c1d1edc32a263e4788`](https://github.com/NanoAdblocker/NanoCore/commit/1089b2e4fc95d0dccf2068c1d1edc32a263e4788)
 
 - Add syntax highlighting
