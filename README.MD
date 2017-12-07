@@ -4,9 +4,14 @@ Another adblocker
 
 Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock). 
 
-Please open an issue if there is something you want me to know.
+Please open an issue if there is something you want me to know. 
 
-## Changes
+## Notable Change
+
+### Syntax highlighter for My Filters
+![Screenshot](https://i.imgur.com/8TQGFiw.png)
+
+## Change Log
 
 Housekeeping changes are not listed here. 
 
