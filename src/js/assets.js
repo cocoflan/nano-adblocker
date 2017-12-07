@@ -86,7 +86,7 @@ api.fetchText = function(url, onLoad, onError) {
     }
 
     var contentLoaded = 0,
-        timeoutAfter = µBlock.hiddenSettings.assetFetchTimeout * 1000 || 30000,
+        timeoutAfter = µBlock.hiddenSettings.assetFetchTimeout * 1000 || 60000,
         timeoutTimer,
         xhr = new XMLHttpRequest();
 
