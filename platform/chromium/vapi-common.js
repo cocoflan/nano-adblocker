@@ -87,7 +87,7 @@ vAPI.i18n = function(name, substitutions) {
     } else {
         data = chrome.i18n.getMessage(name, substitutions);
     }
-    return data.replace(i18nReplaceMatcher, 'Nano Adblocker');
+    return data.replace(i18nReplaceMatcher, 'Nano');
 };
 
 setScriptDirection(vAPI.i18n('@@ui_locale'));
