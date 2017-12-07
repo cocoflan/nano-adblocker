@@ -1,6 +1,6 @@
 # Nano Adblocker Core
 
-Another adblocker
+Just another adblocker
 
 Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock). 
 

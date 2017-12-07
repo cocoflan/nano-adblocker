@@ -16,7 +16,7 @@
         }
     },
     "default_locale": "en",
-    "description": "Another adblocker",
+    "description": "Just another adblocker",
     "icons": {
         "128": "img/128_on.png"
     },

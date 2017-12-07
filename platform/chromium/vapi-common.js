@@ -65,10 +65,22 @@ vAPI.getURL = chrome.runtime.getURL;
 
 /******************************************************************************/
 
+// Patch 2017-12-07: Add a couple placeholders
+var i18nPlaceholders = {
+    aboutBasedOn: "Based on uBlock Origin v1.14.21.101",
+    advancedSettingsAboutChanges: "Nano Adblocker has different default " +
+        "values than uBlock Origin for these settings, assetFetchTimeout " +
+        "defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500."
+};
+
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
 // are way too many locale files
 var i18nReplaceMatcher = /uBlock\u2080|uBO/g;
 vAPI.i18n = function(name, substitutions) {
+    if ( i18nPlaceholders.hasOwnProperty(name) ) {
+        return i18nPlaceholders[name];
+    }
+    
     var data;
     if ( substitutions === undefined ) {
         data = chrome.i18n.getMessage(name);
