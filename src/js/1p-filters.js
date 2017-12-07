@@ -41,7 +41,8 @@ ace.define('ace/mode/nano_filters', function(require, exports, module) {
 });
 ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
     const oop = ace.require('ace/lib/oop');
-    const TextHighlightRules = ace.require('ace/mode/text_highlight_rules').TextHighlightRules;
+    const TextHighlightRules = ace.require('ace/mode/text_highlight_rules')
+        .TextHighlightRules;
     exports.HighlightRules = function() {
         this.$rules = {
             start: [
@@ -52,7 +53,8 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     next: 'header'
                 },
                 {
-                    // TODO 2017-12-16: Inline comments are only allowed for network filter
+                    // TODO 2017-12-06: Inline comments are only allowed for
+                    // network filter
                     token: 'comment.line',
                     regex: /^(?:!|# |\[).*/
                 },
@@ -126,6 +128,8 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
             script_inject_part1: [
                 //Exit
                 {
+                    // TODO 2017-12-07: Is this right? Need to investigate how
+                    // uBlock Origin process commas
                     token: 'invalid.illegal',
                     regex: /,\)?$/,
                     next: 'start'
