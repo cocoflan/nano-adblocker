@@ -455,7 +455,7 @@ var applyChanges = function() {
 
     var request = {
         what: 'writeUserFilters',
-        content: textarea.value
+        content: editor.getValue()
     };
     messaging.send('dashboard', request, onWritten);
 };
