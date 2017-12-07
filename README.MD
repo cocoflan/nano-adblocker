@@ -12,6 +12,7 @@ Housekeeping changes are not listed here.
 
 - Add syntax highlighting
   - [`436f4de6fb23ffa3354bfab61b65730f40f75566`](https://github.com/NanoAdblocker/NanoCore/commit/436f4de6fb23ffa3354bfab61b65730f40f75566)
+  - [`25569ccbacd91bc2d25c66e709fbc28dad0bdfca`](https://github.com/NanoAdblocker/NanoCore/commit/25569ccbacd91bc2d25c66e709fbc28dad0bdfca)
 
 - Open the dashboard in the same tab
   - [`9f6f05bfb57264f5211576b58e2410750a89dbbd`](https://github.com/NanoAdblocker/NanoCore/commit/9f6f05bfb57264f5211576b58e2410750a89dbbd)
