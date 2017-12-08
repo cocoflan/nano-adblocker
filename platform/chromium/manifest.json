@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Nano Adblocker",
-    "version": "1.0.0.1",
+    "version": "1.0.0.2",
 
     "commands": {
         "launch-element-zapper": {
@@ -49,7 +49,7 @@
     ],
     "incognito": "split",
     "minimum_chrome_version": "62.0",
-    "optional_permissions": [ "file:///*" ],
+    "optional_permissions": ["file:///*"],
     "options_page": "dashboard.html",
     "options_ui": {
         "page": "options_ui.html"

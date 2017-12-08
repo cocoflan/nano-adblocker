@@ -75,7 +75,8 @@ var i18nPlaceholders = {
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
 // are way too many locale files
-var i18nReplaceMatcher = /uBlock\u2080|uBO/g;
+var i18nReplaceMatcher1 = /uBlock\u2080|uBO/g;
+var i18nReplaceMatcher2 = /ublock/g;
 vAPI.i18n = function(name, substitutions) {
     if ( i18nPlaceholders.hasOwnProperty(name) ) {
         return i18nPlaceholders[name];
@@ -87,7 +88,9 @@ vAPI.i18n = function(name, substitutions) {
     } else {
         data = chrome.i18n.getMessage(name, substitutions);
     }
-    return data.replace(i18nReplaceMatcher, 'Nano');
+    return data
+        .replace(i18nReplaceMatcher1, 'Nano')
+        .replace(i18nReplaceMatcher2, 'nano');
 };
 
 setScriptDirection(vAPI.i18n('@@ui_locale'));
