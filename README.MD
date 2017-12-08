@@ -13,7 +13,10 @@ Please open an issue if there is something you want me to know.
 
 ## Change Log
 
-Housekeeping changes are not listed here. 
+Housekeeping (renaming, formatting, minor UI tweak, etc.) changes are not listed here. 
+
+- Add `nano` as alias to `µBlock` which is too hard to type
+  - [`6b10f39e59ff4497fe80efb46dbd839bf4dee50b`](https://github.com/NanoAdblocker/NanoCore/commit/6b10f39e59ff4497fe80efb46dbd839bf4dee50b)
 
 - Make filter update delay shorter and timeout delay longer
   - [`1089b2e4fc95d0dccf2068c1d1edc32a263e4788`](https://github.com/NanoAdblocker/NanoCore/commit/1089b2e4fc95d0dccf2068c1d1edc32a263e4788)
