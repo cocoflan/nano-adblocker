@@ -23,10 +23,10 @@
 			"assets/ublock/resources.txt"
 		]
 	},
-	"nano-stealth": {
+	"nano-defender": {
 		"content": "filters",
 		"group": "default",
-		"title": "Nano Stealth Engine Integration",
+		"title": "Nano Defender Integration",
 		"off": true,
 		"contentURL": "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt",
 		"instructionURL": "https://jspenguin2017.github.io/uBlockProtector/"
