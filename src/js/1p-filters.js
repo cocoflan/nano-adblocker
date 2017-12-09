@@ -324,6 +324,13 @@ var editor = ace.edit('userFilters');
 editor.getSession().setMode('ace/mode/nano_filters');
 editor.$blockScrolling = Infinity;
 
+// Patch 2017-12-09: Fix line ending, Ace's auto-detect feature is broken
+if ( navigator.userAgent.includes('Windows') ) {
+    editor.getSession().setNewLineMode('windows');
+} else {
+    editor.getSession().setNewLineMode('unix');
+}
+
 /******************************************************************************/
 
 var messaging = vAPI.messaging;
