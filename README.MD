@@ -9,7 +9,7 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### Syntax highlighter for My Filters
+### Syntax highlighter for My filters
 ![Screenshot](https://i.imgur.com/8TQGFiw.png)
 
 ## Change Log
