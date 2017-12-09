@@ -936,6 +936,31 @@ vAPI.messaging.broadcast = function(message) {
 };
 
 /******************************************************************************/
+
+// Patch 2017-12-08: Add automatic configuration for Nano Defender integration
+vAPI.messaging.onNanoDefenderActivated = (function() {
+    var callbacks = [];
+    
+    chrome.runtime.onMessageExternal.addListener(function(msg, sender, response) {
+        if ( typeof msg !== 'object' || typeof msg.data !== 'string' ) {
+            return;
+        }
+        if ( sender.id === 'ggolfgbegefeeoocgjbmkembbncoadlb' ) { // Nano Defender
+            for ( var callback of callbacks ) {
+                callback(msg.data);
+            }
+            if ( typeof response === 'function' ) {
+                response('ok');
+            }
+        }
+    });
+    
+    return function(callback) {
+        callbacks.push(callback);
+    };
+})();
+
+/******************************************************************************/
 /******************************************************************************/
 
 // https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/contextMenus#Browser_compatibility
