@@ -363,7 +363,7 @@ var registerAssetSource = function(assetKey, dict) {
         entry.contentURL = [];
     }
     if ( typeof entry.updateAfter !== 'number' ) {
-        entry.updateAfter = 5;
+        entry.updateAfter = 3;
     }
     if ( entry.submitter ) {
         entry.submitTime = Date.now(); // To detect stale entries
