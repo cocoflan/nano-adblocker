@@ -1022,8 +1022,9 @@ var updateNext = function() {
             if ( cacheEntry && (cacheEntry.writeTime + assetEntry.updateAfter * 86400000) > now ) {
                 continue;
             }
+            // Patch 2017-12-09: Add nano-resources
             // Update of user scripts/resources forbidden?
-            if ( assetKey === 'ublock-resources' && noRemoteResources ) {
+            if ( (assetKey === 'ublock-resources' || assetKey === 'nano-resources') && noRemoteResources ) {
                 continue;
             }
             if (

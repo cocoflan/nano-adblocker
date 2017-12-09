@@ -939,6 +939,10 @@ var onMessage = function(request, sender, callback) {
         if ( request.assetKey === 'ublock-filters' ) {
             µb.assets.purge('ublock-resources');
         }
+        // Patch 2017-12-09: Do the same thing for Nano filters
+        if ( request.assetKey === 'nano-filters' || request.assetKey === 'nano-defender' ) {
+            nano.assets.purge('nano-resources');
+        }
         break;
 
     case 'readHiddenSettings':

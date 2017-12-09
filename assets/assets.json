@@ -23,18 +23,13 @@
       "assets/ThirdParty/uBlockResources.txt"
     ]
   },
-
-
-  "nano-defender": {
-    "content": "filters",
-    "group": "default",
-    "title": "Nano Defender Integration",
-    "off": true,
+  "nano-resources": {
+    "content": "internal",
+    "updateAfter": 7,
     "contentURL": [
-      "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt",
-      "assets/ThirdParty/NanoDefender.txt"
-    ],
-    "instructionURL": "https://jspenguin2017.github.io/uBlockProtector/"
+      "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoResources.txt",
+      "assets/NanoFilters/NanoResources.txt"
+    ]
   },
 
 
@@ -47,6 +42,17 @@
       "assets/NanoFilters/NanoBase.txt"
     ],
     "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
+  },
+  "nano-defender": {
+    "content": "filters",
+    "group": "default",
+    "title": "Nano Defender Integration",
+    "off": true,
+    "contentURL": [
+      "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt",
+      "assets/ThirdParty/NanoDefender.txt"
+    ],
+    "instructionURL": "https://jspenguin2017.github.io/uBlockProtector/"
   },
 
 
