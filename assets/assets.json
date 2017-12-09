@@ -38,6 +38,18 @@
   },
 
 
+  "nano-filters": {
+    "content": "filters",
+    "group": "default",
+    "title": "Nano filters",
+    "contentURL": [
+      "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoBase.txt",
+      "assets/NanoFilters/NanoBase.txt"
+    ],
+    "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
+  },
+
+
   "ublock-filters": {
     "content": "filters",
     "group": "default",
