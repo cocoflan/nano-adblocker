@@ -80,4 +80,11 @@ uDom.onLoad(function() {
 
 /******************************************************************************/
 
+// Patch 2017-12-09: Make back button properly return to extension manager
+window.addEventListener('beforeunload', function() {
+    vAPI.openHere(vAPI.extensionManager);
+});
+
+/******************************************************************************/
+
 })();
