@@ -22,11 +22,11 @@ I cannot read your mind, write down what is in your head!
 - Browser and Version: 
 - Nano Adblocker Version: 
 
-##### Your filter lists (Required)
+#### Your filter lists (Required)
 <!--
 List filters you have enabled or disabled from the default settings.
 -->
 
 
-##### Your custom filters (Required if you have any)
+#### Your custom filters (Required if you have any)
 
