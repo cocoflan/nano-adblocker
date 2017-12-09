@@ -26,7 +26,7 @@ Housekeeping (renaming, formatting, minor UI tweak, etc.) changes are not listed
   - [`436f4de6fb23ffa3354bfab61b65730f40f75566`](https://github.com/NanoAdblocker/NanoCore/commit/436f4de6fb23ffa3354bfab61b65730f40f75566)
   - [`25569ccbacd91bc2d25c66e709fbc28dad0bdfca`](https://github.com/NanoAdblocker/NanoCore/commit/25569ccbacd91bc2d25c66e709fbc28dad0bdfca)
 
-- Make default filters work better with Nano Stealth Engine
+- Make default filters work better with Nano Defender
   - [`4d75ad29ab1d223a553cd074096ceedb26e1a99d`](https://github.com/NanoAdblocker/NanoCore/commit/4d75ad29ab1d223a553cd074096ceedb26e1a99d)
   - [`c847df39e0378ed1bf306606af1c13defdc76d48`](https://github.com/NanoAdblocker/NanoCore/commit/c847df39e0378ed1bf306606af1c13defdc76d48)
 
