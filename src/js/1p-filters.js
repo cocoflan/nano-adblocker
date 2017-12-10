@@ -323,6 +323,11 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
 var editor = ace.edit('userFilters');
 editor.getSession().setMode('ace/mode/nano_filters');
 editor.$blockScrolling = Infinity;
+// Patch 2017-12-10: Disable commands that makes no sense
+var uselessCommands = ['blockindent', 'blockoutdent', 'indent', 'outdent'];
+for ( var cmd of uselessCommands ) {
+    editor.commands.removeCommand(cmd);
+}
 // Patch 2017-12-09: Fix line ending, Ace's auto-detect feature is broken
 if ( navigator.userAgent.includes('Windows') ) {
     editor.getSession().setNewLineMode('windows');
