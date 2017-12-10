@@ -28,8 +28,6 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-// Patch 2017-12-06: Add syntax highlighting
-
 /**
  * Define a module along with a payload
  * @param module a name for the payload
