@@ -12,6 +12,9 @@ Please open an issue if there is something you want me to know.
 ### Syntax highlighter for My filters
 ![Screenshot](https://i.imgur.com/8TQGFiw.png)
 
+### More powerful [resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt)
+Note: Available since 1.0.0.6
+
 ## Change Log
 
 Housekeeping (renaming, formatting, minor UI tweak, etc.) changes are not listed here. 
