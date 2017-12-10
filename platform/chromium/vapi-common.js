@@ -73,10 +73,11 @@ var i18nPlaceholders = {
         'values than uBlock Origin for these settings, assetFetchTimeout ' +
         'defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500.',
 
-    '1pResourceReference': 'Nano Adblocker comes with two sets of resources,',
-    '1pResourceAnd': 'and',
-    '1pResourceuBlock': 'uBlock Origin Resources',
-    '1pResourceuNano': 'Nano Adblocker Extra Resources'
+    '1pResourcesReference': 'Nano Adblocker comes with two sets of resources,',
+    '1pResourcesAnd': 'and',
+    '1pResourcesOriginal': 'uBlock Origin Resources',
+    '1pResourcesNano': 'Nano Adblocker Extra Resources',
+    '1pResourcesPeriod': '.'
 };
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
