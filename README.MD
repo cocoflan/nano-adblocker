@@ -9,7 +9,7 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### Nano IDE for My filters
+### Nano Filter IDE for My filters
 
 ![Screenshot](https://i.imgur.com/8TQGFiw.png)
 
