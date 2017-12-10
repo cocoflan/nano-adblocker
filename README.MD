@@ -17,7 +17,7 @@ Available since 1.0.0.0
 
 ### Even more [powerful resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt)
 
-![Screenshot](https://i.imgur.com/0HIYf4d.png)
+![Screenshot](https://i.imgur.com/KktoFJL.png)
 
 Available since 1.0.0.6
 
