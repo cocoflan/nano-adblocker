@@ -78,8 +78,8 @@ var i18nPlaceholders = {
     '1pResourcesOriginal': 'uBlock Origin Resources',
     '1pResourcesNano': 'Nano Adblocker Extra Resources',
     '1pResourcesPeriod': '.',
-    '1pIDEHelp': 'Nano IDE is powered by Ace and most shortcut keys works ' +
-        'the same.'
+    '1pIDEHelp': 'Nano Filter IDE is powered by Ace and most shortcut keys ' +
+        'works the same.'
 };
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
