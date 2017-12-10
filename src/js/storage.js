@@ -879,15 +879,23 @@
         }
         onDone();
     };
-
-    var onResourcesLoaded = function(details) {
+    
+    // Patch 2017-12-09: Add nano-resources
+    var onNanoResourcesLoaded = function(details) {
         if ( details.content !== '' ) {
-            content = details.content;
+            content += '\n\n' + details.content;
         }
         if ( µb.hiddenSettings.userResourcesLocation === 'unset' ) {
             return onDone();
         }
         µb.assets.fetchText(µb.hiddenSettings.userResourcesLocation, onUserResourcesLoaded);
+    };
+
+    var onResourcesLoaded = function(details) {
+        if ( details.content !== '' ) {
+            content = details.content;
+        }
+        nano.assets.get('nano-resources', onNanoResourcesLoaded);
     };
 
     this.assets.get('ublock-resources', onResourcesLoaded);
