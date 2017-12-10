@@ -16,6 +16,11 @@ Please open an issue if there is something you want me to know.
 
 Housekeeping (renaming, formatting, minor UI tweak, etc.) changes are not listed here. 
 
+- Add more resources
+  - [`9d1f8923203878a9f69e0d15ee50866a5614c8f4`](https://github.com/NanoAdblocker/NanoCore/commit/9d1f8923203878a9f69e0d15ee50866a5614c8f4)
+  - [`7a32942767ae26f75a8500a460a2c82e5263379c`](https://github.com/NanoAdblocker/NanoCore/commit/7a32942767ae26f75a8500a460a2c82e5263379c)
+  - [`127ff137a789382e939d4c034a917753e44df3fe`](https://github.com/NanoAdblocker/NanoCore/commit/127ff137a789382e939d4c034a917753e44df3fe)
+
 - Add `nano` as alias to `µBlock` which is too hard to type
   - [`6b10f39e59ff4497fe80efb46dbd839bf4dee50b`](https://github.com/NanoAdblocker/NanoCore/commit/6b10f39e59ff4497fe80efb46dbd839bf4dee50b)
 
