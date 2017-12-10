@@ -67,10 +67,16 @@ vAPI.getURL = chrome.runtime.getURL;
 
 // Patch 2017-12-07: Add a couple placeholders
 var i18nPlaceholders = {
-    aboutBasedOn: "Based on uBlock Origin v1.14.21.103",
-    advancedSettingsAboutChanges: "Nano Adblocker has different default " +
-        "values than uBlock Origin for these settings, assetFetchTimeout " +
-        "defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500."
+    'aboutBasedOn': 'Based on uBlock Origin v1.14.21.103',
+
+    'advancedSettingsAboutChanges': 'Nano Adblocker has different default ' +
+        'values than uBlock Origin for these settings, assetFetchTimeout ' +
+        'defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500.',
+
+    '1pResourceReference': 'Nano Adblocker comes with two sets of resources,',
+    '1pResourceAnd': 'and',
+    '1pResourceuBlock': 'uBlock Origin Resources',
+    '1pResourceuNano': 'Nano Adblocker Extra Resources'
 };
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
