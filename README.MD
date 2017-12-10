@@ -9,13 +9,13 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### Syntax highlighter for My filters
+### Nano IDE for My filters
 
 ![Screenshot](https://i.imgur.com/8TQGFiw.png)
 
 Available since 1.0.0.0
 
-### More powerful [resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt)
+### Even more [powerful resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt)
 
 ![Screenshot](https://i.imgur.com/0HIYf4d.png)
 
