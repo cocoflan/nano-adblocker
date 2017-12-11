@@ -24,7 +24,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
     exports.HighlightRules = function() {
         this.$rules = {
             start: [
-                //Comments
+                // Comments
                 {
                     token: 'comment',
                     regex: /^! === /,
@@ -36,18 +36,18 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     token: 'comment.line',
                     regex: /^(?:!|# |\[).*/
                 },
-                //CSS
+                // CSS
                 {
                     token: 'keyword.control',
                     regex: /#@?\$?#/,
                     next: 'double_hash'
                 },
-                //Operators
+                // Operators
                 {
                     token: 'keyword.operator',
                     regex: /^@@|\||,|\^|\*/
                 },
-                //Options
+                // Options
                 {
                     token: 'invalid.illegal',
                     regex: /\$,/,
@@ -58,53 +58,53 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /\$/,
                     next: 'options'
                 },
-                //Domains (default)
+                // Domains (default)
                 {
                     defaultToken: 'string.unquoted'
                 }
             ],
             header: [
-                //Exit
+                // Exit
                 {
                     token: 'text',
                     regex: /$/,
                     next: 'start'
                 },
-                //Operators
+                // Operators
                 {
                     token: 'keyword.operator',
                     regex: /,/
                 },
-                //NSFW flag
+                // NSFW header
                 {
                     token: 'keyword.other',
                     regex: /NSFW!/
                 },
-                //Header text (default)
+                // Header text (default)
                 {
                     defaultToken: 'text'
                 }
             ],
             double_hash: [
-                //Exit
+                // Exit
                 {
                     token: 'text',
                     regex: /$/,
                     next: 'start'
                 },
-                //Script inject
+                // Script inject
                 {
                     token: 'keyword.control',
                     regex: /script:inject\(/,
                     next: 'script_inject_part1'
                 },
-                //CSS (default)
+                // CSS (default)
                 {
                     defaultToken: 'constant.character'
                 }
             ],
             script_inject_part1: [
-                //Exit
+                // Exit
                 {
                     // TODO 2017-12-07: Is this right? Need to investigate how
                     // uBlock Origin process commas
@@ -118,26 +118,26 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     next: 'start'
                 },
                 {
-                    //Unexpected line break
+                    // Unexpected line break
                     token: 'invalid.illegal',
                     regex: /.?$/,
                     next: 'start'
                 },
-                //Parameters
+                // Parameters
                 {
                     token: 'keyword.operator',
                     regex: /,/,
                     next: 'script_inject_part2'
                 },
-                //Scriplet name (default)
+                // Scriplet name (default)
                 {
                     defaultToken: 'variable.other'
                 }
             ],
             script_inject_part2: [
-                //Exit
+                // Exit
                 {
-                    //Missing parentheses
+                    // Missing parentheses
                     token: 'invalid.illegal',
                     regex: /[^\)]?$/,
                     next: 'start'
@@ -147,13 +147,13 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /\)$/,
                     next: 'start'
                 },
-                //Parameters (default)
+                // Parameters (default)
                 {
                     defaultToken: 'constant.character'
                 }
             ],
             options: [
-                //Exit
+                // Exit
                 {
                     token: 'invalid.illegal',
                     regex: /,$/,
@@ -164,50 +164,50 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /$/,
                     next: 'start'
                 },
-                //Operators
+                // Operators
                 {
                     token: 'keyword.operator',
                     regex: /,/
                 },
-                //Modifiers
+                // Modifiers
                 {
                     token: 'keyword.control',
                     regex: /document|~?first-party|~?third-party|important|badfilter/
                 },
-                //Actions
+                // Actions
                 {
                     token: 'variable.other',
                     regex: /popup|popunder|generichide|inline-script/
                 },
-                //Types
+                // Types
                 {
-                    //Compatible layer
+                    // Compatibility layer
                     token: 'variable.parameter',
                     regex: /beacon|ping|elemhide|~?object-subrequest/
                 },
                 {
-                    //Resource type
+                    // Resource type
                     token: 'variable.parameter',
                     regex: /~?(?:font|image|media|object|script|stylesheet|subdocument|xmlhttprequest)/
                 },
                 {
-                    //Special types
+                    // Special types
                     token: 'variable.parameter',
                     regex: /websocket|webrtc|data|other/
                 },
-                //Redirect
+                // Redirect
                 {
                     token: 'keyword.language',
                     regex: /redirect=/,
                     next: 'options_redirect'
                 },
-                //Domains restriction
+                // Domains restriction
                 {
                     token: 'keyword.language',
                     regex: /domain=/,
                     next: 'options_domain'
                 },
-                //CSP
+                // CSP
                 {
                     token: 'keyword.language',
                     regex: /csp=/,
@@ -217,13 +217,13 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     token: 'keyword.language',
                     regex: /csp/
                 },
-                //Invalid (default)
+                // Invalid (default)
                 {
                     defaultToken: 'invalid.illegal'
                 }
             ],
             options_redirect: [
-                //Exit
+                // Exit
                 {
                     token: 'invalid.illegal',
                     regex: /,$/,
@@ -234,19 +234,19 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /$/,
                     next: 'start'
                 },
-                //Operators
+                // Operators
                 {
                     token: 'keyword.operator',
                     regex: /,/,
                     next: 'options'
                 },
-                //Redirect resource name (default)
+                // Redirect resource name (default)
                 {
                     defaultToken: 'variable.language',
                 }
             ],
             options_domain: [
-                //Exit
+                // Exit
                 {
                     token: 'invalid.illegal',
                     regex: /,$/,
@@ -257,19 +257,19 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /$/,
                     next: 'start'
                 },
-                //Operators
+                // Operators
                 {
                     token: 'keyword.operator',
                     regex: /,/,
                     next: 'options'
                 },
-                //Domains (default)
+                // Domains (default)
                 {
                     defaultToken: 'string.unquoted'
                 }
             ],
             options_csp: [
-                //Exit
+                // Exit
                 {
                     token: 'invalid.illegal',
                     regex: /,$/,
@@ -280,13 +280,13 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /$/,
                     next: 'start'
                 },
-                //Operators
+                // Operators
                 {
                     token: 'keyword.operator',
                     regex: /,/,
                     next: 'options'
                 },
-                //CSP text (default)
+                // CSP text (default)
                 {
                     defaultToken: 'constant.character'
                 }
