@@ -23,7 +23,7 @@ Available since 1.0.0.6
 
 ## Change Log
 
-Housekeeping (renaming, formatting, minor UI tweak, etc.) changes are not listed here. 
+Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) changes are not listed here. 
 
 - Optimize shortcut keys for Nano Filter IDE
   - [`66c2bafcecdc2813f331d198f1bf4aead797e829`](https://github.com/NanoAdblocker/NanoCore/commit/66c2bafcecdc2813f331d198f1bf4aead797e829)
