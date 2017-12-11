@@ -1,13 +1,15 @@
 <!--
 More information you provide faster will your issue be resolved!
+For missed ad, popup, anti-adblock, and site breakage please open issue in NanoFilters instead:
+https://github.com/NanoAdblocker/NanoFilters/issues
 -->
 ### Describe the issue (Required)
 
 
-### URLs where this issue occurs (Required)
-
-
 ### Screenshots (Required)
+
+
+### URLs where this issue occurs (Required if applicable)
 
 
 ### Reproduction Steps (Optional if trivial)
