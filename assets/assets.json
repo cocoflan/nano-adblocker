@@ -589,24 +589,6 @@
     "contentURL": "https://raw.githubusercontent.com/MajkiIT/polish-ads-filter/master/polish-adblock-filters/adblock_ublock.txt",
     "supportURL": "https://github.com/MajkiIT/polish-ads-filter/issues"
   },
-  "POL-2": {
-    "content": "filters",
-    "group": "regions",
-    "off": true,
-    "title": "POL: Popup Blocker PLUS",
-    "lang": "pl",
-    "contentURL": "https://raw.githubusercontent.com/azet12/PopupBlocker/master/PPB.txt",
-    "supportURL": "https://github.com/azet12/PopupBlocker/issues"
-  },
-  "POL-3": {
-    "content": "filters",
-    "group": "regions",
-    "off": true,
-    "title": "POL: Popup Blocker PLUS - uzupełnienie do uBlocka",
-    "lang": "pl",
-    "contentURL": "https://raw.githubusercontent.com/azet12/PopupBlocker/master/PPB_uBlock_AdGuard.txt",
-    "supportURL": "https://github.com/azet12/PopupBlocker/issues"
-  },
   "RUS-0": {
     "content": "filters",
     "group": "regions",
