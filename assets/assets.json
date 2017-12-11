@@ -53,6 +53,17 @@
     ],
     "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
   },
+  "nano-annoyance": {
+    "content": "filters",
+    "group": "default",
+    "title": "Nano filters – Annoyance",
+    "off": true,
+    "contentURL": [
+      "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoAnnoyance.txt",
+      "assets/NanoFilters/NanoAnnoyance.txt"
+    ],
+    "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
+  },
   "nano-defender": {
     "content": "filters",
     "group": "default",
