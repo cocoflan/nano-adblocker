@@ -183,7 +183,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 {
                     //Compatible layer
                     token: 'variable.parameter',
-                    regex: /beacon|ping|elemhide|object-subrequest/
+                    regex: /beacon|ping|elemhide|~?object-subrequest/
                 },
                 {
                     //Resource type
