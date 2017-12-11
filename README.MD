@@ -9,11 +9,11 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### Nano Filter IDE for My filters
+### Advanced Filter Viewer, powerful and blazing fast
 
-![Screenshot](https://i.imgur.com/KktoFJL.png)
+![Screenshot](https://i.imgur.com/fZh4Hqn.png)
 
-Available since 1.0.0.0
+Available since 1.0.0.10
 
 ### Even more [powerful resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt)
 
@@ -21,11 +21,11 @@ Available since 1.0.0.0
 
 Available since 1.0.0.6
 
-### Advanced Filter Viewer, powerful and blazing fast
+### Nano Filter IDE for My filters
 
-![Screenshot](https://i.imgur.com/fZh4Hqn.png)
+![Screenshot](https://i.imgur.com/KktoFJL.png)
 
-Available since 1.0.0.10
+Available since 1.0.0.0
 
 ## Change Log
 
