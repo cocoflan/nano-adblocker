@@ -21,7 +21,9 @@ Available since 1.0.0.0
 
 Available since 1.0.0.6
 
-### Blazing fast Filter Viewer, equipped with regular expression searching
+### Advanced Filter Viewer, powerful and blazing fast
+
+![Screenshot](https://i.imgur.com/fZh4Hqn.png)
 
 Available since 1.0.0.10
 
