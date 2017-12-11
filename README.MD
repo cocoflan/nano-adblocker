@@ -25,6 +25,11 @@ Available since 1.0.0.6
 
 Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) changes are not listed here. 
 
+- Optimize Nano Filter Viewer
+  - [`5da9e0e7f463c7d7c15629f6c94d42988bd9738e`](https://github.com/NanoAdblocker/NanoCore/commit/5da9e0e7f463c7d7c15629f6c94d42988bd9738e)
+  - [`c4267e09fe1ec2d74c6b8c2ecf6774bac2f54186`](https://github.com/NanoAdblocker/NanoCore/commit/c4267e09fe1ec2d74c6b8c2ecf6774bac2f54186)
+  - [`23012e42703e57e6327d1efbde962e0e00dacf30`](https://github.com/NanoAdblocker/NanoCore/commit/23012e42703e57e6327d1efbde962e0e00dacf30)
+
 - Optimize shortcut keys for Nano Filter IDE
   - [`66c2bafcecdc2813f331d198f1bf4aead797e829`](https://github.com/NanoAdblocker/NanoCore/commit/66c2bafcecdc2813f331d198f1bf4aead797e829)
   - [`4e9e4e9f6c7ba1eb625c893964073e8639b811d5`](https://github.com/NanoAdblocker/NanoCore/commit/4e9e4e9f6c7ba1eb625c893964073e8639b811d5)
