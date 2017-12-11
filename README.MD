@@ -21,6 +21,10 @@ Available since 1.0.0.0
 
 Available since 1.0.0.6
 
+### Blazing fast Filter Viewer, equipped with regular expression searching
+
+Available since 1.0.0.10
+
 ## Change Log
 
 Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) changes are not listed here. 
