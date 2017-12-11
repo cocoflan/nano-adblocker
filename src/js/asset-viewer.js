@@ -30,7 +30,11 @@
 /******************************************************************************/
 
 var onAssetContentReceived = function(details) {
-    uDom('#content').text(details && (details.content || ''));
+    if ( details && details.content ) {
+        var editor = ace.edit('content');
+        nanoIDE.init(editor, true, true);
+        editor.setValue(details.content, -1);
+    }
 };
 
 /******************************************************************************/
