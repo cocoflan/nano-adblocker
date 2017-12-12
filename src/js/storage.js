@@ -881,6 +881,8 @@
     };
     
     // Patch 2017-12-09: Add nano-resources
+    // Must load after ublock-resources so we can override their resources if
+    // needed
     var onNanoResourcesLoaded = function(details) {
         if ( details.content !== '' ) {
             content += '\n\n' + details.content;
