@@ -446,6 +446,7 @@ var getAssetSourceRegistry = function(callback) {
     var registryReady = function() {
         var callers = assetSourceRegistryStatus;
         assetSourceRegistryStatus = 'ready';
+        // TODO 2017-12-12: Woudln't a for...of loop be better?
         var fn;
         while ( (fn = callers.shift()) ) {
             fn(assetSourceRegistry);

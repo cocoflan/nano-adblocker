@@ -1,7 +1,6 @@
 {
   "assets.json": {
     "content": "internal",
-    "updateAfter": 7,
     "contentURL": [
       "https://raw.githubusercontent.com/NanoAdblocker/NanoCore/master/assets/assets.json",
       "assets/assets.json"
@@ -17,7 +16,6 @@
   },
   "ublock-resources": {
     "content": "internal",
-    "updateAfter": 7,
     "contentURL": [
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/resources.txt",
       "assets/ThirdParty/uBlockResources.txt"
@@ -25,7 +23,6 @@
   },
   "nano-resources": {
     "content": "internal",
-    "updateAfter": 7,
     "contentURL": [
       "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoResources.txt",
       "assets/NanoFilters/NanoResources.txt"
@@ -310,7 +307,7 @@
   "dpollock-0": {
     "content": "filters",
     "group": "multipurpose",
-    "updateAfter": 7,
+    "updateAfter": 5,
     "off": true,
     "title": "Dan Pollock’s hosts file",
     "contentURL": "http://someonewhocares.org/hosts/hosts",
@@ -319,7 +316,7 @@
   "hphosts": {
     "content": "filters",
     "group": "multipurpose",
-    "updateAfter": 7,
+    "updateAfter": 5,
     "off": true,
     "title": "hpHosts’ Ad and tracking servers",
     "contentURL": [
@@ -331,7 +328,7 @@
   "mvps-0": {
     "content": "filters",
     "group": "multipurpose",
-    "updateAfter": 7,
+    "updateAfter": 5,
     "off": true,
     "title": "MVPS HOSTS",
     "contentURL": "http://winhelp2002.mvps.org/hosts.txt",
@@ -340,7 +337,7 @@
   "plowe-0": {
     "content": "filters",
     "group": "multipurpose",
-    "updateAfter": 7,
+    "updateAfter": 5,
     "title": "Peter Lowe’s Ad and tracking server list",
     "contentURL": [
       "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
