@@ -11,19 +11,19 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### Advanced Filter Viewer, powerful and blazing fast
+### Nano Filter Viewer, powerful and blazing fast
 
 ![Screenshot](https://i.imgur.com/fZh4Hqn.png)
 
 Available since 1.0.0.10
 
-### Even more [powerful resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt)
+### [Nano Extra Resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt), useful and configurable
 
 ![Screenshot](https://i.imgur.com/0HIYf4d.png)
 
 Available since 1.0.0.6
 
-### Nano Filter IDE for My filters
+### Nano Filter IDE, beautiful and helpful
 
 ![Screenshot](https://i.imgur.com/KktoFJL.png)
 
