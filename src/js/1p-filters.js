@@ -29,8 +29,7 @@
 
 /******************************************************************************/
 
-var editor = ace.edit('userFilters');
-nanoIDE.init(editor, true, false);
+var editor = nanoIDE.init('userFilters', true, false);
 
 /******************************************************************************/
 

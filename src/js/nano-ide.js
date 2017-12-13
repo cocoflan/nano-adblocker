@@ -6,7 +6,9 @@ self.nanoIDE = self.nanoIDE || {};
 
 /******************************************************************************/
 
-self.nanoIDE.init = function(editor, highlight, readonly) {
+self.nanoIDE.init = function(element, highlight, readonly) {
+    self.nanoIDE.editor = ace.edit(element);
+    var editor = self.nanoIDE.editor;
     var session = editor.getSession();
 
     if ( highlight ) {
@@ -31,4 +33,6 @@ self.nanoIDE.init = function(editor, highlight, readonly) {
     }
 
     editor.$blockScrolling = Infinity;
+
+    return editor;
 };
