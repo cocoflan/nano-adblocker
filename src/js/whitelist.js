@@ -54,6 +54,8 @@ var whitelistChanged = (function() {
         editor.session.setAnnotations(badLines.errors.concat(badLines.warnings));
     };
 
+    // TODO 2017-12-13: Why are we passing it over messaging? Why not lint it
+    // right here?
     var validate = function() {
         timer = undefined;
         messaging.send(
