@@ -82,7 +82,10 @@ var i18nPlaceholders = {
         'works the same.',
     
     'whitelistLinterAborted': 'Nano did not scan the rest of the lines ' +
-        'because there are too many errors.',
+        ' for errors because there are too many errors.',
+    'whitelistLinterTooManyWarnings': 'Nano did not scan the rest of the ' +
+        'lines for warnings because there are too many warnings.',
+    
     'whitelistLinterInvalidHostname': 'This host name is not valid.',
     'whitelistLinterInvalidRegExp': 'This regular expression is not valid.',
     'whitelistLinterInvalidURL': 'This URL is not valid.',

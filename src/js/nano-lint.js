@@ -25,6 +25,17 @@ nano.WhitelistLinter.prototype.reset = function() {
 /******************************************************************************/
 
 nano.WhitelistLinter.prototype.lint = function(line, lineNum) {
+    if ( this.warnings.length > 100 ) {
+        return;
+    } else if ( this.warnings.length === 100 ) {
+        this.warnings.push({
+            row: lineNum,
+            type: 'warning',
+            text: vAPI.i18n('whitelistLinterTooManyWarnings')
+        });
+        return;
+    }
+    
     if ( this.reSuspeciousRegExp.test(line) ) {
         this.warnings.push({
             row: lineNum,
