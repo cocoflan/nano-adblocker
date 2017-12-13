@@ -269,7 +269,7 @@ var matchBucket = function(url, hostname, bucket, start) {
 µBlock.validateWhitelistString = function(s) {
     // Patch 2017-12-12: Mark the lines (up to first 10) that are bad
     // This function used to return boolean but not anymore, need to watch out
-    // for that
+    // for that when taking upstream patches
     var currLineNum = 0;
     var badLines = [];
     
@@ -289,6 +289,7 @@ var matchBucket = function(url, hostname, bucket, start) {
                     type: 'error',
                     text: vAPI.i18n('whitelistLinterInvalidHostname')
                 });
+                continue;
             }
         } else if ( line.length > 2 && line.startsWith('/') && line.endsWith('/') ) { // Regex-based
             try {
@@ -299,6 +300,7 @@ var matchBucket = function(url, hostname, bucket, start) {
                     type: 'error',
                     text: vAPI.i18n('whitelistLinterInvalidRegExp')
                 });
+                continue;
             }
         } else if ( reHostnameExtractor.test(line) === false ) { // URL
             badLines.push({
@@ -306,6 +308,7 @@ var matchBucket = function(url, hostname, bucket, start) {
                 type: 'error',
                 text: vAPI.i18n('whitelistLinterInvalidURL')
             });
+            continue;
         }
         
         nano.whitelistLinter.lint(line, currLineNum - 1);

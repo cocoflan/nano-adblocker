@@ -41,8 +41,6 @@ var editor = nanoIDE.init('whitelist', false, false);
 
 var whitelistChanged = (function() {
     var changedWhitelist, notChanged, timer;
-    
-    var errMsg = vAPI.i18n('whitelistTooltipGenericError');
 
     var updateUI = function(badLines) {
         uDom.nodeFromId('whitelistRevert').disabled = notChanged;
