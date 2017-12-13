@@ -11,7 +11,7 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### \[Work in progress\] Nano Linter, neat and saves frustration
+### \[Work in progress\] Nano Filter Linter, neat and saves frustration
 
 ![Screenshot](https://i.imgur.com/oxKF1mj.png)
 
@@ -29,7 +29,7 @@ Available since 1.0.0.10
 
 Available since 1.0.0.6
 
-### Nano Filter IDE, beautiful and helpful
+### Nano Filter Highlighter, beautiful and helpful
 
 ![Screenshot](https://i.imgur.com/KktoFJL.png)
 
