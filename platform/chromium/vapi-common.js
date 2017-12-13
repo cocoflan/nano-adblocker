@@ -80,12 +80,20 @@ var i18nPlaceholders = {
     '1pResourcesPeriod': '.',
     '1pIDEHelp': 'Nano Filter IDE is powered by Ace and most shortcut keys ' +
         'works the same.',
-    'whitelistTooltipGenericError': 'This is not a valid white list matcher.'
+    
+    'whitelistLinterAborted': 'Nano did not scan the rest of the lines ' +
+        'because there are too many errors.',
+    'whitelistLinterInvalidHostname': 'This host name is not valid.',
+    'whitelistLinterInvalidRegExp': 'This regular expression is not valid.',
+    'whitelistLinterInvalidURL': 'This URL is not valid.',
+    
+    'whitelistLinterSuspeciousRegExp': 'This line is treated as a regular ' +
+        'expression, is that intended?'
 };
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
 // are way too many locale files
-var i18nReplaceMatcher1 = /uBlock\u2080|uBO/g;
+var i18nReplaceMatcher1 = /uBlock\u2080?|uBO|uBlock Origin/g;
 var i18nReplaceMatcher2 = /ublock/g;
 vAPI.i18n = function(name, substitutions) {
     if ( i18nPlaceholders.hasOwnProperty(name) ) {

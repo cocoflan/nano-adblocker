@@ -268,26 +268,63 @@ var matchBucket = function(url, hostname, bucket, start) {
 
 µBlock.validateWhitelistString = function(s) {
     // Patch 2017-12-12: Mark the lines (up to first 10) that are bad
-    var lineIter = new this.LineIterator(s), line;
+    // This function used to return boolean but not anymore, need to watch out
+    // for that
     var currLineNum = 0;
     var badLines = [];
+    
+    var lineIter = new this.LineIterator(s), line;
     while ( !lineIter.eot() && badLines.length < 10 ) {
         currLineNum++;
 
         line = lineIter.next().trim();
+        
         if ( line === '' ) { continue; }
         if ( line.startsWith('#') ) { continue; } // Comment
+        
         if ( line.indexOf('/') === -1 ) { // Plain hostname
-            if ( reInvalidHostname.test(line) ) { badLines.push(currLineNum); }
-            continue;
+            if ( reInvalidHostname.test(line) ) {
+                badLines.push({
+                    row: currLineNum - 1,
+                    type: 'error',
+                    text: vAPI.i18n('whitelistLinterInvalidHostname')
+                });
+            }
+        } else if ( line.length > 2 && line.startsWith('/') && line.endsWith('/') ) { // Regex-based
+            try {
+                new RegExp(line.slice(1, -1));
+            } catch(ex) {
+                badLines.push({
+                    row: currLineNum - 1,
+                    type: 'error',
+                    text: vAPI.i18n('whitelistLinterInvalidRegExp')
+                });
+            }
+        } else if ( reHostnameExtractor.test(line) === false ) { // URL
+            badLines.push({
+                row: currLineNum - 1,
+                type: 'error',
+                text: vAPI.i18n('whitelistLinterInvalidURL')
+            });
         }
-        if ( line.length > 2 && line.startsWith('/') && line.endsWith('/') ) { // Regex-based
-            try { new RegExp(line.slice(1, -1)); } catch(ex) { badLines.push(currLineNum); }
-            continue;
-        }
-        if ( reHostnameExtractor.test(line) === false ) { badLines.push(currLineNum); } // URL
+        
+        nano.whitelistLinter.lint(line, currLineNum - 1);
     }
-    return badLines;
+
+    var warnings = nano.whitelistLinter.warnings;
+    nano.whitelistLinter.reset();
+    if ( !lineIter.eot() ) {
+        warnings.push({
+            row: currLineNum,
+            type: 'warning',
+            text: vAPI.i18n('whitelistLinterAborted')
+        });
+    }
+    
+    return {
+        errors: badLines,
+        warnings: warnings
+    };
 };
 
 var reInvalidHostname = /[^a-z0-9.\-\[\]:]/,

@@ -54,7 +54,7 @@ self.nanoIDE.getLinuxValue = function() {
 
 /******************************************************************************/
 
-self.nanoIDE.setValueFocus = function(value, cursor) {
+self.nanoIDE.setValueFocus = function(value, cursor, keepAnnotation) {
     if ( cursor !== -1 ) {
         cursor = 1;
     }
@@ -62,4 +62,8 @@ self.nanoIDE.setValueFocus = function(value, cursor) {
     self.nanoIDE.editor.setValue(value, cursor);
     self.nanoIDE.editor.renderer.scrollCursorIntoView();
     self.nanoIDE.editor.focus();
+    
+    if ( !keepAnnotation ) {
+        self.nanoIDE.editor.session.clearAnnotations();
+    }
 };

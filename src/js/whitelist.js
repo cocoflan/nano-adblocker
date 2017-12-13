@@ -45,25 +45,15 @@ var whitelistChanged = (function() {
     var errMsg = vAPI.i18n('whitelistTooltipGenericError');
 
     var updateUI = function(badLines) {
-        debugger;
         uDom.nodeFromId('whitelistRevert').disabled = notChanged;
         
-        if ( badLines.length === 0 ) {
+        if ( badLines.errors.length === 0 ) {
             uDom.nodeFromId('whitelistApply').disabled = notChanged;
         } else {
             uDom.nodeFromId('whitelistApply').disabled = true;
         }
-        
-        var annotations = new Array(badLines.length);
-        for ( var i = 0; i < badLines.length; i++ ) {
-            // https://github.com/ajaxorg/ace/issues/2006
-            annotations[i] = {
-                row: badLines[i] - 1,
-                type: 'error',
-                text: errMsg
-            };
-        }
-        editor.session.setAnnotations(annotations);
+
+        editor.session.setAnnotations(badLines.errors.concat(badLines.warnings));
     };
 
     var validate = function() {
