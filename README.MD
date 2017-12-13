@@ -45,6 +45,7 @@ Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) chan
   - [`2e352be5ed905cc726c2f58bc0a3010cb622176b`](https://github.com/NanoAdblocker/NanoCore/commit/2e352be5ed905cc726c2f58bc0a3010cb622176b)
   - [`9de15dbd128570ce38a987c4b3f869f95aefb3fc`](https://github.com/NanoAdblocker/NanoCore/commit/9de15dbd128570ce38a987c4b3f869f95aefb3fc)
   - [`8c522c47ce4a7bfd6cb233001c674e4f63361dea`](https://github.com/NanoAdblocker/NanoCore/commit/8c522c47ce4a7bfd6cb233001c674e4f63361dea)
+  - [`00d0ef80fcbd8d83c448fe2baf9bce48ecac9d3d`](https://github.com/NanoAdblocker/NanoCore/commit/00d0ef80fcbd8d83c448fe2baf9bce48ecac9d3d)
 
 - Optimize Nano Filter Viewer
   - [`5da9e0e7f463c7d7c15629f6c94d42988bd9738e`](https://github.com/NanoAdblocker/NanoCore/commit/5da9e0e7f463c7d7c15629f6c94d42988bd9738e)
