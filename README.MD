@@ -11,7 +11,7 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
-### \[Work in progress\] Nano Linter, neat and save frustration
+### \[Work in progress\] Nano Linter, neat and saves frustration
 
 ![Screenshot](https://i.imgur.com/oxKF1mj.png)
 
