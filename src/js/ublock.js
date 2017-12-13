@@ -267,22 +267,27 @@ var matchBucket = function(url, hostname, bucket, start) {
 };
 
 µBlock.validateWhitelistString = function(s) {
+    // Patch 2017-12-12: Mark the lines (up to first 10) that are bad
     var lineIter = new this.LineIterator(s), line;
-    while ( !lineIter.eot() ) {
+    var currLineNum = 0;
+    var badLines = [];
+    while ( !lineIter.eot() && badLines.length < 10 ) {
+        currLineNum++;
+        
         line = lineIter.next().trim();
         if ( line === '' ) { continue; }
         if ( line.startsWith('#') ) { continue; } // Comment
         if ( line.indexOf('/') === -1 ) { // Plain hostname
-            if ( reInvalidHostname.test(line) ) { return false; }
+            if ( reInvalidHostname.test(line) ) { badLines.push(currLineNum); }
             continue;
         }
         if ( line.length > 2 && line.startsWith('/') && line.endsWith('/') ) { // Regex-based
-            try { new RegExp(line.slice(1, -1)); } catch(ex) { return false; }
+            try { new RegExp(line.slice(1, -1)); } catch(ex) { badLines.push(currLineNum); }
             continue;
         }
-        if ( reHostnameExtractor.test(line) === false ) { return false; } // URL
+        if ( reHostnameExtractor.test(line) === false ) { badLines.push(currLineNum); } // URL
     }
-    return true;
+    return badLines;
 };
 
 var reInvalidHostname = /[^a-z0-9.\-\[\]:]/,

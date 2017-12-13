@@ -657,7 +657,7 @@
 
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
-        // This happens for assets which do not exist, ot assets with no
+        // This happens for assets which do not exist, or assets with no
         // content.
         var toLoad = [];
         for ( var assetKey in lists ) {

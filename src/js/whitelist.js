@@ -34,36 +34,34 @@ var messaging = vAPI.messaging,
 
 /******************************************************************************/
 
-var getTextareaNode = function() {
-    var me = getTextareaNode,
-        node = me.theNode;
-    if ( node === undefined ) {
-        node = me.theNode = uDom.nodeFromSelector('#whitelist textarea');
-    }
-    return node;
-};
-
-var setErrorNodeHorizontalOffset = function(px) {
-    var me = setErrorNodeHorizontalOffset,
-        offset = me.theOffset || 0;
-    if ( px === offset ) { return; }
-    var node = me.theNode;
-    if ( node === undefined ) {
-        node = me.theNode = uDom.nodeFromSelector('#whitelist textarea + div');
-    }
-    node.style.right = px + 'px';
-    me.theOffset = px;
-};
+// Patch 2017-12-12: Change textarea to IDE, and clearly mark lines that are bad
+var editor = nanoIDE.init('whitelist', false, false);
 
 /******************************************************************************/
 
 var whitelistChanged = (function() {
-    var changedWhitelist, changed, timer;
+    var changedWhitelist, notChanged, timer;
 
-    var updateUI = function(good) {
-        uDom.nodeFromId('whitelistApply').disabled = changed || !good;
-        uDom.nodeFromId('whitelistRevert').disabled = changed;
-        uDom.nodeFromId('whitelist').classList.toggle('invalid', !good);
+    var updateUI = function(badLines) {
+        debugger;
+        uDom.nodeFromId('whitelistRevert').disabled = notChanged;
+        
+        if ( badLines.length === 0 ) {
+            uDom.nodeFromId('whitelistApply').disabled = notChanged;
+        } else {
+            uDom.nodeFromId('whitelistApply').disabled = true;
+        }
+        
+        var annotations = new Array(badLines.length);
+        for ( var i = 0; i < badLines.length; i++ ) {
+            // https://github.com/ajaxorg/ace/issues/2006
+            annotations[i] = {
+                row: badLines[i],
+                type: 'error'
+                // TODO 2017-12-12: Add field 'text' which contains the error message
+            };
+        }
+        editor.session.setAnnotations(annotations);
     };
 
     var validate = function() {
@@ -76,12 +74,10 @@ var whitelistChanged = (function() {
     };
 
     return function() {
-        changedWhitelist = getTextareaNode().value.trim();
-        changed = changedWhitelist === cachedWhitelist;
+        changedWhitelist = nanoIDE.getLinuxValue().trim();
+        notChanged = changedWhitelist === cachedWhitelist;
         if ( timer !== undefined ) { clearTimeout(timer); }
-        timer = vAPI.setTimeout(validate, 251);
-        var textarea = getTextareaNode();
-        setErrorNodeHorizontalOffset(textarea.offsetWidth - textarea.clientWidth);
+        timer = vAPI.setTimeout(validate, 250);
     };
 })();
 
@@ -90,7 +86,8 @@ var whitelistChanged = (function() {
 var renderWhitelist = function() {
     var onRead = function(whitelist) {
         cachedWhitelist = whitelist.trim();
-        getTextareaNode().value = cachedWhitelist + '\n';
+        editor.setValue(cachedWhitelist + '\n', 1);
+        editor.renderer.scrollCursorIntoView();
         whitelistChanged();
     };
     messaging.send('dashboard', { what: 'getWhitelist' }, onRead);
@@ -100,8 +97,8 @@ var renderWhitelist = function() {
 
 var handleImportFilePicker = function() {
     var fileReaderOnLoadHandler = function() {
-        var textarea = getTextareaNode();
-        textarea.value = [textarea.value.trim(), this.result.trim()].join('\n').trim();
+        editor.setValue(nanoIDE.getLinuxValue().trim() + '\n' + this.result.trim(), 1);
+        editor.renderer.scrollCursorIntoView();
         whitelistChanged();
     };
     var file = this.files[0];
@@ -130,7 +127,7 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportWhitelistToFile = function() {
-    var val = getTextareaNode().value.trim();
+    var val = nanoIDE.getLinuxValue().trim();
     if ( val === '' ) { return; }
     var filename = vAPI.i18n('whitelistExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
@@ -144,7 +141,7 @@ var exportWhitelistToFile = function() {
 /******************************************************************************/
 
 var applyChanges = function() {
-    cachedWhitelist = getTextareaNode().value.trim();
+    cachedWhitelist = nanoIDE.getLinuxValue().trim();
     var request = {
         what: 'setWhitelist',
         whitelist: cachedWhitelist
@@ -153,25 +150,26 @@ var applyChanges = function() {
 };
 
 var revertChanges = function() {
-    getTextareaNode().value = cachedWhitelist + '\n';
+    editor.setValue(cachedWhitelist + '\n', 1);
+    editor.renderer.scrollCursorIntoView();
     whitelistChanged();
 };
 
 /******************************************************************************/
 
 var getCloudData = function() {
-    return getTextareaNode().value;
+    return nanoIDE.getLinuxValue();
 };
 
 var setCloudData = function(data, append) {
     if ( typeof data !== 'string' ) {
         return;
     }
-    var textarea = getTextareaNode();
     if ( append ) {
-        data = uBlockDashboard.mergeNewLines(textarea.value.trim(), data);
+        data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue().trim(), data);
     }
-    textarea.value = data.trim() + '\n';
+    editor.setValue(data.trim() + '\n', 1);
+    editor.renderer.scrollCursorIntoView();
     whitelistChanged();
 };
 
@@ -183,9 +181,9 @@ self.cloud.onPull = setCloudData;
 uDom('#importWhitelistFromFile').on('click', startImportFilePicker);
 uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportWhitelistToFile').on('click', exportWhitelistToFile);
-uDom('#whitelist textarea').on('input', whitelistChanged);
 uDom('#whitelistApply').on('click', applyChanges);
 uDom('#whitelistRevert').on('click', revertChanges);
+editor.session.on('change', whitelistChanged)
 
 renderWhitelist();
 

@@ -209,9 +209,7 @@ uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportUserFiltersToFile').on('click', exportUserFiltersToFile);
 uDom('#userFiltersApply').on('click', applyChanges);
 uDom('#userFiltersRevert').on('click', revertChanges);
-// TODO 2017-12-06: Check on every keystroke can get expensive real fast, any
-// better implementation?
-editor.getSession().on('change', userFiltersChanged);
+editor.session.on('change', userFiltersChanged);
 
 renderUserFilters(true);
 
