@@ -13,7 +13,7 @@ Please open an issue if there is something you want me to know.
 
 ### \[Work in progress\] Nano Filter Linter, neat and saves frustration
 
-![Screenshot](https://i.imgur.com/oxKF1mj.png)
+![Screenshot](https://i.imgur.com/IkTaEQ3.png)
 
 Partially available since 1.0.0.11
 
