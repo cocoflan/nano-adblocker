@@ -82,7 +82,7 @@ var i18nPlaceholders = {
         'works the same.',
     
     'whitelistLinterAborted': 'Nano did not scan the rest of the lines ' +
-        ' for errors because there are too many errors.',
+        'for errors because there are too many errors.',
     'whitelistLinterTooManyWarnings': 'Nano did not scan the rest of the ' +
         'lines for warnings because there are too many warnings.',
     
