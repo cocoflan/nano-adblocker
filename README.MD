@@ -11,6 +11,12 @@ Please open an issue if there is something you want me to know.
 
 ## Notable Change
 
+### \[Work in progress\] Nano Linter, neat and save frustration
+
+![Screenshot](https://i.imgur.com/oxKF1mj.png)
+
+Partially available since 1.0.0.11
+
 ### Nano Filter Viewer, powerful and blazing fast
 
 ![Screenshot](https://i.imgur.com/fZh4Hqn.png)
@@ -32,6 +38,11 @@ Available since 1.0.0.0
 ## Change Log
 
 Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) changes are not listed here. 
+
+- Add linter for white list
+  - [`333c389058e92a875d16d957d011c5d89313035c`](https://github.com/NanoAdblocker/NanoCore/commit/333c389058e92a875d16d957d011c5d89313035c)
+  - [`f61a57a25f637515e1fe84f657758b14cf4f30b8`](https://github.com/NanoAdblocker/NanoCore/commit/f61a57a25f637515e1fe84f657758b14cf4f30b8)
+  - [`2e352be5ed905cc726c2f58bc0a3010cb622176b`](https://github.com/NanoAdblocker/NanoCore/commit/2e352be5ed905cc726c2f58bc0a3010cb622176b)
 
 - Optimize Nano Filter Viewer
   - [`5da9e0e7f463c7d7c15629f6c94d42988bd9738e`](https://github.com/NanoAdblocker/NanoCore/commit/5da9e0e7f463c7d7c15629f6c94d42988bd9738e)
