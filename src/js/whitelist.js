@@ -41,6 +41,8 @@ var editor = nanoIDE.init('whitelist', false, false);
 
 var whitelistChanged = (function() {
     var changedWhitelist, notChanged, timer;
+    
+    var errMsg = vAPI.i18n('whitelistTooltipGenericError');
 
     var updateUI = function(badLines) {
         debugger;
@@ -56,9 +58,9 @@ var whitelistChanged = (function() {
         for ( var i = 0; i < badLines.length; i++ ) {
             // https://github.com/ajaxorg/ace/issues/2006
             annotations[i] = {
-                row: badLines[i],
-                type: 'error'
-                // TODO 2017-12-12: Add field 'text' which contains the error message
+                row: badLines[i] - 1,
+                type: 'error',
+                text: errMsg
             };
         }
         editor.session.setAnnotations(annotations);
@@ -86,8 +88,7 @@ var whitelistChanged = (function() {
 var renderWhitelist = function() {
     var onRead = function(whitelist) {
         cachedWhitelist = whitelist.trim();
-        editor.setValue(cachedWhitelist + '\n', 1);
-        editor.renderer.scrollCursorIntoView();
+        nanoIDE.setValueFocus(cachedWhitelist + '\n');
         whitelistChanged();
     };
     messaging.send('dashboard', { what: 'getWhitelist' }, onRead);
@@ -97,8 +98,7 @@ var renderWhitelist = function() {
 
 var handleImportFilePicker = function() {
     var fileReaderOnLoadHandler = function() {
-        editor.setValue(nanoIDE.getLinuxValue().trim() + '\n' + this.result.trim(), 1);
-        editor.renderer.scrollCursorIntoView();
+        nanoIDE.setValueFocus(nanoIDE.getLinuxValue().trim() + '\n' + this.result.trim());
         whitelistChanged();
     };
     var file = this.files[0];
@@ -150,8 +150,7 @@ var applyChanges = function() {
 };
 
 var revertChanges = function() {
-    editor.setValue(cachedWhitelist + '\n', 1);
-    editor.renderer.scrollCursorIntoView();
+    nanoIDE.setValueFocus(cachedWhitelist + '\n');
     whitelistChanged();
 };
 
@@ -168,8 +167,7 @@ var setCloudData = function(data, append) {
     if ( append ) {
         data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue().trim(), data);
     }
-    editor.setValue(data.trim() + '\n', 1);
-    editor.renderer.scrollCursorIntoView();
+    nanoIDE.setValueFocus(data.trim() + '\n');
     whitelistChanged();
 };
 

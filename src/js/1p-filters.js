@@ -56,12 +56,10 @@ function renderUserFilters(first) {
         if ( details.error ) { return; }
         cachedUserFilters = details.content.trim();
         if ( first ) {
-            editor.setValue(details.content + '\n', 1);
-            editor.focus();
+            nanoIDE.setValueFocus(details.content + '\n');
         } else {
-            editor.setValue(details.content, 1);
+            nanoIDE.setValueFocus(details.content);
         }
-        editor.renderer.scrollCursorIntoView();
         userFiltersChanged(false);
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);
@@ -104,8 +102,7 @@ var handleImportFilePicker = function() {
 
     var fileReaderOnLoadHandler = function() {
         var sanitized = abpImporter(this.result);
-        editor.setValue(editor.getValue().trim() + '\n' + sanitized, 1);
-        editor.renderer.scrollCursorIntoView();
+        nanoIDE.setValueFocus(editor.getValue().trim() + '\n' + sanitized);
         userFiltersChanged();
     };
     var file = this.files[0];
@@ -154,14 +151,12 @@ var applyChanges = function() {
         if ( details.error ) {
             return;
         }
-        editor.setValue(details.content, 1);
+        // TODO 2017-12-06: Maybe set the cursor back to its original position?
+        nanoIDE.setValueFocus(details.content);
         cachedUserFilters = details.content.trim();
         // Patch 2017-12-06: Add false as I just set the value to be the same
         userFiltersChanged(false);
         allFiltersApplyHandler();
-        // TODO 2017-12-06: Maybe set the cursor back to its original position?
-        editor.focus();
-        editor.renderer.scrollCursorIntoView();
     };
 
     var request = {
@@ -172,8 +167,7 @@ var applyChanges = function() {
 };
 
 var revertChanges = function() {
-    editor.setValue(cachedUserFilters + '\n', 1);
-    editor.renderer.scrollCursorIntoView();
+    nanoIDE.setValueFocus(cachedUserFilters + '\n');
     // Patch 2017-12-06: Add false as I just set the value to be the same
     userFiltersChanged(false);
 };
@@ -193,8 +187,7 @@ var setCloudData = function(data, append) {
     if ( append ) {
         data = uBlockDashboard.mergeNewLines(editor.getValue(), data);
     }
-    editor.setValue(data, 1);
-    editor.renderer.scrollCursorIntoView();
+    nanoIDE.setValueFocus(data);
     userFiltersChanged();
 };
 

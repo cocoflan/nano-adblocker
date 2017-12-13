@@ -30,9 +30,12 @@
 /******************************************************************************/
 
 var onAssetContentReceived = function(details) {
-    var editor = nanoIDE.init('content', true, true);
+    nanoIDE.init('content', true, true);
     if ( details && details.content ) {
-        editor.setValue(details.content, -1);
+        nanoIDE.setValueFocus(details.content, -1);
+    } else {
+        // TODO 2017-12-12: Maybe add an error message?
+        nanoIDE.setValueFocus('', -1);
     }
 };
 

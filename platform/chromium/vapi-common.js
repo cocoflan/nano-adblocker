@@ -79,7 +79,8 @@ var i18nPlaceholders = {
     '1pResourcesNano': 'Nano Adblocker Extra Resources',
     '1pResourcesPeriod': '.',
     '1pIDEHelp': 'Nano Filter IDE is powered by Ace and most shortcut keys ' +
-        'works the same.'
+        'works the same.',
+    'whitelistTooltipGenericError': 'This is not a valid white list matcher.'
 };
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there

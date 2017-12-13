@@ -51,3 +51,15 @@ self.nanoIDE.getLinuxValue = function() {
     }
     return data;
 };
+
+/******************************************************************************/
+
+self.nanoIDE.setValueFocus = function(value, cursor) {
+    if ( cursor !== -1 ) {
+        cursor = 1;
+    }
+    
+    self.nanoIDE.editor.setValue(value, cursor);
+    self.nanoIDE.editor.renderer.scrollCursorIntoView();
+    self.nanoIDE.editor.focus();
+};

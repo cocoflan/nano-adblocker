@@ -273,7 +273,7 @@ var matchBucket = function(url, hostname, bucket, start) {
     var badLines = [];
     while ( !lineIter.eot() && badLines.length < 10 ) {
         currLineNum++;
-        
+
         line = lineIter.next().trim();
         if ( line === '' ) { continue; }
         if ( line.startsWith('#') ) { continue; } // Comment
