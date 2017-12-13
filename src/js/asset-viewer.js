@@ -35,6 +35,7 @@ var onAssetContentReceived = function(details) {
         nanoIDE.setValueFocus(details.content, -1);
     } else {
         // TODO 2017-12-12: Maybe add an error message?
+        // Or keep it empty but annotate the line as error?
         nanoIDE.setValueFocus('', -1);
     }
 };

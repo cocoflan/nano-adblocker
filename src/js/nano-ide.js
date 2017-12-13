@@ -30,7 +30,7 @@ self.nanoIDE.init = function(element, highlight, readonly) {
         self.nanoIDE.isWindows = true;
         session.setNewLineMode('windows');
     } else {
-        self.nanoIDE.isWindows = true;
+        self.nanoIDE.isWindows = false;
         session.setNewLineMode('unix');
     }
 
