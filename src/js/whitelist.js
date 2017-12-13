@@ -115,7 +115,8 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportWhitelistToFile = function() {
-    var val = nanoIDE.getLinuxValue().trim();
+    // Patch 2017-12-13: Just get value, not Linux line ending value
+    var val = editor.getValue().trim();
     if ( val === '' ) { return; }
     var filename = vAPI.i18n('whitelistExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())

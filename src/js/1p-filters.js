@@ -174,7 +174,6 @@ var revertChanges = function() {
 
 /******************************************************************************/
 
-// TODO 2017-12-06: What is cloud?
 var getCloudData = function() {
     //return uDom.nodeFromId('userFilters').value;
     return editor.getValue();
