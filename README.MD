@@ -5,6 +5,9 @@ Just another adblocker
 Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock) and will stay in sync with latest features of uBlock 
 Origin. 
 
+Nano Adblocker currently aims at making filter maintenance easier, powerful tools are being rapidly developed to save your time, 
+frustration, and bandwidth. 
+
 Please open an issue if there is something you want me to know. 
 
 ### [Get it from Web Store](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
