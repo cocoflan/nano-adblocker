@@ -1,6 +1,11 @@
 <!--
 More information you provide faster will your issue be resolved!
-For missed ad, popup, anti-adblock, and site breakage please open issue in NanoFilters instead:
+
+For missed ad, popup, and hard (allow ads or leave type) anti-adblock, please open issue in uAssets instead:
+https://github.com/uBlockOrigin/uAssets
+uBlock Origin version that Nano Adblocker uses can be found in About section of Nano Dashboard.
+
+For soft anti-adblock, ads timer, and site breakage, please open issue in NanoFilters instead:
 https://github.com/NanoAdblocker/NanoFilters/issues
 -->
 ### Describe the issue (Required)
