@@ -39,8 +39,8 @@ ace.define('ace/mode/nano_filters', function(require, exports, module) {
     oop.inherits(exports.Mode, TextMode);
 });
 ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
-    const oop = ace.require('ace/lib/oop');
-    const TextHighlightRules = ace.require('ace/mode/text_highlight_rules')
+    var oop = ace.require('ace/lib/oop');
+    var TextHighlightRules = ace.require('ace/mode/text_highlight_rules')
         .TextHighlightRules;
     exports.HighlightRules = function() {
         this.$rules = {
