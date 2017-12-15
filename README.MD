@@ -12,9 +12,10 @@ Please open an issue if there is something you want me to know.
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
-<!--
-### [Get it for Edge (beta)](https://github.com/NanoAdblocker/NanoCore#how-to-install-nano-adblocker-on-edge)
--->
+### [\[Work in progress\] Get it for Firefox](https://github.com/NanoAdblocker/NanoCore/issues/41)
+
+### [\[Work in progress\] Get it for Edge (beta)](https://github.com/NanoAdblocker/NanoCore/issues/40)
+
 
 ## Notable Change
 
