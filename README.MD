@@ -12,7 +12,9 @@ Please open an issue if there is something you want me to know.
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
+<!--
 ### [Get it for Edge (beta)](https://github.com/NanoAdblocker/NanoCore#how-to-install-nano-adblocker-on-edge)
+-->
 
 ## Notable Change
 
@@ -90,6 +92,7 @@ Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) chan
   - [`78bc8c172016d868e9c5252f61d5765e0d8dd2c0`](https://github.com/NanoAdblocker/NanoCore/commit/78bc8c172016d868e9c5252f61d5765e0d8dd2c0)
   - [`7502bafcf8be88fea0ffb82dbb32ccd7edd96101`](https://github.com/NanoAdblocker/NanoCore/commit/7502bafcf8be88fea0ffb82dbb32ccd7edd96101)
 
+<!--
 ## How to install Nano Adblocker on Edge
 
 First, update your Windows to the latest version. 
@@ -97,3 +100,4 @@ First, update your Windows to the latest version.
 (TODO)
 
 ![Screenshot](https://i.imgur.com/Au1DzRT.png)
+-->
