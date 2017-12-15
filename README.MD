@@ -89,3 +89,11 @@ Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) chan
 - Make some build tools working on Windows 10
   - [`78bc8c172016d868e9c5252f61d5765e0d8dd2c0`](https://github.com/NanoAdblocker/NanoCore/commit/78bc8c172016d868e9c5252f61d5765e0d8dd2c0)
   - [`7502bafcf8be88fea0ffb82dbb32ccd7edd96101`](https://github.com/NanoAdblocker/NanoCore/commit/7502bafcf8be88fea0ffb82dbb32ccd7edd96101)
+
+## How to install Nano Adblocker on Edge
+
+First, update your Windows to the latest version. 
+
+(TODO)
+
+![Screenshot](https://i.imgur.com/Au1DzRT.png)
