@@ -10,7 +10,9 @@ frustration, and bandwidth.
 
 Please open an issue if there is something you want me to know. 
 
-### [Get it from Web Store](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
+### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
+
+### [Get it for Edge]()
 
 ## Notable Change
 
