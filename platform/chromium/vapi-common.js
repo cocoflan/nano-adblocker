@@ -65,7 +65,54 @@ vAPI.getURL = chrome.runtime.getURL;
 
 /******************************************************************************/
 
-vAPI.i18n = chrome.i18n.getMessage;
+// Patch 2017-12-07: Add a couple placeholders
+var i18nPlaceholders = {
+    'aboutBasedOn': 'Based on uBlock Origin v1.14.21.103',
+
+    'advancedSettingsAboutChanges': 'Nano Adblocker has different default ' +
+        'values than uBlock Origin for these settings, assetFetchTimeout ' +
+        'defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500.',
+
+    '1pResourcesReference': 'Nano Adblocker comes with two sets of resources,',
+    '1pResourcesAnd': 'and',
+    '1pResourcesOriginal': 'uBlock Origin Resources',
+    '1pResourcesNano': 'Nano Adblocker Extra Resources',
+    '1pResourcesPeriod': '.',
+    '1pIDEHelp': 'Nano Filter IDE is powered by Ace and most shortcut keys ' +
+        'works the same.',
+    
+    'whitelistLinterAborted': 'Nano did not scan the rest of the lines ' +
+        'for errors because there are too many errors.',
+    'whitelistLinterTooManyWarnings': 'Nano did not scan the rest of the ' +
+        'lines for warnings because there are too many warnings.',
+    
+    'whitelistLinterInvalidHostname': 'This host name is not valid.',
+    'whitelistLinterInvalidRegExp': 'This regular expression is not valid.',
+    'whitelistLinterInvalidURL': 'This URL is not valid.',
+    
+    'whitelistLinterSuspeciousRegExp': 'This line is treated as a regular ' +
+        'expression, is that intended?'
+};
+
+// Patch 2017-12-06: Patch name, this has a slight performance overhead but there
+// are way too many locale files
+var i18nReplaceMatcher1 = /uBlock\u2080?|uBO|uBlock Origin/g;
+var i18nReplaceMatcher2 = /ublock/g;
+vAPI.i18n = function(name, substitutions) {
+    if ( i18nPlaceholders.hasOwnProperty(name) ) {
+        return i18nPlaceholders[name];
+    }
+    
+    var data;
+    if ( substitutions === undefined ) {
+        data = chrome.i18n.getMessage(name);
+    } else {
+        data = chrome.i18n.getMessage(name, substitutions);
+    }
+    return data
+        .replace(i18nReplaceMatcher1, 'Nano')
+        .replace(i18nReplaceMatcher2, 'nano');
+};
 
 setScriptDirection(vAPI.i18n('@@ui_locale'));
 

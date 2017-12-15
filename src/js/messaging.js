@@ -121,7 +121,7 @@ var onMessage = function(request, sender, callback) {
 
     case 'forceUpdateAssets':
         µb.scheduleAssetUpdater(0);
-        µb.assets.updateStart({ delay: µb.hiddenSettings.manualUpdateAssetFetchPeriod || 2000 });
+        µb.assets.updateStart({ delay: µb.hiddenSettings.manualUpdateAssetFetchPeriod || 500 });
         break;
 
     case 'getAppData':
@@ -789,6 +789,7 @@ var restoreUserData = function(request) {
 var resetUserData = function() {
     vAPI.cacheStorage.clear();
     vAPI.storage.clear();
+    // TODO 2017-12-12: Why not remove everything?
     vAPI.localStorage.removeItem('hiddenSettings');
 
     // Keep global counts, people can become quite attached to numbers
@@ -936,8 +937,12 @@ var onMessage = function(request, sender, callback) {
         µb.assets.purge(request.assetKey);
         µb.assets.remove('compiled/' + request.assetKey);
         // https://github.com/gorhill/uBlock/pull/2314#issuecomment-278716960
-        if ( request.assetKey === 'ublock-filters' ) {
+        if ( request.assetKey.startsWith('ublock-') ) {
             µb.assets.purge('ublock-resources');
+        }
+        // Patch 2017-12-09: Do the same thing for Nano filters
+        if ( request.assetKey.startsWith('nano-') ) {
+            nano.assets.purge('nano-resources');
         }
         break;
 

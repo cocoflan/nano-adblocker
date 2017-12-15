@@ -32,12 +32,12 @@ var µBlock = (function() { // jshint ignore:line
         oneMinute = 60 * oneSecond;
 
     var hiddenSettingsDefault = {
-        assetFetchTimeout: 30,
+        assetFetchTimeout: 60,
         autoUpdateAssetFetchPeriod: 120,
         autoUpdatePeriod: 7,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
-        manualUpdateAssetFetchPeriod: 2000,
+        manualUpdateAssetFetchPeriod: 500,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset'
@@ -173,5 +173,10 @@ var µBlock = (function() { // jshint ignore:line
     };
 
 })();
+
+/******************************************************************************/
+
+// Patch 2017-12-07: Make debugging less painful
+var nano = µBlock;
 
 /******************************************************************************/

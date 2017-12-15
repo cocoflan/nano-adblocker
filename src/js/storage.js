@@ -657,7 +657,7 @@
 
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
-        // This happens for assets which do not exist, ot assets with no
+        // This happens for assets which do not exist, or assets with no
         // content.
         var toLoad = [];
         for ( var assetKey in lists ) {
@@ -879,15 +879,25 @@
         }
         onDone();
     };
-
-    var onResourcesLoaded = function(details) {
+    
+    // Patch 2017-12-09: Add nano-resources
+    // Must load after ublock-resources so we can override their resources if
+    // needed
+    var onNanoResourcesLoaded = function(details) {
         if ( details.content !== '' ) {
-            content = details.content;
+            content += '\n\n' + details.content;
         }
         if ( µb.hiddenSettings.userResourcesLocation === 'unset' ) {
             return onDone();
         }
         µb.assets.fetchText(µb.hiddenSettings.userResourcesLocation, onUserResourcesLoaded);
+    };
+
+    var onResourcesLoaded = function(details) {
+        if ( details.content !== '' ) {
+            content = details.content;
+        }
+        nano.assets.get('nano-resources', onNanoResourcesLoaded);
     };
 
     this.assets.get('ublock-resources', onResourcesLoaded);

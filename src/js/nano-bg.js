@@ -1,7 +1,7 @@
 /*******************************************************************************
 
-    uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Nano Adblocker - Just another adblocker
+    Copyright (C) 2017 Nano Adblocker contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,46 +16,36 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see {http://www.gnu.org/licenses/}.
 
-    Home: https://github.com/gorhill/uBlock
+    Home: https://github.com/NanoAdblocker/NanoCore
 */
 
-/* global uDom */
-
-/******************************************************************************/
-
-(function() {
+// For background page
 
 'use strict';
 
 /******************************************************************************/
 
-var onAssetContentReceived = function(details) {
-    nanoIDE.init('content', true, true);
-    if ( details && details.content ) {
-        nanoIDE.setValueFocus(details.content, -1);
-    } else {
-        // TODO 2017-12-12: Maybe add an error message?
-        // Or keep it empty but annotate the line as error?
-        nanoIDE.setValueFocus('', -1);
-    }
-};
+(function() {
 
 /******************************************************************************/
 
-var q = window.location.search;
-var matches = q.match(/^\?url=([^&]+)/);
-if ( !matches || matches.length !== 2 ) {
-    return;
-}
-
-vAPI.messaging.send(
-    'default',
-    {
-        what : 'getAssetContent',
-        url: decodeURIComponent(matches[1])
-    },
-    onAssetContentReceived
-);
+// Patch 2017-12-08: Add automatic configuration for Nano Defender integration
+vAPI.messaging.onNanoDefenderActivated(function(msg) {
+    if ( 
+        msg === 'Nano Defender Enabled' &&
+        !nano.selectedFilterLists.includes('nano-defender')
+    ) {
+        nano.saveSelectedFilterLists([ 'nano-defender' ], true);
+        var dispatchReload = function() {
+            if ( nano.loadingFilterLists ) {
+                setTimeout(dispatchReload, 500);
+            } else {
+                nano.loadFilterLists();
+            }
+        };
+        dispatchReload();
+    }
+});
 
 /******************************************************************************/
 

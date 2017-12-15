@@ -34,38 +34,28 @@ var messaging = vAPI.messaging,
 
 /******************************************************************************/
 
-var getTextareaNode = function() {
-    var me = getTextareaNode,
-        node = me.theNode;
-    if ( node === undefined ) {
-        node = me.theNode = uDom.nodeFromSelector('#whitelist textarea');
-    }
-    return node;
-};
-
-var setErrorNodeHorizontalOffset = function(px) {
-    var me = setErrorNodeHorizontalOffset,
-        offset = me.theOffset || 0;
-    if ( px === offset ) { return; }
-    var node = me.theNode;
-    if ( node === undefined ) {
-        node = me.theNode = uDom.nodeFromSelector('#whitelist textarea + div');
-    }
-    node.style.right = px + 'px';
-    me.theOffset = px;
-};
+// Patch 2017-12-12: Change textarea to IDE, and clearly mark lines that are bad
+var editor = nanoIDE.init('whitelist', false, false);
 
 /******************************************************************************/
 
 var whitelistChanged = (function() {
-    var changedWhitelist, changed, timer;
+    var changedWhitelist, notChanged, timer;
 
-    var updateUI = function(good) {
-        uDom.nodeFromId('whitelistApply').disabled = changed || !good;
-        uDom.nodeFromId('whitelistRevert').disabled = changed;
-        uDom.nodeFromId('whitelist').classList.toggle('invalid', !good);
+    var updateUI = function(badLines) {
+        uDom.nodeFromId('whitelistRevert').disabled = notChanged;
+        
+        if ( badLines.errors.length === 0 ) {
+            uDom.nodeFromId('whitelistApply').disabled = notChanged;
+        } else {
+            uDom.nodeFromId('whitelistApply').disabled = true;
+        }
+
+        editor.session.setAnnotations(badLines.errors.concat(badLines.warnings));
     };
 
+    // TODO 2017-12-13: Why are we passing it over messaging? Why not lint it
+    // right here?
     var validate = function() {
         timer = undefined;
         messaging.send(
@@ -76,12 +66,10 @@ var whitelistChanged = (function() {
     };
 
     return function() {
-        changedWhitelist = getTextareaNode().value.trim();
-        changed = changedWhitelist === cachedWhitelist;
+        changedWhitelist = nanoIDE.getLinuxValue().trim();
+        notChanged = changedWhitelist === cachedWhitelist;
         if ( timer !== undefined ) { clearTimeout(timer); }
-        timer = vAPI.setTimeout(validate, 251);
-        var textarea = getTextareaNode();
-        setErrorNodeHorizontalOffset(textarea.offsetWidth - textarea.clientWidth);
+        timer = vAPI.setTimeout(validate, 250);
     };
 })();
 
@@ -90,7 +78,7 @@ var whitelistChanged = (function() {
 var renderWhitelist = function() {
     var onRead = function(whitelist) {
         cachedWhitelist = whitelist.trim();
-        getTextareaNode().value = cachedWhitelist + '\n';
+        nanoIDE.setValueFocus(cachedWhitelist + '\n');
         whitelistChanged();
     };
     messaging.send('dashboard', { what: 'getWhitelist' }, onRead);
@@ -100,8 +88,7 @@ var renderWhitelist = function() {
 
 var handleImportFilePicker = function() {
     var fileReaderOnLoadHandler = function() {
-        var textarea = getTextareaNode();
-        textarea.value = [textarea.value.trim(), this.result.trim()].join('\n').trim();
+        nanoIDE.setValueFocus(nanoIDE.getLinuxValue().trim() + '\n' + this.result.trim());
         whitelistChanged();
     };
     var file = this.files[0];
@@ -130,7 +117,8 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportWhitelistToFile = function() {
-    var val = getTextareaNode().value.trim();
+    // Patch 2017-12-13: Just get value, not Linux line ending value
+    var val = editor.getValue().trim();
     if ( val === '' ) { return; }
     var filename = vAPI.i18n('whitelistExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
@@ -144,7 +132,7 @@ var exportWhitelistToFile = function() {
 /******************************************************************************/
 
 var applyChanges = function() {
-    cachedWhitelist = getTextareaNode().value.trim();
+    cachedWhitelist = nanoIDE.getLinuxValue().trim();
     var request = {
         what: 'setWhitelist',
         whitelist: cachedWhitelist
@@ -153,25 +141,24 @@ var applyChanges = function() {
 };
 
 var revertChanges = function() {
-    getTextareaNode().value = cachedWhitelist + '\n';
+    nanoIDE.setValueFocus(cachedWhitelist + '\n');
     whitelistChanged();
 };
 
 /******************************************************************************/
 
 var getCloudData = function() {
-    return getTextareaNode().value;
+    return nanoIDE.getLinuxValue();
 };
 
 var setCloudData = function(data, append) {
     if ( typeof data !== 'string' ) {
         return;
     }
-    var textarea = getTextareaNode();
     if ( append ) {
-        data = uBlockDashboard.mergeNewLines(textarea.value.trim(), data);
+        data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue().trim(), data);
     }
-    textarea.value = data.trim() + '\n';
+    nanoIDE.setValueFocus(data.trim() + '\n');
     whitelistChanged();
 };
 
@@ -183,9 +170,9 @@ self.cloud.onPull = setCloudData;
 uDom('#importWhitelistFromFile').on('click', startImportFilePicker);
 uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportWhitelistToFile').on('click', exportWhitelistToFile);
-uDom('#whitelist textarea').on('input', whitelistChanged);
 uDom('#whitelistApply').on('click', applyChanges);
 uDom('#whitelistRevert').on('click', revertChanges);
+editor.session.on('change', whitelistChanged)
 
 renderWhitelist();
 

@@ -17,7 +17,8 @@ with open(manifest_in_file) as f1:
 
 # Development build? If so, modify name accordingly.
 match = re.search('^\d+\.\d+\.\d+\.\d+$', manifest_in['version'])
-if match:
+# Patch 2017-12-06: Disable dev build renaming
+if match and not match:
     build_dir = os.path.abspath(sys.argv[1])
     dev_build = ' dev build'
     manifest_out = {}
