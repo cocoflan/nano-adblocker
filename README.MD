@@ -14,7 +14,7 @@ Please open an issue if there is something you want me to know.
 
 ### [\[Work in progress\] Get it for Firefox](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
-### [\[Work in progress\] Get it for Edge (beta)](https://github.com/NanoAdblocker/NanoCore/issues/40)
+### [\[Work in progress\] Get it for Edge](https://github.com/NanoAdblocker/NanoCore/issues/40)
 
 
 ## Notable Change
