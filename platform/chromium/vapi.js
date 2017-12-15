@@ -54,3 +54,15 @@ if (
 }
 
 /******************************************************************************/
+
+// Patch 2017-12-14: See how compatible Edge is
+if (
+    navigator.userAgent.includes('Edge') &&
+    typeof browser === 'object' &&
+    typeof edge === 'undefined'
+) {
+    window.edge = chrome;
+    chrome = browser;
+}
+
+/******************************************************************************/

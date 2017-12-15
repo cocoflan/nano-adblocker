@@ -31,7 +31,8 @@
 
     "author": "All Nano Adblocker and uBlock Origin contributors",
     "background": {
-        "page": "background.html"
+        "page": "background.html",
+        "persistent": true
     },
     "content_scripts": [
         {
