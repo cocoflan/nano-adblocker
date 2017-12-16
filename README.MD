@@ -8,9 +8,11 @@ Origin.
 Nano Adblocker currently aims at making filter maintenance easier, powerful tools are being rapidly developed to save your time, 
 frustration, and bandwidth. 
 
-If something is obviously broken then we would have already noticed it. If you are losing settings reliably or things does not work 
-at all, then it is likely a problem with a third-party cleaner or anti-virus that you have. Microsoft's own cleaner and anti-virus 
-are known to not cause problems. 
+<!--
+If something is obviously broken then we would have already noticed it. If something does not work at all, then it is likely a 
+problem with a third-party cleaner or anti-virus that you have. Microsoft's own cleaner and anti-virus are known to not cause 
+problems. 
+-->
 
 Please open an issue if there is something you want us to know. 
 
@@ -95,13 +97,3 @@ Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) chan
 - Make some build tools working on Windows 10
   - [`78bc8c172016d868e9c5252f61d5765e0d8dd2c0`](https://github.com/NanoAdblocker/NanoCore/commit/78bc8c172016d868e9c5252f61d5765e0d8dd2c0)
   - [`7502bafcf8be88fea0ffb82dbb32ccd7edd96101`](https://github.com/NanoAdblocker/NanoCore/commit/7502bafcf8be88fea0ffb82dbb32ccd7edd96101)
-
-<!--
-## How to install Nano Adblocker on Edge
-
-First, update your Windows to the latest version. 
-
-(TODO)
-
-![Screenshot](https://i.imgur.com/Au1DzRT.png)
--->
