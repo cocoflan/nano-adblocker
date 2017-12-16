@@ -44,6 +44,11 @@ vAPI.messaging.onNanoDefenderActivated(function(msg) {
                 return;
             }
             
+            if ( nano.selectedFilterLists.length === 0 ) {
+                // Something is obviously wrong
+                return;
+            }
+            
             nano.saveSelectedFilterLists([ 'nano-defender' ], true);
             var dispatchReload = function() {
                 if ( nano.loadingFilterLists ) {
