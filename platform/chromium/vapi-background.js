@@ -938,7 +938,7 @@ vAPI.messaging.broadcast = function(message) {
 /******************************************************************************/
 
 // Patch 2017-12-08: Add automatic configuration for Nano Defender integration
-vAPI.messaging.onNanoDefenderActivated = (function() {
+vAPI.messaging.onNanoDefenderConnection = (function() {
     var callbacks = [];
     
     chrome.runtime.onMessageExternal.addListener(function(msg, sender, response) {

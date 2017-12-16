@@ -30,7 +30,7 @@
 /******************************************************************************/
 
 // Patch 2017-12-08: Add automatic configuration for Nano Defender integration
-vAPI.messaging.onNanoDefenderActivated(function(msg) {
+vAPI.messaging.onNanoDefenderConnection(function(msg) {
     if ( msg === 'Nano Defender Enabled' ) {
         var performConfiguration = function() {
             if ( nano.selectedFilterLists.includes('nano-defender') ) {
