@@ -31,19 +31,30 @@
 
 // Patch 2017-12-08: Add automatic configuration for Nano Defender integration
 vAPI.messaging.onNanoDefenderActivated(function(msg) {
-    if ( 
-        msg === 'Nano Defender Enabled' &&
-        !nano.selectedFilterLists.includes('nano-defender')
-    ) {
-        nano.saveSelectedFilterLists([ 'nano-defender' ], true);
-        var dispatchReload = function() {
-            if ( nano.loadingFilterLists ) {
-                setTimeout(dispatchReload, 500);
-            } else {
-                nano.loadFilterLists();
+    if ( msg === 'Nano Defender Enabled' ) {
+        var performConfiguration = function() {
+            if ( nano.selectedFilterLists.includes('nano-defender') ) {
+                return;
             }
+            
+            // Make sure to keep this fixed:
+            // https://github.com/NanoAdblocker/NanoCore/issues/49
+            if ( !nano.selectedFilterListsLoaded ) {
+                setTimeout(performConfiguration, 500);
+                return;
+            }
+            
+            nano.saveSelectedFilterLists([ 'nano-defender' ], true);
+            var dispatchReload = function() {
+                if ( nano.loadingFilterLists ) {
+                    setTimeout(dispatchReload, 500);
+                } else {
+                    nano.loadFilterLists();
+                }
+            };
+            dispatchReload();
         };
-        dispatchReload();
+        performConfiguration();
     }
 });
 
