@@ -8,11 +8,11 @@ Origin.
 Nano Adblocker currently aims at making filter maintenance easier, powerful tools are being rapidly developed to save your time, 
 frustration, and bandwidth. 
 
-If something is obviously broken then I would have already noticed it. If you are losing settings reliably or things does not work 
+If something is obviously broken then we would have already noticed it. If you are losing settings reliably or things does not work 
 at all, then it is likely a problem with a third-party cleaner or anti-virus that you have. Microsoft's own cleaner and anti-virus 
 are known to not cause problems. 
 
-Please open an issue if there is something you want me to know. 
+Please open an issue if there is something you want us to know. 
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
