@@ -8,6 +8,10 @@ Origin.
 Nano Adblocker currently aims at making filter maintenance easier, powerful tools are being rapidly developed to save your time, 
 frustration, and bandwidth. 
 
+If something is obviously broken I would already have noticed it. If you are losing settings reliably or things does not work 
+at all, then it is likely a problem with a third-party cleaner or anti-virus that you have. Microsoft's own cleaner and anti-virus 
+is verified to not cause problem. 
+
 Please open an issue if there is something you want me to know. 
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
@@ -15,7 +19,6 @@ Please open an issue if there is something you want me to know.
 ### [\[Work in progress\] Get it for Firefox](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
 ### [\[Work in progress\] Get it for Edge](https://github.com/NanoAdblocker/NanoCore/issues/40)
-
 
 ## Notable Change
 
