@@ -173,6 +173,10 @@
             // Select default filter lists if first-time launch.
             µb.assets.metadata(function(availableLists) {
                 µb.saveSelectedFilterLists(µb.autoSelectRegionalFilterLists(availableLists));
+                
+                // Patch 2017-12-16: Fix potential race condition on slow devices
+                //console.log(nano.selectedFilterLists);
+                nano.selectedFilterListsLoaded = true;
                 callback();
             });
             return;
@@ -192,9 +196,8 @@
         }
         µb.selectedFilterLists = listKeys;
         
-        // Patch 2017-12-16: Fix potential race condition on slow devices
+        //console.log(nano.selectedFilterLists);
         nano.selectedFilterListsLoaded = true;
-        
         callback();
     });
 };
