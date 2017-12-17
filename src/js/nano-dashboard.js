@@ -42,6 +42,22 @@ const drawActionBtns = (() => {
     };
 })();
 
+const closeDrawer = (() => {
+    let backdrop = null;
+    return () => {
+        if (backdrop) {
+            if (backdrop.classList.contains("is-visible")) {
+                backdrop.click();
+            }
+        } else {
+            backdrop = document.querySelector(".mdl-layout__obfuscator.is-visible");
+            if (backdrop) {
+                backdrop.click();
+            }
+        }
+    };
+})();
+
 /**
  * Tab interface.
  * @class
@@ -50,32 +66,40 @@ const Tab = class {
     /**
      * Constructor.
      * @constructor
-     * @param {HTMLElement} btn - The tab bar button.
+     * @param {HTMLElement} btn1 - The tab bar button.
+     * @param {HTMLElement} btn2 - The drawer button.
      * @param {HTMLElement} content - The content section.
      */
-    constructor(btn, content) {
-        this.btn = btn;
+    constructor(btn1, btn2, content) {
+        this.btn1 = btn1;
+        this.btn2 = btn2;
         this.content = content;
 
-        this.btn.addEventListener("click", () => {
-            if (currentTab) {
-                if (currentTab === this) {
-                    return;
-                }
-                if (!currentTab.teardown(this)) {
-                    return;
-                }
+        const onclick = () => {
+            if (currentTab === this) {
+                return;
             }
+
+            closeDrawer();
+
+            if (currentTab && !currentTab.teardown(this)) {
+                return;
+            }
+
             this.init();
-        });
+        };
+        this.btn1.addEventListener("click", onclick);
+        this.btn2.addEventListener("click", onclick);
     }
     /**
      * Initialize the tab.
      * @method
      */
     init() {
-        this.btn.classList.add("nano-tab-active");
+        this.btn1.classList.add("is-active");
+        this.btn2.classList.add("is-active");
         this.content.removeAttribute("hidden");
+
         currentTab = this;
     }
     /**
@@ -85,8 +109,10 @@ const Tab = class {
      * @return {boolean} True if the operation succeeded, false otherwise.
      */
     teardown() {
-        this.btn.classList.remove("nano-tab-active");
+        this.btn1.classList.remove("is-active");
+        this.btn2.classList.remove("is-active");
         this.content.setAttribute("hidden", "");
+
         return true;
     }
 };
@@ -104,6 +130,7 @@ const tabSettings = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-settings"),
+            document.getElementById("nano-drawer-settings"),
             document.getElementById("nano-section-settings"),
         );
     }
@@ -126,6 +153,7 @@ const tabFilters = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-filters"),
+            document.getElementById("nano-drawer-filters"),
             document.getElementById("nano-section-filters"),
         );
     }
@@ -161,6 +189,7 @@ const tabRules = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-rules"),
+            document.getElementById("nano-drawer-rules"),
             document.getElementById("nano-section-rules"),
         );
     }
@@ -196,6 +225,7 @@ const tabWhitelist = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-whitelist"),
+            document.getElementById("nano-drawer-whitelist"),
             document.getElementById("nano-section-whitelist"),
         );
     }
@@ -231,6 +261,7 @@ const tabMatrix = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-matrix"),
+            document.getElementById("nano-drawer-matrix"),
             document.getElementById("nano-section-matrix"),
         );
     }
@@ -262,6 +293,7 @@ const tabDev = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-developer"),
+            document.getElementById("nano-drawer-developer"),
             document.getElementById("nano-section-developer"),
         );
     }
@@ -285,6 +317,7 @@ const tabAbout = new class extends Tab {
     constructor() {
         super(
             document.getElementById("nano-tab-about"),
+            document.getElementById("nano-drawer-about"),
             document.getElementById("nano-section-about"),
         );
     }

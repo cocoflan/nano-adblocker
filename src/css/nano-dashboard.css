@@ -3,7 +3,7 @@
     This file should be formatted by Visual Studio.
 */
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.nano-tab-active {
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.is-active {
     background-color: #E0E0E0;
 }
 
@@ -13,14 +13,26 @@
     padding-right: 7px;
 }
 
+.mdl-layout__tab .nano-icon-adjust {
+    position: relative;
+    top: 7px;
+    padding-right: 5px;
+}
+
 @media (min-width: 760px) {
     .mdl-button {
         margin-right: 2em;
     }
 }
 
-@media(min-width:1025px) {
-    .nano-only-small-screen {
+@media (max-width: 1024px) {
+    .mdl-layout__tab-bar-container {
+        display: none;
+    }
+}
+
+@media (min-width: 1025px) {
+    .mdl-layout__drawer-button {
         display: none;
     }
 }

@@ -20,14 +20,14 @@
     <link rel="shortcut icon" type="image/png" href="img/icon_16.png" />
 </head>
 <body>
-    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
         <!-- Header -->
         <header class="mdl-layout__header">
             <div class="mdl-layout__header-row">
                 <span class="mdl-layout-title nano-only-small-screen" data-i18n="extName"></span>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Action buttons -->
-                <!-- Will be updated when initializing tab, up to 7 can fit on a mobile screen -->
+                <!-- Will be updated when initializing tab, about 5 to 7 can fit on a mobile screen -->
                 <nav class="mdl-navigation">
                     <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-0">
                         <span class="material-icons">done</span>
@@ -65,39 +65,13 @@
                     <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="nano-action-6">Action 6</div>
                 </nav>
             </div>
-        </header>
-        <div class="mdl-layout__drawer">
-            <span class="mdl-layout-title" data-i18n="extName"></span>
-            <!-- Tab navigation -->
-            <nav class="mdl-navigation">
-                <a class="mdl-navigation__link" id="nano-tab-settings">
-                    <span class="material-icons nano-icon-adjust">settings</span><span>Settings</span>
+            <div class="mdl-layout__tab-bar mdl-layout__tab-manual-switch mdl-js-ripple-effect">
+                <!-- TODO 2017-12-17: i18n? -->
+                <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-settings">
+                    <span class="material-icons nano-icon-adjust">settings</span><span>Config</span>
                 </a>
-                <a class="mdl-navigation__link" id="nano-tab-filters">
+                <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-filters">
                     <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span>My Filters</span>
-                </a>
-                <a class="mdl-navigation__link" id="nano-tab-rules">
-                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span>My Rules</span>
-                </a>
-                <a class="mdl-navigation__link" id="nano-tab-whitelist">
-                    <span class="material-icons nano-icon-adjust">thumb_up</span><span>Whitelist</span>
-                </a>
-                <a class="mdl-navigation__link" id="nano-tab-matrix">
-                    <span class="material-icons nano-icon-adjust">grid_on</span><span>My Matrix</span>
-                </a>
-                <a class="mdl-navigation__link" id="nano-tab-developer">
-                    <span class="material-icons nano-icon-adjust">build</span><span>Developer</span>
-                </a>
-                <a class="mdl-navigation__link" id="nano-tab-about">
-                    <span class="material-icons nano-icon-adjust">info_outline</span><span>About</span>
-                </a>
-            </nav>
-            <!--
-                <nav class="mdl-navigation">
-                <!-- TODO 2017-12-17: i18n? - ->
-                
-                <a class="navigation__link" id="nano-tab-filters">
-                    <span class="material-icons">format_list_bulleted</span><span>My Filters</span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-rules">
                     <span class="material-icons nano-icon-adjust">format_list_numbered</span><span>My Rules</span>
@@ -114,7 +88,34 @@
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-about">
                     <span class="material-icons nano-icon-adjust">info_outline</span><span>About</span>
                 </a>
-            </nav>-->
+            </div>
+        </header>
+        <div class="mdl-layout__drawer">
+            <span class="mdl-layout-title" data-i18n="extName"></span>
+            <!-- Tab navigation -->
+            <nav class="mdl-navigation">
+                <a class="mdl-navigation__link" id="nano-drawer-settings">
+                    <span class="material-icons nano-icon-adjust">settings</span><span>Settings</span>
+                </a>
+                <a class="mdl-navigation__link" id="nano-drawer-filters">
+                    <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span>My Filters</span>
+                </a>
+                <a class="mdl-navigation__link" id="nano-drawer-rules">
+                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span>My Rules</span>
+                </a>
+                <a class="mdl-navigation__link" id="nano-drawer-whitelist">
+                    <span class="material-icons nano-icon-adjust">thumb_up</span><span>Whitelist</span>
+                </a>
+                <a class="mdl-navigation__link" id="nano-drawer-matrix">
+                    <span class="material-icons nano-icon-adjust">grid_on</span><span>My Matrix</span>
+                </a>
+                <a class="mdl-navigation__link" id="nano-drawer-developer">
+                    <span class="material-icons nano-icon-adjust">build</span><span>Developer</span>
+                </a>
+                <a class="mdl-navigation__link" id="nano-drawer-about">
+                    <span class="material-icons nano-icon-adjust">info_outline</span><span>About</span>
+                </a>
+            </nav>
         </div>
 
         <main class="mdl-layout__content">
