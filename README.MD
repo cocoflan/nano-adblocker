@@ -102,6 +102,7 @@ Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) chan
   - [`d750ebbbe44ab65de61b21d1c7c628e428e9937e`](https://github.com/NanoAdblocker/NanoCore/commit/d750ebbbe44ab65de61b21d1c7c628e428e9937e)
   - [`b71ac4a8de1e9f626dbab83f760cae58551cc7a7`](https://github.com/NanoAdblocker/NanoCore/commit/b71ac4a8de1e9f626dbab83f760cae58551cc7a7)
   - [`7898a9ed446db1077c8fc898f46cfb88628e6589`](https://github.com/NanoAdblocker/NanoCore/commit/7898a9ed446db1077c8fc898f46cfb88628e6589)
+  - [`86a6318b48c540774805b6d79b44cd24a80c6167`](https://github.com/NanoAdblocker/NanoCore/commit/86a6318b48c540774805b6d79b44cd24a80c6167)
 
 - Make some build tools working on Windows 10
   - [`78bc8c172016d868e9c5252f61d5765e0d8dd2c0`](https://github.com/NanoAdblocker/NanoCore/commit/78bc8c172016d868e9c5252f61d5765e0d8dd2c0)
