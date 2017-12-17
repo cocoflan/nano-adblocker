@@ -945,7 +945,7 @@ vAPI.messaging.onNanoDefenderConnection = (function() {
         if ( typeof msg !== 'object' || typeof msg.data !== 'string' ) {
             return;
         }
-        if ( sender.id === 'ggolfgbegefeeoocgjbmkembbncoadlb' ) { // Nano Defender
+        if ( sender.id === NanoDefenderExtensionID ) {
             for ( var callback of callbacks ) {
                 callback(msg.data);
             }
