@@ -3,18 +3,24 @@
     This file should be formatted by Visual Studio.
 */
 
-.nano-hover-effect:hover {
-    color: #FFFFFF;
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.nano-tab-active {
+    background-color: #E0E0E0;
 }
 
-.nano-icon-adjust {
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link .nano-icon-adjust {
     position: relative;
-    top: 7px;
-    padding-right: 5px;
+    top: -1px;
+    padding-right: 7px;
 }
 
 @media (min-width: 760px) {
     .mdl-button {
         margin-right: 2em;
+    }
+}
+
+@media(min-width:1025px) {
+    .nano-only-small-screen {
+        display: none;
     }
 }

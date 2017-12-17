@@ -74,7 +74,7 @@ const Tab = class {
      * @method
      */
     init() {
-        this.btn.classList.add("is-active");
+        this.btn.classList.add("nano-tab-active");
         this.content.removeAttribute("hidden");
         currentTab = this;
     }
@@ -85,7 +85,7 @@ const Tab = class {
      * @return {boolean} True if the operation succeeded, false otherwise.
      */
     teardown() {
-        this.btn.classList.remove("is-active");
+        this.btn.classList.remove("nano-tab-active");
         this.content.setAttribute("hidden", "");
         return true;
     }
@@ -94,21 +94,21 @@ const Tab = class {
 // ===== Tab Objects =====
 
 /**
- * The config tab.
+ * The settings tab.
  * @const {Tab}
  */
-const tabConfig = new class extends Tab {
+const tabSettings = new class extends Tab {
     /**
      * Pass appropriate elements to super.
      */
     constructor() {
         super(
-            document.getElementById("nano-tab-config"),
-            document.getElementById("nano-section-config"),
+            document.getElementById("nano-tab-settings"),
+            document.getElementById("nano-section-settings"),
         );
     }
     /**
-     * No action buttons for config tab.
+     * No action buttons for settings tab.
      */
     init() {
         super.init();
@@ -252,6 +252,29 @@ const tabMatrix = new class extends Tab {
 };
 
 /**
+ * The developer tab.
+ * @const {Tab}
+ */
+const tabDev = new class extends Tab {
+    /**
+     * Pass appropriate elements to super.
+     */
+    constructor() {
+        super(
+            document.getElementById("nano-tab-developer"),
+            document.getElementById("nano-section-developer"),
+        );
+    }
+    /**
+     * No action buttons for developer tab.
+     */
+    init() {
+        super.init();
+        this.buttons = drawActionBtns([], [], []);
+    }
+};
+
+/**
  * The about tab.
  * @const {Tab}
  */
@@ -277,4 +300,4 @@ const tabAbout = new class extends Tab {
 // ===== Bootstrap =====
 
 // TODO: read localstorage for last active tab etc.
-tabConfig.init();
+tabSettings.init();
