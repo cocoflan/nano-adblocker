@@ -52,6 +52,9 @@ Available since 1.0.0.0
 
 Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) changes are not listed here. 
 
+- Add Edge support
+  - [`2ac10284a86178b4989681525c333cf3b136bb31`](https://github.com/NanoAdblocker/NanoCore/commit/2ac10284a86178b4989681525c333cf3b136bb31)
+
 - Add linter for white list
   - [`333c389058e92a875d16d957d011c5d89313035c`](https://github.com/NanoAdblocker/NanoCore/commit/333c389058e92a875d16d957d011c5d89313035c)
   - [`f61a57a25f637515e1fe84f657758b14cf4f30b8`](https://github.com/NanoAdblocker/NanoCore/commit/f61a57a25f637515e1fe84f657758b14cf4f30b8)
@@ -93,6 +96,9 @@ Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) chan
   - [`4d75ad29ab1d223a553cd074096ceedb26e1a99d`](https://github.com/NanoAdblocker/NanoCore/commit/4d75ad29ab1d223a553cd074096ceedb26e1a99d)
   - [`c847df39e0378ed1bf306606af1c13defdc76d48`](https://github.com/NanoAdblocker/NanoCore/commit/c847df39e0378ed1bf306606af1c13defdc76d48)
   - [`c6d158b199c66c279c5fbbc1e1d79856e4e0f10e`](https://github.com/NanoAdblocker/NanoCore/commit/c6d158b199c66c279c5fbbc1e1d79856e4e0f10e)
+  - [`d750ebbbe44ab65de61b21d1c7c628e428e9937e`](https://github.com/NanoAdblocker/NanoCore/commit/d750ebbbe44ab65de61b21d1c7c628e428e9937e)
+  - [`b71ac4a8de1e9f626dbab83f760cae58551cc7a7`](https://github.com/NanoAdblocker/NanoCore/commit/b71ac4a8de1e9f626dbab83f760cae58551cc7a7)
+  - [`7898a9ed446db1077c8fc898f46cfb88628e6589`](https://github.com/NanoAdblocker/NanoCore/commit/7898a9ed446db1077c8fc898f46cfb88628e6589)
 
 - Make some build tools working on Windows 10
   - [`78bc8c172016d868e9c5252f61d5765e0d8dd2c0`](https://github.com/NanoAdblocker/NanoCore/commit/78bc8c172016d868e9c5252f61d5765e0d8dd2c0)
