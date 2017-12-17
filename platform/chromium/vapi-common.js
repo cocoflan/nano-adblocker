@@ -67,7 +67,7 @@ vAPI.getURL = chrome.runtime.getURL;
 
 // Patch 2017-12-07: Add a couple placeholders
 var i18nPlaceholders = {
-    'aboutBasedOn': 'Based on uBlock Origin v1.14.21.103',
+    'aboutBasedOn': 'Based on uBlock Origin v1.14.22',
 
     'advancedSettingsAboutChanges': 'Nano Adblocker has different default ' +
         'values than uBlock Origin for these settings, assetFetchTimeout ' +
