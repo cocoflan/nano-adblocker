@@ -104,7 +104,7 @@ const Tab = class {
     init() {
         this.btn1.classList.add("is-active");
         this.btn2.classList.add("is-active");
-        this.content.removeAttribute("hidden");
+        this.content.classList.add("is-active");
         currentTabTextElement.textContent = this.btn2.children[1].textContent;
 
         currentTab = this;
@@ -118,7 +118,7 @@ const Tab = class {
     teardown() {
         this.btn1.classList.remove("is-active");
         this.btn2.classList.remove("is-active");
-        this.content.setAttribute("hidden", "");
+        this.content.classList.remove("is-active");
 
         return true;
     }

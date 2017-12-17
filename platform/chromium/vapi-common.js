@@ -65,10 +65,13 @@ vAPI.getURL = chrome.runtime.getURL;
 
 /******************************************************************************/
 
-// Patch 2017-12-07: Add a couple placeholders
+// Patch 2017-12-07: Add a couple placeholders, might need a real i18n system
+// soon...
 var i18nPlaceholders = {
     'matrixPageName': 'My matrix',
     'developerPageName': 'Developer',
+    
+    'settingGeneralGroup': 'General',
     
     'aboutBasedOn': 'Based on uBlock Origin v1.14.22',
 

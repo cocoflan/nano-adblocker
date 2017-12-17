@@ -3,6 +3,12 @@
     This file should be formatted by Visual Studio.
 */
 
+/* ===== Header and Navigation ===== */
+
+.mdl-navigation {
+    text-transform: uppercase;
+}
+
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.is-active {
     background-color: #E0E0E0;
 }
@@ -44,3 +50,37 @@
         display: none;
     }
 }
+
+/* ===== Tabs Common ===== */
+
+.mdl-layout__content .mdl-layout__tab-panel {
+    padding: 10px;
+    padding-top: 48px;
+}
+
+section.nano-section-center {
+    margin-bottom: 48px;
+    max-width: 860px;
+}
+
+.mdl-card .mdl-card__supporting-text {
+    margin: 40px;
+    padding: 0px;
+    width: calc(100% - 80px);
+}
+
+    .mdl-card .mdl-card__supporting-text h4 {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+
+.nano-option-row {
+    padding-left: 20px;
+    margin-bottom: 17px;
+    color: #000000;
+}
+
+    .nano-option-row .mdl-switch__label {
+        position: relative;
+        top: 1px;
+    }
