@@ -3,26 +3,6 @@
     This file should be formatted by Visual Studio.
 */
 
-/*
-    Main color pallet
-*/
-:root {
-    --color-50: #FCE4EC;
-    --color-100: #F8BBD0;
-    --color-200: #F48FB1;
-    --color-300: #F06292;
-    --color-400: #EC407A;
-    --color-500: #E91E63;
-    --color-600: #D81B60;
-    --color-700: #C2185B;
-    --color-800: #AD1457;
-    --color-900: #880E4F;
-    --color-A100: #FF80AB;
-    --color-A200: #FF4081;
-    --color-A400: #F50057;
-    --color-A700: #C51162;
-}
-
 .nano-hover-effect:hover {
     color: #FFFFFF;
 }
@@ -31,4 +11,10 @@
     position: relative;
     top: 7px;
     padding-right: 5px;
+}
+
+@media (min-width: 760px) {
+    .mdl-button {
+        margin-right: 2em;
+    }
 }
