@@ -21,10 +21,11 @@
 </head>
 <body>
     <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-        <!-- Header -->
         <header class="mdl-layout__header">
             <div class="mdl-layout__header-row">
+                <!-- On large screen: Nano; On small screen: Name of selected tab -->
                 <span class="mdl-layout-title nano-only-small-screen" data-i18n="extName"></span>
+                <span class="mdl-layout-title nano-only-large-screen" id="nano-selected-tab"></span>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Action buttons -->
                 <!-- Will be updated when initializing tab, about 5 to 7 can fit on a mobile screen -->
@@ -65,63 +66,67 @@
                     <div class="mdl-tooltip mdl-tooltip--large" data-mdl-for="nano-action-6">Action 6</div>
                 </nav>
             </div>
+            <!-- Navigation tabs -->
             <div class="mdl-layout__tab-bar mdl-layout__tab-manual-switch mdl-js-ripple-effect">
-                <!-- TODO 2017-12-17: i18n? -->
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-settings">
-                    <span class="material-icons nano-icon-adjust">settings</span><span>Config</span>
+                    <span class="material-icons nano-icon-adjust">settings</span><span data-i18n="settingsPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-filters">
-                    <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span>My Filters</span>
+                    <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span data-i18n="1pPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-rules">
-                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span>My Rules</span>
+                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span data-i18n="rulesPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-whitelist">
-                    <span class="material-icons nano-icon-adjust">thumb_up</span><span>Whitelist</span>
+                    <span class="material-icons nano-icon-adjust">thumb_up</span><span data-i18n="whitelistPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-matrix">
-                    <span class="material-icons nano-icon-adjust">grid_on</span><span>My Matrix</span>
+                    <span class="material-icons nano-icon-adjust">grid_on</span><span data-i18n="matrixPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-developer">
-                    <span class="material-icons nano-icon-adjust">build</span><span>Developer</span>
+                    <span class="material-icons nano-icon-adjust">build</span><span data-i18n="developerPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-about">
-                    <span class="material-icons nano-icon-adjust">info_outline</span><span>About</span>
+                    <span class="material-icons nano-icon-adjust">info_outline</span><span data-i18n="aboutPageName"></span>
                 </a>
             </div>
         </header>
         <div class="mdl-layout__drawer">
+            <!-- Always Nano -->
             <span class="mdl-layout-title" data-i18n="extName"></span>
-            <!-- Tab navigation -->
+            <!-- Navigation drawer -->
             <nav class="mdl-navigation">
                 <a class="mdl-navigation__link" id="nano-drawer-settings">
-                    <span class="material-icons nano-icon-adjust">settings</span><span>Settings</span>
+                    <span class="material-icons nano-icon-adjust">settings</span><span data-i18n="settingsPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-filters">
-                    <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span>My Filters</span>
+                    <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span data-i18n="1pPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-rules">
-                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span>My Rules</span>
+                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span data-i18n="rulesPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-whitelist">
-                    <span class="material-icons nano-icon-adjust">thumb_up</span><span>Whitelist</span>
+                    <span class="material-icons nano-icon-adjust">thumb_up</span><span data-i18n="whitelistPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-matrix">
-                    <span class="material-icons nano-icon-adjust">grid_on</span><span>My Matrix</span>
+                    <span class="material-icons nano-icon-adjust">grid_on</span><span data-i18n="matrixPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-developer">
-                    <span class="material-icons nano-icon-adjust">build</span><span>Developer</span>
+                    <span class="material-icons nano-icon-adjust">build</span><span data-i18n="developerPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-about">
-                    <span class="material-icons nano-icon-adjust">info_outline</span><span>About</span>
+                    <span class="material-icons nano-icon-adjust">info_outline</span><span data-i18n="aboutPageName"></span>
                 </a>
             </nav>
         </div>
 
         <main class="mdl-layout__content">
+            <!-- Settings tab -->
             <section hidden id="nano-section-settings">
                 <p>Settings</p>
             </section>
+
+            <!-- TODO -->
             <section hidden id="nano-section-filters">
                 <p>Filters</p>
             </section>

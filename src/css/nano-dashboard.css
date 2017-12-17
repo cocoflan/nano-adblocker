@@ -29,10 +29,18 @@
     .mdl-layout__tab-bar-container {
         display: none;
     }
+
+    .mdl-layout-title.nano-only-small-screen {
+        display: none;
+    }
 }
 
 @media (min-width: 1025px) {
     .mdl-layout__drawer-button {
+        display: none;
+    }
+
+    .mdl-layout-title.nano-only-large-screen {
         display: none;
     }
 }

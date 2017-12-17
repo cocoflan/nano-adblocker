@@ -13,6 +13,12 @@
 let currentTab = null;
 
 /**
+ * The current tab indicator for small screen.
+ * @const {HTMLElement}
+ */
+const currentTabTextElement = document.getElementById("nano-selected-tab");
+
+/**
  * Update action buttons for this tab.
  * The two arrays that are passed in must be parallel arrays.
  * @method
@@ -99,6 +105,7 @@ const Tab = class {
         this.btn1.classList.add("is-active");
         this.btn2.classList.add("is-active");
         this.content.removeAttribute("hidden");
+        currentTabTextElement.textContent = this.btn2.children[1].textContent;
 
         currentTab = this;
     }

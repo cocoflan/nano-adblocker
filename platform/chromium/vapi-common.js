@@ -67,6 +67,9 @@ vAPI.getURL = chrome.runtime.getURL;
 
 // Patch 2017-12-07: Add a couple placeholders
 var i18nPlaceholders = {
+    'matrixPageName': 'My matrix',
+    'developerPageName': 'Developer',
+    
     'aboutBasedOn': 'Based on uBlock Origin v1.14.22',
 
     'advancedSettingsAboutChanges': 'Nano Adblocker has different default ' +
