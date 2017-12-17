@@ -55,6 +55,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, et
 - Revamp dashboard
   - [`b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b`](https://github.com/NanoAdblocker/NanoCore/commit/b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b)
   - [`7437f3bbc822652a2c9819d63e1161aad08d4fa1`](https://github.com/NanoAdblocker/NanoCore/commit/7437f3bbc822652a2c9819d63e1161aad08d4fa1)
+  - [`1864fc2a4efc2ded9486beba3e8bfd6d2af98ded`](https://github.com/NanoAdblocker/NanoCore/commit/1864fc2a4efc2ded9486beba3e8bfd6d2af98ded)
 
 - Make default settings better
   - [`000e6cc57f9de4ab5b431cbaed6a936c49788c29`](https://github.com/NanoAdblocker/NanoCore/commit/000e6cc57f9de4ab5b431cbaed6a936c49788c29)
