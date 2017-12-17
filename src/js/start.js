@@ -182,7 +182,8 @@ var onUserSettingsReady = function(fetched) {
     // For first installation on a battery-powered device, disable generic
     // cosmetic filtering.
     //
-    // Patch 2017-12-16: This is just ridiculous
+    // Patch 2017-12-16: This is just ridiculous, moving the problem to another
+    // place is not a solution
     //if ( µb.firstInstall && vAPI.battery ) {
     //    userSettings.ignoreGenericCosmeticFilters = true;
     //}
