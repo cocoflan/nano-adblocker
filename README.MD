@@ -50,7 +50,7 @@ Available since 1.0.0.0
 
 ## Change Log
 
-Housekeeping (renaming, formatting, resources update, minor UI tweak, etc.) changes are not listed here. 
+Housekeeping changes (renaming, formatting, resources update, minor UI tweak, etc.) are not listed here. 
 
 - Make default settings better
   - [`000e6cc57f9de4ab5b431cbaed6a936c49788c29`](https://github.com/NanoAdblocker/NanoCore/commit/000e6cc57f9de4ab5b431cbaed6a936c49788c29)
