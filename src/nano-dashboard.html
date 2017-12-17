@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<!--
+    Patch 2017-12-16: Add an alternative dashboard.
+    The dashboard uses the same messaging interface but does not share code beyond that.
+    This file should be formatted by Visual Studio.
+-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <title data-i18n="dashboardName"></title>
+
+    <link rel="stylesheet" href="lib/mdl/icons.css" />
+    <link rel="stylesheet" href="lib/mdl/material-default.css" />
+    <link rel="stylesheet" href="css/nano-dashboard.css" />
+
+    <link rel="shortcut icon" type="image/png" href="img/icon_16.png" />
+</head>
+<body>
+    <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <!-- Header -->
+        <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+                <!-- Title -->
+                <span class="mdl-layout-title" data-i18n="extName"></span>
+                <div class="mdl-layout-spacer"></div>
+                <!-- Action buttons -->
+                <nav class="mdl-navigation">
+                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-0">Action 0</a>
+                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-1">Action 1</a>
+                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-2">Action 2</a>
+                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-3">Action 3</a>
+                </nav>
+            </div>
+            <div class="mdl-layout__tab-bar mdl-layout__tab-manual-switch mdl-js-ripple-effect">
+                <a class="mdl-layout__tab is-active nano-hover-effect">
+                    <span class="icon material-icons nano-icon-adjust">build</span><span>Config</span>
+                </a>
+                <a class="mdl-layout__tab nano-hover-effect">
+                    <span class="icon material-icons nano-icon-adjust">build</span><span>My Filters</span>
+                </a>
+                <a class="mdl-layout__tab nano-hover-effect">
+                    <span class="icon material-icons nano-icon-adjust">build</span><span>My Rules</span>
+                </a>
+                <a class="mdl-layout__tab nano-hover-effect">
+                    <span class="icon material-icons nano-icon-adjust">build</span><span>Whitelist</span>
+                </a>
+                <a class="mdl-layout__tab nano-hover-effect">
+                    <span class="icon material-icons nano-icon-adjust">build</span><span>My Matrix</span>
+                </a>
+                <a class="mdl-layout__tab nano-hover-effect">
+                    <span class="icon material-icons nano-icon-adjust">build</span><span>About</span>
+                </a>
+            </div>
+        </header>
+
+        <main class="mdl-layout__content">
+            <p>hiiii</p>
+        </main>
+    </div>
+
+    <script src="js/vapi.js"></script>
+    <script src="js/vapi-common.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/nano-dashboard.js"></script>
+    <script src="lib/mdl/material.js"></script>
+</body>
+</html>
