@@ -44,8 +44,8 @@ vAPI.messaging.onNanoDefenderConnection(function(msg) {
                 return;
             }
             
+            // An extra check to be absolutely sure
             if ( nano.selectedFilterLists.length === 0 ) {
-                // Something is obviously wrong
                 return;
             }
             
