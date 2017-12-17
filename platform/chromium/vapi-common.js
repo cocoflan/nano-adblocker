@@ -68,7 +68,7 @@ vAPI.getURL = chrome.runtime.getURL;
 // Patch 2017-12-07: Add a couple placeholders, might need a real i18n system
 // soon...
 var i18nPlaceholders = {
-    'matrixPageName': 'My matrix',
+    'matrixPageName': 'Hosts matrix',
     'developerPageName': 'Developer',
     
     'settingGeneralGroup': 'General',
@@ -102,7 +102,7 @@ var i18nPlaceholders = {
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
 // are way too many locale files
-var i18nReplaceMatcher1 = /uBlock\u2080?|uBO|uBlock Origin/g;
+var i18nReplaceMatcher1 = /uBlock\u2080|uBlock(?!\/)|uBO|uBlock Origin/g;
 var i18nReplaceMatcher2 = /ublock/g;
 vAPI.i18n = function(name, substitutions) {
     if ( i18nPlaceholders.hasOwnProperty(name) ) {
