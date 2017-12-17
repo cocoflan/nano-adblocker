@@ -3,6 +3,8 @@
     Patch 2017-12-16: Add an alternative dashboard.
     The dashboard uses the same messaging interface but does not share code beyond that.
     This file should be formatted by Visual Studio.
+
+    Icons: https://material.io/icons/
 -->
 <html>
 <head>
@@ -12,7 +14,7 @@
     <title data-i18n="dashboardName"></title>
 
     <link rel="stylesheet" href="lib/mdl/icons.css" />
-    <link rel="stylesheet" href="lib/mdl/material-default.css" />
+    <link rel="stylesheet" href="lib/mdl/material.css" />
     <link rel="stylesheet" href="css/nano-dashboard.css" />
 
     <link rel="shortcut icon" type="image/png" href="img/icon_16.png" />
@@ -26,31 +28,62 @@
                 <span class="mdl-layout-title" data-i18n="extName"></span>
                 <div class="mdl-layout-spacer"></div>
                 <!-- Action buttons -->
+                <!-- Will be updated when initializing tab, up to 7 can fit on a mobile screen -->
                 <nav class="mdl-navigation">
-                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-0">Action 0</a>
-                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-1">Action 1</a>
-                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-2">Action 2</a>
-                    <a class="mdl-navigation__link nano-hover-effect" id="nano-navbtn-3">Action 3</a>
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-0">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-0">Action 0</div>
+
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-1">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-1">Action 1</div>
+
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-2">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-2">Action 2</div>
+
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-3">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-3">Action 3</div>
+
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-4">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-4">Action 4</div>
+
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-5">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-5">Action 5</div>
+
+                    <label class="mdl-button mdl-js-button mdl-button--icon" id="nano-action-6">
+                        <span class="material-icons">done</span>
+                    </label>
+                    <div class="mdl-tooltip" data-mdl-for="nano-action-6">Action 6</div>
                 </nav>
             </div>
             <div class="mdl-layout__tab-bar mdl-layout__tab-manual-switch mdl-js-ripple-effect">
                 <a class="mdl-layout__tab is-active nano-hover-effect">
-                    <span class="icon material-icons nano-icon-adjust">build</span><span>Config</span>
+                    <span class="material-icons nano-icon-adjust">build</span><span>Config</span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect">
-                    <span class="icon material-icons nano-icon-adjust">build</span><span>My Filters</span>
+                    <span class="material-icons nano-icon-adjust">format_list_bulleted</span><span>My Filters</span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect">
-                    <span class="icon material-icons nano-icon-adjust">build</span><span>My Rules</span>
+                    <span class="material-icons nano-icon-adjust">format_list_numbered</span><span>My Rules</span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect">
-                    <span class="icon material-icons nano-icon-adjust">build</span><span>Whitelist</span>
+                    <span class="material-icons nano-icon-adjust">thumb_up</span><span>Whitelist</span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect">
-                    <span class="icon material-icons nano-icon-adjust">build</span><span>My Matrix</span>
+                    <span class="material-icons nano-icon-adjust">grid_on</span><span>My Matrix</span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect">
-                    <span class="icon material-icons nano-icon-adjust">build</span><span>About</span>
+                    <span class="material-icons nano-icon-adjust">info_outline</span><span>About</span>
                 </a>
             </div>
         </header>
