@@ -140,6 +140,27 @@ const tabSettings = new class extends Tab {
             document.getElementById("nano-drawer-settings"),
             document.getElementById("nano-section-settings"),
         );
+
+        // Upgrade textbox
+        const textboxes = document.getElementById("nano-section-settings").querySelectorAll("input:not([class])");
+        for (let i = 0; i < textboxes.length; i++) {
+            let container = document.createElement("div");
+            container.className = "mdl-textfield mdl-js-textfield nano-inline-textbox";
+
+            let input = document.createElement("input");
+            input.className = "mdl-textfield__input";
+            input.type = textboxes[i].type;
+            input.id = "nano-settings-upgraded-textbox-" + i;
+
+            let label = document.createElement("label");
+            label.className = "mdl-textfield__label";
+            label.setAttribute("for", input.id);
+
+            container.append(input, label);
+
+            // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/replaceWith
+            textboxes[i].replaceWith(container);
+        }
     }
     /**
      * No action buttons for settings tab.

@@ -5,6 +5,10 @@
 
 /* ===== Header and Navigation ===== */
 
+.mdl-layout__header-row {
+    height: 56px;
+}
+
 .mdl-layout__drawer .mdl-navigation {
     text-transform: uppercase;
 }
@@ -25,9 +29,13 @@
     margin-right: 5px;
 }
 
+.mdl-layout__header-row .mdl-navigation .mdl-button {
+    margin-right: 15px;
+}
+
 @media (min-width: 760px) {
     .mdl-layout__header-row .mdl-navigation .mdl-button {
-        margin-right: 2em;
+        margin-right: 50px;
     }
 }
 
@@ -105,6 +113,10 @@ section.nano-section-center {
         margin-bottom: 0px;
     }
 
+    .nano-option-row label {
+        width: auto;
+    }
+
     .nano-option-row .mdl-switch__label {
         position: relative;
         top: 1px;
@@ -130,3 +142,27 @@ section.nano-section-center {
     position: relative;
     top: -1px;
 }
+
+.mdl-switch__label.nano-inline-textbox-info-adjust .mdl-button {
+    position: relative;
+    top: -3px;
+}
+
+.mdl-textfield.nano-inline-textbox {
+    padding: 0px;
+    width: 100px;
+}
+
+    .mdl-textfield.nano-inline-textbox label::after {
+        bottom: 0px;
+    }
+
+/* Settings tab */
+#nano-settings-default-behavior-info {
+    font-size: 16px;
+}
+
+    #nano-settings-default-behavior-info .mdl-button {
+        position: relative;
+        top: -1px;
+    }
