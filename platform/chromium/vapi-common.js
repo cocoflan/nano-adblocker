@@ -103,7 +103,7 @@ var i18nPlaceholders = {
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there
 // are way too many locale files
-var i18nReplaceMatcher1 = /uBlock\u2080|uBlock(?!\/)|uBO|uBlock Origin/g;
+var i18nReplaceMatcher1 = /uBlock Origin|uBlock\u2080|uBlock(?!\/)|uBO/g;
 var i18nReplaceMatcher2 = /ublock/g;
 vAPI.i18n = function(name, substitutions) {
     if ( i18nPlaceholders.hasOwnProperty(name) ) {
