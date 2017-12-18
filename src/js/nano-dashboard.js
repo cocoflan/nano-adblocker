@@ -290,7 +290,7 @@ const tabMatrix = new class extends Tab {
 };
 
 /**
- * The developer tab.
+ * The advanced tab.
  * @const {Tab}
  */
 const tabDev = new class extends Tab {
@@ -299,13 +299,13 @@ const tabDev = new class extends Tab {
      */
     constructor() {
         super(
-            document.getElementById("nano-tab-developer"),
-            document.getElementById("nano-drawer-developer"),
-            document.getElementById("nano-section-developer"),
+            document.getElementById("nano-tab-advanced"),
+            document.getElementById("nano-drawer-advanced"),
+            document.getElementById("nano-section-advanced"),
         );
     }
     /**
-     * No action buttons for developer tab.
+     * No action buttons for advanced tab.
      */
     init() {
         super.init();

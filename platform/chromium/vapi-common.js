@@ -69,7 +69,7 @@ vAPI.getURL = chrome.runtime.getURL;
 // soon...
 var i18nPlaceholders = {
     'matrixPageName': 'Hosts matrix',
-    'developerPageName': 'Developer',
+    'advancedPageName': 'Advanced',
     
     'settingGeneralGroup': 'General',
     

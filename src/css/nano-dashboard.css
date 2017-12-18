@@ -5,24 +5,24 @@
 
 /* ===== Header and Navigation ===== */
 
-.mdl-navigation {
+.mdl-layout__drawer .mdl-navigation {
     text-transform: uppercase;
 }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.is-active {
-    background-color: #E0E0E0;
-}
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.is-active {
+        background-color: #E0E0E0;
+    }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link .nano-icon-adjust {
-    position: relative;
-    top: -1px;
-    padding-right: 7px;
-}
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link .nano-icon-adjust {
+        position: relative;
+        top: -1px;
+        margin-right: 7px;
+    }
 
 .mdl-layout__tab .nano-icon-adjust {
     position: relative;
     top: 7px;
-    padding-right: 5px;
+    margin-right: 5px;
 }
 
 @media (min-width: 760px) {
@@ -76,6 +76,7 @@ section.nano-section-center {
 .nano-option-row {
     padding-left: 20px;
     margin-bottom: 20px;
+    min-height: 32px;
     color: #000000;
 }
 
@@ -92,14 +93,16 @@ section.nano-section-center {
 @media (max-width: 1024px) {
     .nano-option-row {
         padding-left: 10px;
+        margin-bottom: 40px;
     }
-
-        .nano-option-row:not(:nth-last-child(1)) {
-            margin-bottom: 45px;
-        }
 }
 
 .mdl-switch__label.nano-info-adjust .mdl-button {
     position: relative;
     top: -1px;
+}
+
+/* https://github.com/google/material-design-lite/issues/1558 */
+.mdl-switch {
+    height: 100%;
 }

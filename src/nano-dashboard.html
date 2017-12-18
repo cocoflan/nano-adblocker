@@ -83,8 +83,8 @@
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-matrix">
                     <span class="material-icons nano-icon-adjust">grid_on</span><span data-i18n="matrixPageName"></span>
                 </a>
-                <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-developer">
-                    <span class="material-icons nano-icon-adjust">build</span><span data-i18n="developerPageName"></span>
+                <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-advanced">
+                    <span class="material-icons nano-icon-adjust">code</span><span data-i18n="advancedPageName"></span>
                 </a>
                 <a class="mdl-layout__tab nano-hover-effect" id="nano-tab-about">
                     <span class="material-icons nano-icon-adjust">info_outline</span><span data-i18n="aboutPageName"></span>
@@ -111,8 +111,8 @@
                 <a class="mdl-navigation__link" id="nano-drawer-matrix">
                     <span class="material-icons nano-icon-adjust">grid_on</span><span data-i18n="matrixPageName"></span>
                 </a>
-                <a class="mdl-navigation__link" id="nano-drawer-developer">
-                    <span class="material-icons nano-icon-adjust">build</span><span data-i18n="developerPageName"></span>
+                <a class="mdl-navigation__link" id="nano-drawer-advanced">
+                    <span class="material-icons nano-icon-adjust">code</span><span data-i18n="advancedPageName"></span>
                 </a>
                 <a class="mdl-navigation__link" id="nano-drawer-about">
                     <span class="material-icons nano-icon-adjust">info_outline</span><span data-i18n="aboutPageName"></span>
@@ -123,6 +123,7 @@
         <main class="mdl-layout__content">
             <!-- Settings tab -->
             <div class="mdl-layout__tab-panel" id="nano-section-settings">
+                <!-- General -->
                 <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp nano-section-center">
                     <div class="mdl-card mdl-cell mdl-cell--12-col">
                         <div class="mdl-card__supporting-text">
@@ -166,7 +167,7 @@
                                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-cloud-storage-enabled">
                                     <input type="checkbox" class="mdl-switch__input"
                                            data-setting-name="cloudStorageEnabled" data-setting-type="bool" id="settings-cloud-storage-enabled" />
-                                    <span class="mdl-switch__label nano-info-adjust" >
+                                    <span class="mdl-switch__label nano-info-adjust">
                                         <span data-i18n="settingsCloudStorageEnabledPrompt"></span>
                                         <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Cloud-storage" target="_blank">
                                             <span class="material-icons">info_outline</span>
@@ -177,49 +178,63 @@
                         </div>
                     </div>
                 </section>
-
+                <!-- Privacy -->
                 <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp nano-section-center">
                     <div class="mdl-card mdl-cell mdl-cell--12-col">
                         <div class="mdl-card__supporting-text">
-                            <h4 data-i18n="settingGeneralGroup"></h4>
-
+                            <h4 data-i18n="3pGroupPrivacy"></h4>
                             <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
-                                    <input type="checkbox" id="switch-2" class="mdl-switch__input">
-                                    <span class="mdl-switch__label">test</span>
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-prefetching-disabled">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="prefetchingDisabled" data-setting-type="bool" id="settings-prefetching-disabled" />
+                                    <span class="mdl-switch__label nano-info-adjust">
+                                        <span data-i18n="settingsPrefetchingDisabledPrompt"></span>
+                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://wikipedia.org/wiki/Link_prefetching#Issues_and_criticisms" target="_blank">
+                                            <span class="material-icons">info_outline</span>
+                                        </a>
+                                    </span>
                                 </label>
                             </div>
-
                             <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
-                                    <input type="checkbox" id="switch-2" class="mdl-switch__input">
-                                    <span class="mdl-switch__label">test</span>
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-hyperlink-auditing-disabled">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="hyperlinkAuditingDisabled" data-setting-type="bool" id="hyperlink-auditing-disabled" />
+                                    <span class="mdl-switch__label nano-info-adjust">
+                                        <span data-i18n="settingsHyperlinkAuditingDisabledPrompt"></span>
+                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Disable-hyperlink-auditing-beacon" target="_blank">
+                                            <span class="material-icons">info</span>
+                                        </a>
+                                    </span>
                                 </label>
                             </div>
-
                             <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
-                                    <input type="checkbox" id="switch-2" class="mdl-switch__input">
-                                    <span class="mdl-switch__label">test</span>
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-webrtc-ipaddress-hidden">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="webrtcIPAddressHidden" data-setting-type="bool" id="settings-webrtc-ipaddress-hidden" />
+                                    <span class="mdl-switch__label nano-info-adjust">
+                                        <span data-i18n="settingsWebRTCIPAddressHiddenPrompt"></span>
+                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Prevent-WebRTC-from-leaking-local-IP-address" target="_blank">
+                                            <span class="material-icons">info</span>
+                                        </a>
+                                    </span>
                                 </label>
                             </div>
-
                             <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="switch-2">
-                                    <input type="checkbox" id="switch-2" class="mdl-switch__input">
-                                    <span class="mdl-switch__label">test</span>
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-no-csp-reports">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="noCSPReports" data-setting-type="bool" id="settings-no-csp-reports" />
+                                    <span class="mdl-switch__label nano-info-adjust">
+                                        <span data-i18n="settingsNoCSPReportsPrompt"></span>
+                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Dashboard:-Settings#block-csp-reports" target="_blank">
+                                            <span class="material-icons">info_outline</span>
+                                        </a>
+                                    </span>
                                 </label>
                             </div>
-
                         </div>
                     </div>
                 </section>
             </div>
-
-
-
-
-
 
 
             <!-- TODO -->
@@ -235,7 +250,7 @@
             <section hidden id="nano-section-matrix">
                 <p>Matrix</p>
             </section>
-            <section hidden id="nano-section-developer">
+            <section hidden id="nano-section-advanced">
                 <p>Developer</p>
             </section>
             <section hidden id="nano-section-about">
