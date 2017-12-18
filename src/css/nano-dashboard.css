@@ -78,7 +78,7 @@
 /* ===== Tabs Common ===== */
 
 /* https://github.com/google/material-design-lite/issues/1558 */
-.mdl-switch, .mdl-button {
+.mdl-switch, .mdl-button.mdl-button--raised {
     height: auto;
 }
 
