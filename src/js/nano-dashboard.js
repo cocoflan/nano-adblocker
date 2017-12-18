@@ -259,6 +259,30 @@ const tabWhitelist = new class extends Tab {
 };
 
 /**
+ * The advanced tab.
+ * @const {Tab}
+ */
+const tabAdvanced = new class extends Tab {
+    /**
+     * Pass appropriate elements to super.
+     */
+    constructor() {
+        super(
+            document.getElementById("nano-tab-advanced"),
+            document.getElementById("nano-drawer-advanced"),
+            document.getElementById("nano-section-advanced"),
+        );
+    }
+    /**
+     * No action buttons for advanced tab.
+     */
+    init() {
+        super.init();
+        this.buttons = drawActionBtns([], [], []);
+    }
+};
+
+/**
  * The matrix tab.
  */
 const tabMatrix = new class extends Tab {
@@ -286,30 +310,6 @@ const tabMatrix = new class extends Tab {
         // TODO 2017-12-17: Check for unsaved changes 
         super.teardown();
         return true;
-    }
-};
-
-/**
- * The advanced tab.
- * @const {Tab}
- */
-const tabDev = new class extends Tab {
-    /**
-     * Pass appropriate elements to super.
-     */
-    constructor() {
-        super(
-            document.getElementById("nano-tab-advanced"),
-            document.getElementById("nano-drawer-advanced"),
-            document.getElementById("nano-section-advanced"),
-        );
-    }
-    /**
-     * No action buttons for advanced tab.
-     */
-    init() {
-        super.init();
-        this.buttons = drawActionBtns([], [], []);
     }
 };
 

@@ -19,20 +19,36 @@
         margin-right: 7px;
     }
 
-.mdl-layout__tab .nano-icon-adjust {
+.mdl-layout__tab-bar .mdl-layout__tab .nano-icon-adjust {
     position: relative;
     top: 7px;
     margin-right: 5px;
 }
 
 @media (min-width: 760px) {
-    .mdl-button {
+    .mdl-layout__header-row .mdl-navigation .mdl-button {
         margin-right: 2em;
     }
 }
 
+.mdl-layout__header .mdl-layout__drawer-button {
+    display: none;
+}
+
+.mdl-layout-title.nano-only-large-screen {
+    display: none;
+}
+
 @media (max-width: 1024px) {
-    .mdl-layout__tab-bar-container {
+    .mdl-layout__header .mdl-layout__drawer-button {
+        display: block;
+    }
+
+    .mdl-layout-title.nano-only-large-screen {
+        display: block;
+    }
+
+    .mdl-layout__header .mdl-layout__tab-bar-container {
         display: none;
     }
 
@@ -41,17 +57,12 @@
     }
 }
 
-@media (min-width: 1025px) {
-    .mdl-layout__drawer-button {
-        display: none;
-    }
-
-    .mdl-layout-title.nano-only-large-screen {
-        display: none;
-    }
-}
-
 /* ===== Tabs Common ===== */
+
+/* https://github.com/google/material-design-lite/issues/1558 */
+.mdl-switch {
+    height: 100%;
+}
 
 .mdl-layout__content .mdl-layout__tab-panel {
     padding: 10px;
@@ -80,6 +91,10 @@ section.nano-section-center {
     color: #000000;
 }
 
+    .nano-option-row:nth-last-of-type(1) {
+        margin-bottom: 0px;
+    }
+
     .nano-option-row .mdl-switch__label {
         position: relative;
         top: 1px;
@@ -95,14 +110,13 @@ section.nano-section-center {
         padding-left: 10px;
         margin-bottom: 40px;
     }
+
+        .nano-option-row:nth-last-of-type(1) {
+            margin-bottom: 0px;
+        }
 }
 
 .mdl-switch__label.nano-info-adjust .mdl-button {
     position: relative;
     top: -1px;
-}
-
-/* https://github.com/google/material-design-lite/issues/1558 */
-.mdl-switch {
-    height: 100%;
 }
