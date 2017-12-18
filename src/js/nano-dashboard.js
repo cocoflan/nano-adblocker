@@ -142,7 +142,7 @@ const tabSettings = new class extends Tab {
         );
 
         // Upgrade textbox
-        const textboxes = document.getElementById("nano-section-settings").querySelectorAll("input:not([class])");
+        const textboxes = document.querySelectorAll("#nano-section-settings input:not([class])");
         for (let i = 0; i < textboxes.length; i++) {
             let container = document.createElement("div");
             container.className = "mdl-textfield mdl-js-textfield nano-inline-textbox";
@@ -158,6 +158,7 @@ const tabSettings = new class extends Tab {
 
             container.append(input, label);
 
+            // Might need a polyfill for Edge
             // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/replaceWith
             textboxes[i].replaceWith(container);
         }

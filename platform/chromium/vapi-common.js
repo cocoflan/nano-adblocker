@@ -72,6 +72,7 @@ var i18nPlaceholders = {
     'advancedPageName': 'Advanced',
     
     'settingGeneralGroup': 'General',
+    'settingOtherGroup': 'Other',
     
     'aboutBasedOn': 'Based on uBlock Origin v1.14.22',
 
