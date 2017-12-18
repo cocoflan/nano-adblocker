@@ -35,7 +35,7 @@
     display: none;
 }
 
-.mdl-layout-title.nano-only-large-screen {
+.mdl-layout-title.nano-only-small-screen {
     display: none;
 }
 
@@ -44,7 +44,7 @@
         display: block;
     }
 
-    .mdl-layout-title.nano-only-large-screen {
+    .mdl-layout-title.nano-only-small-screen {
         display: block;
     }
 
@@ -52,6 +52,16 @@
         display: none;
     }
 
+    .mdl-layout-title.nano-only-large-screen {
+        display: none;
+    }
+}
+
+/*
+    The screen is just too tiny, the user can still know which tab they are on
+    from the navigation drawer.
+*/
+@media (max-width: 480px) {
     .mdl-layout-title.nano-only-small-screen {
         display: none;
     }

@@ -170,8 +170,8 @@ const tabFilters = new class extends Tab {
     init() {
         super.init();
         this.buttons = drawActionBtns(
-            ["update", "delete_forever", "done"],
-            [vAPI.i18n("3pUpdateNow"), vAPI.i18n("3pPurgeAll"), vAPI.i18n("3pApplyChanges")],
+            ["done", "update", "delete_forever"],
+            [vAPI.i18n("3pApplyChanges"), vAPI.i18n("3pUpdateNow"), vAPI.i18n("3pPurgeAll")],
             // TODO
             [() => { }, () => { }, () => { }],
         );
@@ -206,7 +206,7 @@ const tabRules = new class extends Tab {
     init() {
         super.init();
         this.buttons = drawActionBtns(
-            ["done", "undo", "note_add", "file_download"],
+            ["done", "undo", "note_add", "archive"],
             [vAPI.i18n("1pApplyChanges"), vAPI.i18n("genericRevert"), vAPI.i18n("1pImport"), vAPI.i18n("1pExport")],
             // TODO
             [() => { }, () => { }, () => { }, () => { }],
@@ -242,7 +242,7 @@ const tabWhitelist = new class extends Tab {
     init() {
         super.init();
         this.buttons = drawActionBtns(
-            ["done", "undo", "note_add", "file_download"],
+            ["done", "undo", "note_add", "archive"],
             [vAPI.i18n("whitelistApply"), vAPI.i18n("genericRevert"), vAPI.i18n("whitelistImport"), vAPI.i18n("whitelistExport")],
             // TODO
             [() => { }, () => { }, () => { }, () => { }],
