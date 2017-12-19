@@ -21,7 +21,7 @@ const currentTabTextElement = document.getElementById("nano-selected-tab");
 /**
  * Update action buttons for this tab.
  * The two arrays that are passed in must be parallel arrays.
- * @method
+ * @function
  * @param {Array.<string>} inIcons - The icons to set.
  * @param {Array.<string>} inTooltips - The tooltips to set.
  * @param {Array.<Function>} inHandlers - The click handlers.
@@ -48,6 +48,10 @@ const drawActionBtns = (() => {
     };
 })();
 
+/**
+ * Close the drawer.
+ * @function
+ */
 const closeDrawer = (() => {
     let backdrop = null;
     return () => {
@@ -88,8 +92,12 @@ const Tab = class {
 
             closeDrawer();
 
-            if (currentTab && !currentTab.teardown(this)) {
-                return;
+            if (currentTab) {
+                if (currentTab.hasChanges()) {
+                    return;
+                } else {
+                    currentTab.unload();
+                }
             }
 
             this.init();
@@ -98,7 +106,7 @@ const Tab = class {
         this.btn2.addEventListener("click", onclick);
     }
     /**
-     * Initialize the tab.
+     * Initialize this tab.
      * @method
      */
     init() {
@@ -108,19 +116,24 @@ const Tab = class {
         currentTabTextElement.textContent = this.btn2.children[1].textContent;
 
         currentTab = this;
+        vAPI.localStorage.setItem("nanoDashboardLastVisitedTab", this.constructor.name);
     }
     /**
-     * Teardown current tab. If overriden, should take in the caller tab in case teardown
-     * succeeded asynchronously.
+     * Check whether this tab is ready to be unloaded.
      * @method
-     * @return {boolean} True if the operation succeeded, false otherwise.
+     * @return {boolean} True if there are unsaved changes, false otherwise.
      */
-    teardown() {
+    hasChanges() {
+        return false;
+    }
+    /**
+     * Unload this tab.
+     * @method
+     */
+    unload() {
         this.btn1.classList.remove("is-active");
         this.btn2.classList.remove("is-active");
         this.content.classList.remove("is-active");
-
-        return true;
     }
 };
 
@@ -130,9 +143,11 @@ const Tab = class {
  * The settings tab.
  * @const {Tab}
  */
-const tabSettings = new class extends Tab {
+window.tabSettings = new class tabSettings extends Tab {
     /**
-     * Pass appropriate elements to super.
+     * Pass appropriate elements to super then upgrade textboxes.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -165,6 +180,8 @@ const tabSettings = new class extends Tab {
     }
     /**
      * No action buttons for settings tab.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -174,10 +191,13 @@ const tabSettings = new class extends Tab {
 
 /**
  * The filters tab.
+ * @const {Tab}
  */
-const tabFilters = new class extends Tab {
+window.tabFilters = new class tabFilters extends Tab {
     /**
      * Pass appropriate elements to super.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -187,7 +207,9 @@ const tabFilters = new class extends Tab {
         );
     }
     /**
-     * 3 buttons: Update now, Purge all caches, Apply changes
+     * 3 buttons: Update now, Purge all caches, Apply changes.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -200,20 +222,24 @@ const tabFilters = new class extends Tab {
     }
     /**
      * Check for unsaved changes.
+     * @method
+     * @override
      */
-    teardown() {
-        // TODO 2017-12-17: Check for unsaved changes 
-        super.teardown();
-        return true;
+    hasChanges() {
+        // TODO 2017-12-17: Check for unsaved changes
+        return false;
     }
 };
 
 /**
  * The rules tab.
+ * @const {Tab}
  */
-const tabRules = new class extends Tab {
+window.tabRules = new class tabRules extends Tab {
     /**
      * Pass appropriate elements to super.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -223,7 +249,9 @@ const tabRules = new class extends Tab {
         );
     }
     /**
-     * 4 buttons: Apply changes, Revert, Import and append, Export
+     * 4 buttons: Apply changes, Revert, Import and append, Export.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -236,20 +264,24 @@ const tabRules = new class extends Tab {
     }
     /**
      * Check for unsaved changes.
+     * @method
+     * @override
      */
-    teardown() {
+    hasChanges() {
         // TODO 2017-12-17: Check for unsaved changes 
-        super.teardown();
-        return true;
+        return false;
     }
 };
 
 /**
  * The whitelist tab.
+ * @const {Tab}
  */
-const tabWhitelist = new class extends Tab {
+window.tabWhitelist = new class tabWhitelist extends Tab {
     /**
      * Pass appropriate elements to super.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -259,7 +291,9 @@ const tabWhitelist = new class extends Tab {
         );
     }
     /**
-     * 4 buttons: Apply changes, Revert, Import and append, Export
+     * 4 buttons: Apply changes, Revert, Import and append, Export.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -272,11 +306,12 @@ const tabWhitelist = new class extends Tab {
     }
     /**
      * Check for unsaved changes.
+     * @method
+     * @override
      */
-    teardown() {
+    hasChanges() {
         // TODO 2017-12-17: Check for unsaved changes 
-        super.teardown();
-        return true;
+        return false;
     }
 };
 
@@ -284,9 +319,11 @@ const tabWhitelist = new class extends Tab {
  * The advanced tab.
  * @const {Tab}
  */
-const tabAdvanced = new class extends Tab {
+window.tabAdvanced = new class tabAdvanced extends Tab {
     /**
      * Pass appropriate elements to super.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -297,6 +334,8 @@ const tabAdvanced = new class extends Tab {
     }
     /**
      * No action buttons for advanced tab.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -306,10 +345,13 @@ const tabAdvanced = new class extends Tab {
 
 /**
  * The matrix tab.
+ * @const {Tab}
  */
-const tabMatrix = new class extends Tab {
+window.tabMatrix = new class tabMatrix extends Tab {
     /**
      * Pass appropriate elements to super.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -320,6 +362,8 @@ const tabMatrix = new class extends Tab {
     }
     /**
      * No action buttons for matrix tab.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -327,11 +371,12 @@ const tabMatrix = new class extends Tab {
     }
     /**
      * Check for unsaved changes.
+     * @method
+     * @override
      */
-    teardown() {
+    hasChanges() {
         // TODO 2017-12-17: Check for unsaved changes 
-        super.teardown();
-        return true;
+        return false;
     }
 };
 
@@ -339,9 +384,11 @@ const tabMatrix = new class extends Tab {
  * The about tab.
  * @const {Tab}
  */
-const tabAbout = new class extends Tab {
+window.tabAbout = new class tabAbout extends Tab {
     /**
      * Pass appropriate elements to super.
+     * @constructor
+     * @override
      */
     constructor() {
         super(
@@ -352,6 +399,8 @@ const tabAbout = new class extends Tab {
     }
     /**
      * No action buttons for about tab.
+     * @method
+     * @override
      */
     init() {
         super.init();
@@ -361,5 +410,11 @@ const tabAbout = new class extends Tab {
 
 // ===== Bootstrap =====
 
-// TODO: read localstorage for last active tab etc.
-tabSettings.init();
+{
+    const lastTab = vAPI.localStorage.getItem("nanoDashboardLastVisitedTab");
+    if (window[lastTab] instanceof Tab) {
+        window[lastTab].init();
+    } else {
+        tabSettings.init();
+    }
+}

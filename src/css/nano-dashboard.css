@@ -3,6 +3,14 @@
     This file should be formatted by Visual Studio.
 */
 
+/* Selction lock, can be configured in advanced tab */
+* {
+    user-select: none !important;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
 /* ===== Header and Navigation ===== */
 
 .mdl-layout__header-row {
@@ -150,6 +158,13 @@ section.nano-section-center {
 .mdl-switch__label.nano-inline-textbox-info-adjust .mdl-button {
     position: relative;
     top: -3px;
+}
+
+@media (max-width: 1024px) {
+    .mdl-switch__label.nano-inline-textbox-info-adjust .mdl-button {
+        position: relative;
+        top: -2px;
+    }
 }
 
 .mdl-textfield.nano-inline-textbox {
