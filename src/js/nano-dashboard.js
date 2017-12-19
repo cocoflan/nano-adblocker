@@ -158,39 +158,27 @@ const pickFile = (callback) => {
  * Show a confirm modal.
  * @function
  * @param {string} msg - The message to show.
- * @param {Function} yes - The callback when yes is clicked.
- * @param {Function} no - The callback when no is clicked.
+ * @param {Function} callback - The callback when yes is clicked.
  */
 const showConfirmModal = (() => {
     const dialog = document.getElementById("nano-confirm-dialog");
     const content = dialog.querySelector("p");
     const [btnNo, btnYes] = dialog.querySelectorAll("button");
 
-    return (msg, yes, no) => {
+    return (msg, callback) => {
         if (window.HTMLDialogElement) {
             content.textContent = msg;
             btnYes.onclick = () => {
                 dialog.close();
-                if (typeof yes === "function") {
-                    yes();
-                }
+                callback();
             };
             btnNo.onclick = () => {
                 dialog.close();
-                if (typeof no === "function") {
-                    no();
-                }
             };
             dialog.showModal();
         } else {
             if (confirm(msg)) {
-                if (typeof yes === "function") {
-                    yes();
-                }
-            } else {
-                if (typeof no === "function") {
-                    no();
-                }
+                callback();
             }
         }
     };
