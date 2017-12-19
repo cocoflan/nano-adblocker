@@ -8,12 +8,6 @@ Origin.
 Nano Adblocker currently aims at making filter maintenance easier, powerful tools are being rapidly developed to save your time, 
 frustration, and bandwidth. 
 
-<!--
-If something is obviously broken then we would have already noticed it. If something does not work at all, then it is likely a 
-problem with a third-party cleaner or anti-virus that you have. Microsoft's own cleaner and anti-virus are known to not cause 
-problems. 
--->
-
 Please open an issue if there is something you want us to know. 
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
@@ -23,6 +17,12 @@ Please open an issue if there is something you want us to know.
 ### [\[Work in progress\] Get it for Edge](https://github.com/NanoAdblocker/NanoCore/issues/40)
 
 ## Notable Change
+
+### \[Work in progress\] Nano Dashboard, clean and modern
+
+![Screenshot](https://i.imgur.com/LUAu7KO.png)
+
+Not yet available
 
 ### \[Work in progress\] Nano Filter Linter, neat and saves frustration
 
@@ -50,7 +50,7 @@ Available since 1.0.0.0
 
 ## Change Log
 
-Housekeeping changes (renaming, formatting, resources update, minor UI tweak, etc.) are not listed here. 
+Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pulling upstream changes, etc.) are not listed here. 
 
 - Revamp dashboard with Material Design
   - [`b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b`](https://github.com/NanoAdblocker/NanoCore/commit/b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b)
