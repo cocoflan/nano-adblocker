@@ -47,7 +47,6 @@ const drawActionBtns = (() => {
         return buttons.slice(0, inIcons.length);
     };
 })();
-
 /**
  * Close the drawer.
  * @function
@@ -67,6 +66,23 @@ const closeDrawer = (() => {
         }
     };
 })();
+
+/**
+ * Pick a file.
+ * @function
+ * @param {Function} callback - The function to call.
+ ** @param {HTMLElement} elem - The file picker.
+ */
+const pickFile = (callback) => {
+    // Do not have to be attached to DOM.
+    // It should be really rare that we need to pick a file, we will not cache the element.
+    let filePicker = document.createElement("input");
+    filePicker.setAttribute("type", "file");
+    filePicker.addEventListener("change", () => {
+        callback(filePicker);
+    });
+    filePicker.click();
+};
 
 /**
  * Tab interface.
@@ -189,16 +205,11 @@ window.tabSettings = new class tabSettings extends Tab {
         this.buttons = drawActionBtns([], [], []);
 
         if (this.initialized) {
-            this.refreshStats(() => {
+            vAPI.messaging.send("dashboard", { what: "getLocalData" }, (data) => {
+                this.refreshState(data);
                 super.init();
             });
         } else {
-            // Does not have to be attached to DOM
-            this.filePicker = document.createElement("input");
-            this.filePicker.setAttribute("type", "file");
-
-            // TODO: bind event handlers for file picker
-
             vAPI.messaging.send("dashboard", { what: "userSettings" }, (data) => {
                 const checkboxes = document.querySelectorAll("[id^='settings-'][data-setting-type='bool']");
                 for (let checkbox of checkboxes) {
@@ -207,104 +218,234 @@ window.tabSettings = new class tabSettings extends Tab {
                     }
 
                     checkbox.addEventListener("change", () => {
-                        // TODO
-                        console.log(checkbox, checkbox.checked);
+                        this.saveSettingsChange(checkbox.dataset.settingName, checkbox.checked);
                     });
                 }
 
                 const inputs = document.querySelectorAll("[id^='nano-settings-textbox-']");
+                // Inputs are to be handled individually
                 inputs[0].dataset.settingName = "largeMediaSize";
                 inputs[0].dataset.settingType = "input";
-                for (let input of inputs) {
-                    let inputLastValue = input.value = data[input.dataset.settingName];
-                    input.addEventListener("change", () => {
-                        // TODO
-                        console.log(input, input.value);
-                    });
-                }
+                inputs[0].value = data.largeMediaSize;
+                inputs[0].addEventListener("change", () => {
+                    let v = inputs[0].value;
 
-                // TODO: buttons event handlers
+                    v = parseInt(v, 10);
+                    // parseInt can also return Infinity, but -Infinity is smaller than 0 and Infinity is larger
+                    // than 1000000
+                    if (isNaN(v) || v < 0) {
+                        v = 0;
+                    } else if (v > 1000000) {
+                        v = 1000000;
+                    }
 
-                this.refreshStats(() => {
+                    if (v !== inputs[0].value) {
+                        inputs[0].value = v;
+                        inputs[0].parentNode.classList.remove("is-invalid");
+                    }
+
+                    this.saveSettingsChange("largeMediaSize", v);
+                });
+
+                document.querySelector("[data-i18n='aboutBackupDataButton']").addEventListener("click", () => {
+                    this.onBackupBtnClicked();
+                });
+                document.querySelector("[data-i18n='aboutRestoreDataButton']").addEventListener("click", () => {
+                    this.onRestoreBtnClicked();
+                });
+                document.querySelector("[data-i18n='aboutResetDataButton']").addEventListener("click", () => {
+                    this.onResetBtnClicked();
+                });
+
+                vAPI.messaging.send("dashboard", { what: "getLocalData" }, (data) => {
+                    this.refreshState(data);
                     super.init();
                 });
             });
         }
     }
+
+    // ----- Helper Functions -----
+
     /**
-     * Refresh stats.
+     * Refresh state.
      * @method
-     * @param {Function} onDone - The callback function.
+     * @param {Object} data - The state data.
      */
-    refreshStats(onDone) {
-        vAPI.messaging.send("dashboard", { what: "getLocalData" }, (data) => {
-            const timeOptions = {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                timeZoneName: "short",
-            };
+    refreshState(data) {
+        const timeOptions = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            timeZoneName: "short",
+        };
 
-            let diskUsage = data.storageUsed;
-            const diskUsageElem = document.getElementById("nano-settings-disk-usage");
-            if (typeof diskUsage === "number") {
-                diskUsage = diskUsage / 1024 / 1024;
-                diskUsage = Math.ceil(diskUsage * 100);
-                diskUsage = diskUsage / 100;
+        let diskUsage = data.storageUsed;
+        const diskUsageElem = document.getElementById("nano-settings-disk-usage");
+        if (typeof diskUsage === "number") {
+            diskUsage = diskUsage / 1024 / 1024;
+            diskUsage = Math.ceil(diskUsage * 100);
+            diskUsage = diskUsage / 100;
 
-                diskUsageElem.textContent = vAPI.i18n("settingDiskUsage") + diskUsage.toString() + vAPI.i18n("settingMebibyte");
-                diskUsageElem.style.display = "block";
-            } else {
-                diskUsageElem.style.display = "none";
+            diskUsageElem.textContent = vAPI.i18n("settingDiskUsage") + diskUsage.toString() + vAPI.i18n("settingMebibyte");
+            diskUsageElem.style.display = "block";
+        } else {
+            diskUsageElem.style.display = "none";
+        }
+
+        let lastBackup = data.lastBackupFile;
+        const lastBackupElem = document.getElementById("nano-settings-last-backup");
+        const lastBackupFileElem = document.getElementById("nano-settings-last-backedup-file");
+        if (typeof lastBackup === "string" && lastBackup.length > 0) {
+            let d = new Date(data.lastBackupTime);
+
+            lastBackupElem.textContent = vAPI.i18n("settingsLastBackupPrompt") + " " + d.toLocaleString("fullwide", timeOptions);
+            lastBackupFileElem.textContent = vAPI.i18n("settingsLastBackedupFilePrompt") + " " + lastBackup;
+            lastBackupElem.style.display = "block";
+            lastBackupFileElem.style.display = "block";
+        } else {
+            lastBackupElem.style.display = "none";
+            lastBackupFileElem.style.display = "none";
+        }
+
+        let lastRestore = data.lastRestoreFile;
+        const lastRestoreElem = document.getElementById("nano-settings-last-restore");
+        const lastRestoreFileElem = document.getElementById("nano-settings-last-restored-file");
+        if (typeof lastRestore === "string" && lastRestore.length > 0) {
+            let d = new Date(data.lastRestoreTime);
+
+            lastRestoreElem.textContent = vAPI.i18n("settingsLastRestorePrompt") + " " + d.toLocaleString("fullwide", timeOptions);
+            lastRestoreFileElem.textContent = vAPI.i18n("settingsLastRestoredFilePrompt") + " " + lastRestore;
+            lastRestoreElem.style.display = "block";
+            lastRestoreFileElem.style.display = "block";
+        } else {
+            lastRestoreElem.style.display = "none";
+            lastRestoreFileElem.style.display = "none";
+        }
+
+        if (data.cloudStorageSupported === false) {
+            document.getElementById("settings-cloud-storage-enabled").parentNode.MaterialSwitch.disable();
+        }
+        if (data.privacySettingsSupported === false) {
+            const inputs = document.querySelectorAll("#settings-privacy-group input");
+            for (let input of inputs) {
+                input.parentNode.MaterialSwitch.disable();
+            }
+        }
+    }
+    /**
+     * Save changes to a settings.
+     * @method
+     * @param {string} name - The name of the settings.
+     * @param {boolean|number} val - The new value.
+     */
+    saveSettingsChange(name, val) {
+        vAPI.messaging.send(
+            "dashboard",
+            {
+                what: "userSettings",
+                name: name,
+                value: val,
+            },
+        );
+    }
+    /**
+     * Handle restore from file.
+     * @method
+     * @param {HTMLElement} elem - The file picker.
+     */
+    onRestoreFilePicked(elem) {
+        const file = elem.files[0];
+        if (!file || !file.name || !file.type.startsWith("text")) {
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            let data;
+            let abort = false;
+
+            try {
+                data = JSON.parse(reader.result);
+            } catch (err) {
+                abort = true;
+            }
+            if (!abort && (
+                typeof data !== "object" ||
+                typeof data.userSettings !== "object" ||
+                typeof data.netWhitelist !== "string"
+            )) {
+                abort = true;
+            }
+            if (!abort && (
+                typeof data.filterLists !== "object" &&
+                !Array.isArray(data.selectedFilterLists)
+            )) {
+                abort = true;
             }
 
-            let lastBackup = data.lastBackupFile;
-            const lastBackupElem = document.getElementById("nano-settings-last-backup");
-            const lastBackupFileElem = document.getElementById("nano-settings-last-backedup-file");
-            if (typeof lastBackup === "string" && lastBackup.length > 0) {
-                let d = new Date(data.lastBackupTime);
-
-                lastBackupElem.textContent = vAPI.i18n("settingsLastBackupPrompt") + " " + d.toLocaleString("fullwide", timeOptions);
-                lastBackupFileElem.textContent = vAPI.i18n("settingsLastBackedupFilePrompt") + " " + lastBackup;
-                lastBackupElem.style.display = "block";
-                lastBackupFileElem.style.display = "block";
-            } else {
-                lastBackupElem.style.display = "none";
-                lastBackupFileElem.style.display = "none";
+            if (abort) {
+                alert(vAPI.i18n("aboutRestoreDataError"));
+                return;
             }
 
-            let lastRestore = data.lastRestoreFile;
-            const lastRestoreElem = document.getElementById("nano-settings-last-restore");
-            const lastRestoreFileElem = document.getElementById("nano-settings-last-restored-file");
-            if (typeof lastRestore === "string" && lastRestore.length > 0) {
-                let d = new Date(data.lastRestoreTime);
+            const time = new Date(data.timeStamp);
+            const msg = vAPI.i18n("aboutRestoreDataConfirm").replace("{{time}}", time.toLocaleString());
+            if (confirm(msg)) {
+                vAPI.messaging.send(
+                    "dashboard",
+                    {
+                        what: "restoreUserData",
+                        userData: data,
+                        file: file.name,
+                    },
+                );
+            }
+        };
+        reader.readAsText(file);
+    }
 
-                lastRestoreElem.textContent = vAPI.i18n("settingsLastRestorePrompt") + " " + d.toLocaleString("fullwide", timeOptions);
-                lastRestoreFileElem.textContent = vAPI.i18n("settingsLastRestoredFilePrompt") + " " + lastRestore;
-                lastRestoreElem.style.display = "block";
-                lastRestoreFileElem.style.display = "block";
-            } else {
-                lastRestoreElem.style.display = "none";
-                lastRestoreFileElem.style.display = "none";
+    // ----- Button Handlers -----
+
+    /**
+     * Backup button click handler.
+     * @method
+     */
+    onBackupBtnClicked() {
+        vAPI.messaging.send("dashboard", { what: "backupUserData" }, (res) => {
+            if (typeof res !== "object" || typeof res.userData !== "object") {
+                return;
             }
 
-            if (data.cloudStorageSupported === false) {
-                document.getElementById("settings-cloud-storage-enabled").parentNode.MaterialSwitch.disable();
-            }
-            if (data.privacySettingsSupported === false) {
-                const inputs = document.querySelectorAll("#settings-privacy-group input");
-                for (let input of inputs) {
-                    input.parentNode.MaterialSwitch.disable();
-                }
-            }
+            vAPI.download({
+                "url": "data:text/plain;charset=utf-8," + encodeURIComponent(JSON.stringify(res.userData, null, 2)),
+                "filename": res.localData.lastBackupFile,
+            });
 
-            if (typeof onDone === "function") {
-                onDone();
-            }
+            this.refreshState(res.localData);
         });
+    }
+    /**
+     * Restore button click handler.
+     * @method
+     */
+    onRestoreBtnClicked() {
+        pickFile((elem) => {
+            this.onRestoreFilePicked(elem);
+        });
+    }
+    /**
+     * Factory reset button click handler.
+     * @method
+     */
+    onResetBtnClicked() {
+        const msg = vAPI.i18n("aboutResetDataConfirm");
+        if (confirm(msg)) {
+            vAPI.messaging.send("dashboard", { what: "resetUserData" });
+        }
     }
 };
 
