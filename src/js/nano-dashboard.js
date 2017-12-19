@@ -156,6 +156,8 @@ window.tabSettings = new class tabSettings extends Tab {
             document.getElementById("nano-section-settings"),
         );
 
+        this.initialized = false;
+
         // Upgrade textbox
         const textboxes = document.querySelectorAll("#nano-section-settings input:not([class])");
         for (let i = 0; i < textboxes.length; i++) {
@@ -165,7 +167,7 @@ window.tabSettings = new class tabSettings extends Tab {
             let input = document.createElement("input");
             input.className = "mdl-textfield__input";
             input.type = textboxes[i].type;
-            input.id = "nano-settings-upgraded-textbox-" + i;
+            input.id = "nano-settings-textbox-" + i;
 
             let label = document.createElement("label");
             label.className = "mdl-textfield__label";
@@ -184,8 +186,125 @@ window.tabSettings = new class tabSettings extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns([], [], []);
+
+        if (this.initialized) {
+            this.refreshStats(() => {
+                super.init();
+            });
+        } else {
+            // Does not have to be attached to DOM
+            this.filePicker = document.createElement("input");
+            this.filePicker.setAttribute("type", "file");
+
+            // TODO: bind event handlers for file picker
+
+            vAPI.messaging.send("dashboard", { what: "userSettings" }, (data) => {
+                const checkboxes = document.querySelectorAll("[id^='settings-'][data-setting-type='bool']");
+                for (let checkbox of checkboxes) {
+                    if (data[checkbox.dataset.settingName] === true) {
+                        checkbox.parentNode.MaterialSwitch.on();
+                    }
+
+                    checkbox.addEventListener("change", () => {
+                        // TODO
+                        console.log(checkbox, checkbox.checked);
+                    });
+                }
+
+                const inputs = document.querySelectorAll("[id^='nano-settings-textbox-']");
+                inputs[0].dataset.settingName = "largeMediaSize";
+                inputs[0].dataset.settingType = "input";
+                for (let input of inputs) {
+                    let inputLastValue = input.value = data[input.dataset.settingName];
+                    input.addEventListener("change", () => {
+                        // TODO
+                        console.log(input, input.value);
+                    });
+                }
+
+                // TODO: buttons event handlers
+
+                this.refreshStats(() => {
+                    super.init();
+                });
+            });
+        }
+    }
+    /**
+     * Refresh stats.
+     * @method
+     * @param {Function} onDone - The callback function.
+     */
+    refreshStats(onDone) {
+        vAPI.messaging.send("dashboard", { what: "getLocalData" }, (data) => {
+            const timeOptions = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                timeZoneName: "short",
+            };
+
+            let diskUsage = data.storageUsed;
+            const diskUsageElem = document.getElementById("nano-settings-disk-usage");
+            if (typeof diskUsage === "number") {
+                diskUsage = diskUsage / 1024 / 1024;
+                diskUsage = Math.ceil(diskUsage * 100);
+                diskUsage = diskUsage / 100;
+
+                diskUsageElem.textContent = vAPI.i18n("settingDiskUsage") + diskUsage.toString() + vAPI.i18n("settingMebibyte");
+                diskUsageElem.style.display = "block";
+            } else {
+                diskUsageElem.style.display = "none";
+            }
+
+            let lastBackup = data.lastBackupFile;
+            const lastBackupElem = document.getElementById("nano-settings-last-backup");
+            const lastBackupFileElem = document.getElementById("nano-settings-last-backedup-file");
+            if (typeof lastBackup === "string" && lastBackup.length > 0) {
+                let d = new Date(data.lastBackupTime);
+
+                lastBackupElem.textContent = vAPI.i18n("settingsLastBackupPrompt") + " " + d.toLocaleString("fullwide", timeOptions);
+                lastBackupFileElem.textContent = vAPI.i18n("settingsLastBackedupFilePrompt") + " " + lastBackup;
+                lastBackupElem.style.display = "block";
+                lastBackupFileElem.style.display = "block";
+            } else {
+                lastBackupElem.style.display = "none";
+                lastBackupFileElem.style.display = "none";
+            }
+
+            let lastRestore = data.lastRestoreFile;
+            const lastRestoreElem = document.getElementById("nano-settings-last-restore");
+            const lastRestoreFileElem = document.getElementById("nano-settings-last-restored-file");
+            if (typeof lastRestore === "string" && lastRestore.length > 0) {
+                let d = new Date(data.lastRestoreTime);
+
+                lastRestoreElem.textContent = vAPI.i18n("settingsLastRestorePrompt") + " " + d.toLocaleString("fullwide", timeOptions);
+                lastRestoreFileElem.textContent = vAPI.i18n("settingsLastRestoredFilePrompt") + " " + lastRestore;
+                lastRestoreElem.style.display = "block";
+                lastRestoreFileElem.style.display = "block";
+            } else {
+                lastRestoreElem.style.display = "none";
+                lastRestoreFileElem.style.display = "none";
+            }
+
+            if (data.cloudStorageSupported === false) {
+                document.getElementById("settings-cloud-storage-enabled").parentNode.MaterialSwitch.disable();
+            }
+            if (data.privacySettingsSupported === false) {
+                const inputs = document.querySelectorAll("#settings-privacy-group input");
+                for (let input of inputs) {
+                    input.parentNode.MaterialSwitch.disable();
+                }
+            }
+
+            if (typeof onDone === "function") {
+                onDone();
+            }
+        });
     }
 };
 
@@ -212,13 +331,14 @@ window.tabFilters = new class tabFilters extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns(
             ["done", "update", "delete_forever"],
             [vAPI.i18n("3pApplyChanges"), vAPI.i18n("3pUpdateNow"), vAPI.i18n("3pPurgeAll")],
             // TODO
             [() => { }, () => { }, () => { }],
         );
+
+        super.init();
     }
     /**
      * Check for unsaved changes.
@@ -254,13 +374,14 @@ window.tabRules = new class tabRules extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns(
             ["done", "undo", "note_add", "archive"],
             [vAPI.i18n("1pApplyChanges"), vAPI.i18n("genericRevert"), vAPI.i18n("1pImport"), vAPI.i18n("1pExport")],
             // TODO
             [() => { }, () => { }, () => { }, () => { }],
         );
+
+        super.init();
     }
     /**
      * Check for unsaved changes.
@@ -296,13 +417,14 @@ window.tabWhitelist = new class tabWhitelist extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns(
             ["done", "undo", "note_add", "archive"],
             [vAPI.i18n("whitelistApply"), vAPI.i18n("genericRevert"), vAPI.i18n("whitelistImport"), vAPI.i18n("whitelistExport")],
             // TODO
             [() => { }, () => { }, () => { }, () => { }],
         );
+
+        super.init();
     }
     /**
      * Check for unsaved changes.
@@ -338,8 +460,9 @@ window.tabAdvanced = new class tabAdvanced extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns([], [], []);
+
+        super.init();
     }
 };
 
@@ -366,8 +489,9 @@ window.tabMatrix = new class tabMatrix extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns([], [], []);
+
+        super.init();
     }
     /**
      * Check for unsaved changes.
@@ -403,8 +527,9 @@ window.tabAbout = new class tabAbout extends Tab {
      * @override
      */
     init() {
-        super.init();
         this.buttons = drawActionBtns([], [], []);
+
+        super.init();
     }
 };
 

@@ -68,17 +68,19 @@ vAPI.getURL = chrome.runtime.getURL;
 // Patch 2017-12-07: Add a couple placeholders, might need a real i18n system
 // soon...
 var i18nPlaceholders = {
-    'matrixPageName': 'Hosts matrix',
-    'advancedPageName': 'Advanced',
-    
     'settingGeneralGroup': 'General',
     'settingOtherGroup': 'Other',
-    
-    'aboutBasedOn': 'Based on uBlock Origin v1.14.22',
+    'settingDiskUsage': 'Disk usage: ',
+    'settingMebibyte': ' MiB',
+    'settingsLastBackedupFilePrompt': 'Last backed up file:',
+    'settingsLastRestoredFilePrompt': 'Last restored file:',
+
 
     'advancedSettingsAboutChanges': 'Nano Adblocker has different default ' +
         'values than uBlock Origin for these settings, assetFetchTimeout ' +
         'defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500.',
+    'advancedPageName': 'Advanced',
+
 
     '1pResourcesReference': 'Nano Adblocker comes with two sets of resources,',
     '1pResourcesAnd': 'and',
@@ -87,7 +89,8 @@ var i18nPlaceholders = {
     '1pResourcesPeriod': '.',
     '1pIDEHelp': 'Nano Filter IDE is powered by Ace and most shortcut keys ' +
         'works the same.',
-    
+
+
     'whitelistLinterAborted': 'Nano did not scan the rest of the lines ' +
         'for errors because there are too many errors.',
     'whitelistLinterTooManyWarnings': 'Nano did not scan the rest of the ' +
@@ -98,7 +101,13 @@ var i18nPlaceholders = {
     'whitelistLinterInvalidURL': 'This URL is not valid.',
     
     'whitelistLinterSuspeciousRegExp': 'This line is treated as a regular ' +
-        'expression, is that intended?'
+        'expression, is that intended?',
+
+
+    'matrixPageName': 'Hosts matrix',
+
+
+    'aboutBasedOn': 'Based on uBlock Origin v1.14.22'
 };
 
 // Patch 2017-12-06: Patch name, this has a slight performance overhead but there

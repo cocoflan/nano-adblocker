@@ -173,7 +173,7 @@
                     </div>
                 </section>
                 <!-- Privacy -->
-                <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp nano-section-center">
+                <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp nano-section-center" id="settings-privacy-group">
                     <div class="mdl-card mdl-cell mdl-cell--12-col">
                         <div class="mdl-card__supporting-text">
                             <h4 data-i18n="3pGroupPrivacy"></h4>
@@ -283,9 +283,11 @@
                     <div class="mdl-card mdl-cell mdl-cell--12-col">
                         <div class="mdl-card__supporting-text nano-auto-space-buttons">
                             <h4 data-i18n="settingOtherGroup"></h4>
-                            <p class="nano-font-size-16" id="nano-settings-disk-usage">Disk Usage</p>
-                            <p class="nano-font-size-16" id="nano-settings-last-backup">Last Backup</p>
-                            <p class="nano-font-size-16" id="nano-settings-last-restore">Last Restore</p>
+                            <p class="nano-font-size-16" id="nano-settings-disk-usage"></p>
+                            <p class="nano-font-size-16" id="nano-settings-last-backup"></p>
+                            <p class="nano-font-size-16" id="nano-settings-last-backedup-file"></p>
+                            <p class="nano-font-size-16" id="nano-settings-last-restore"></p>
+                            <p class="nano-font-size-16" id="nano-settings-last-restored-file"></p>
                             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" data-i18n="aboutBackupDataButton"></button>
                             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" data-i18n="aboutRestoreDataButton"></button>
                             <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" data-i18n="aboutResetDataButton"></button>
@@ -322,6 +324,7 @@
 
     <script src="js/vapi.js"></script>
     <script src="js/vapi-common.js"></script>
+    <script src="js/vapi-client.js"></script>
     <script src="js/i18n.js"></script>
     <script src="js/nano-dashboard.js"></script>
     <script src="lib/mdl/material.js"></script>
