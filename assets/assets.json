@@ -61,6 +61,15 @@
     ],
     "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
   },
+  "nano-whitelist": {
+    "content": "filters",
+    "group": "default",
+    "title": "Nano filters – Whitelist",
+    "contentURL": [
+      "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoWhitelist.txt",
+      "assets/NanoFilters/NanoWhitelist.txt"
+    ]
+  },
   "nano-defender": {
     "content": "filters",
     "group": "default",
@@ -121,6 +130,13 @@
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/resource-abuse.txt",
       "assets/ThirdParty/uBlockAbuse.txt"
     ]
+  },
+  "ublock-annoyances": {
+    "content": "filters",
+    "group": "default",
+    "title": "uBlock filters – Annoyances",
+    "off": true,
+    "contentURL": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/annoyances.txt"
   },
   "ublock-unbreak": {
     "content": "filters",

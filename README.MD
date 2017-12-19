@@ -76,7 +76,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, et
 - Add Edge support
   - [`2ac10284a86178b4989681525c333cf3b136bb31`](https://github.com/NanoAdblocker/NanoCore/commit/2ac10284a86178b4989681525c333cf3b136bb31)
 
-- Add linter for white list
+- Add linter for whitelist
   - [`333c389058e92a875d16d957d011c5d89313035c`](https://github.com/NanoAdblocker/NanoCore/commit/333c389058e92a875d16d957d011c5d89313035c)
   - [`f61a57a25f637515e1fe84f657758b14cf4f30b8`](https://github.com/NanoAdblocker/NanoCore/commit/f61a57a25f637515e1fe84f657758b14cf4f30b8)
   - [`2e352be5ed905cc726c2f58bc0a3010cb622176b`](https://github.com/NanoAdblocker/NanoCore/commit/2e352be5ed905cc726c2f58bc0a3010cb622176b)
