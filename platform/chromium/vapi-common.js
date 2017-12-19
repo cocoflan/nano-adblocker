@@ -68,6 +68,10 @@ vAPI.getURL = chrome.runtime.getURL;
 // Patch 2017-12-07: Add a couple placeholders, might need a real i18n system
 // soon...
 var i18nPlaceholders = {
+    'genericYes': 'Yes',
+    'genericNo': 'No',
+    
+    
     'settingGeneralGroup': 'General',
     'settingOtherGroup': 'Other',
     'settingDiskUsage': 'Disk usage: ',

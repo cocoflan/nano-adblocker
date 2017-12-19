@@ -3,12 +3,23 @@
     This file should be formatted by Visual Studio.
 */
 
+/* ===== General ===== */
+
 /* Selction lock, can be configured in advanced tab */
 * {
     user-select: none !important;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+}
+
+.nano-font-size-16 {
+    font-size: 16px;
+}
+
+dialog p {
+    font-size: 16px;
+    color: #000000;
 }
 
 /* ===== Header and Navigation ===== */
@@ -88,10 +99,6 @@
 /* https://github.com/google/material-design-lite/issues/1558 */
 .mdl-switch, .mdl-button.mdl-button--raised {
     height: auto;
-}
-
-.nano-font-size-16 {
-    font-size: 16px;
 }
 
 .mdl-layout__content .mdl-layout__tab-panel {
@@ -181,7 +188,7 @@ section.nano-section-center {
     margin-top: 25px;
 }
 
-/* Settings tab */
+/* ===== Settings Tab ===== */
 #nano-settings-default-behavior-info .mdl-button {
     position: relative;
     top: -1px;
