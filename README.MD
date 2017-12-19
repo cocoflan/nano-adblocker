@@ -69,6 +69,11 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, et
   - [`58a5996da6c98d42e2c2628ff67aba28b9f9c7c2`](https://github.com/NanoAdblocker/NanoCore/commit/58a5996da6c98d42e2c2628ff67aba28b9f9c7c2)
   - [`fd93972a39bb149c22cbc1410aff2789af82263c`](https://github.com/NanoAdblocker/NanoCore/commit/fd93972a39bb149c22cbc1410aff2789af82263c)
   - [`f998e760e845d24e74c56a7cd031c480825cc449`](https://github.com/NanoAdblocker/NanoCore/commit/f998e760e845d24e74c56a7cd031c480825cc449)
+  - [`f40edebceccef321f5a1e0f777fad5c7753ea7ee`](https://github.com/NanoAdblocker/NanoCore/commit/f40edebceccef321f5a1e0f777fad5c7753ea7ee)
+  - [`3ab52593256ea942c487702cc82bdb6885456b5b`](https://github.com/NanoAdblocker/NanoCore/commit/3ab52593256ea942c487702cc82bdb6885456b5b)
+  - [`bd83bd2ad767c3bd67a59f3677ac5a1ae5b705a9`](https://github.com/NanoAdblocker/NanoCore/commit/bd83bd2ad767c3bd67a59f3677ac5a1ae5b705a9)
+  - [`79b69097c8c17d19169bb0715bd664686d4bcd52`](https://github.com/NanoAdblocker/NanoCore/commit/79b69097c8c17d19169bb0715bd664686d4bcd52)
+  - [`802686b07c3ae1d14796ff5331a9d2d9e0228c98`](https://github.com/NanoAdblocker/NanoCore/commit/802686b07c3ae1d14796ff5331a9d2d9e0228c98)
 
 - Make default settings better
   - [`000e6cc57f9de4ab5b431cbaed6a936c49788c29`](https://github.com/NanoAdblocker/NanoCore/commit/000e6cc57f9de4ab5b431cbaed6a936c49788c29)
@@ -97,6 +102,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, et
   - [`9d1f8923203878a9f69e0d15ee50866a5614c8f4`](https://github.com/NanoAdblocker/NanoCore/commit/9d1f8923203878a9f69e0d15ee50866a5614c8f4)
   - [`7a32942767ae26f75a8500a460a2c82e5263379c`](https://github.com/NanoAdblocker/NanoCore/commit/7a32942767ae26f75a8500a460a2c82e5263379c)
   - [`127ff137a789382e939d4c034a917753e44df3fe`](https://github.com/NanoAdblocker/NanoCore/commit/127ff137a789382e939d4c034a917753e44df3fe)
+  - [`a585ba1b1d9a48b9e274af9e94eebb5c80d3a58e`](https://github.com/NanoAdblocker/NanoCore/commit/a585ba1b1d9a48b9e274af9e94eebb5c80d3a58e)
 
 - Add `nano` as alias to `µBlock` which is too hard to type
   - [`6b10f39e59ff4497fe80efb46dbd839bf4dee50b`](https://github.com/NanoAdblocker/NanoCore/commit/6b10f39e59ff4497fe80efb46dbd839bf4dee50b)
