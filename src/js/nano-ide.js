@@ -62,6 +62,12 @@ self.nanoIDE.init = function(element, highlight, readonly) {
 
 /******************************************************************************/
 
+self.nanoIDE.setLineWrap = function(lineWrap) {
+    self.nanoIDE.editor.session.setUseWrapMode(lineWrap);
+};
+
+/******************************************************************************/
+
 self.nanoIDE.getLinuxValue = function() {
     if ( self.nanoIDE.isWindows ) {
         self.nanoIDE.editor.session.setNewLineMode('unix');

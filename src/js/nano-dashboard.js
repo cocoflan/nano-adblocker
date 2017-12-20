@@ -242,7 +242,7 @@ const readOneSettings = (name) => {
 {
     function replaceWith(elems, ...rest) {
         if (rest.length) {
-            throw new Error("ChildNode.replaceWith() polyfill needs to be upgraded.");
+            throw new Error("ChildNode.replaceWith() polyfill needs an upgraded.");
         }
         this.parentNode.replaceChild(this, elem);
     }
@@ -299,49 +299,6 @@ window.tabFilters = new class tabFilters extends Tab {
      */
     hasChanges() {
         // TODO 2017-12-17: Check for unsaved changes
-        return false;
-    }
-};
-
-/**
- * The rules tab.
- * @const {Tab}
- */
-window.tabRules = new class tabRules extends Tab {
-    /**
-     * Pass appropriate elements to super.
-     * @constructor
-     * @override
-     */
-    constructor() {
-        super(
-            document.getElementById("nano-tab-rules"),
-            document.getElementById("nano-drawer-rules"),
-            document.getElementById("nano-section-rules"),
-        );
-    }
-    /**
-     * 4 buttons: Apply changes, Revert, Import and append, Export.
-     * @method
-     * @override
-     */
-    init() {
-        this.buttons = drawActionBtns(
-            ["done", "undo", "note_add", "archive"],
-            [vAPI.i18n("1pApplyChanges"), vAPI.i18n("genericRevert"), vAPI.i18n("1pImport"), vAPI.i18n("1pExport")],
-            // TODO
-            [() => { }, () => { }, () => { }, () => { }],
-        );
-
-        super.init();
-    }
-    /**
-     * Check for unsaved changes.
-     * @method
-     * @override
-     */
-    hasChanges() {
-        // TODO 2017-12-17: Check for unsaved changes 
         return false;
     }
 };

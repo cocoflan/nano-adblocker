@@ -70,6 +70,7 @@ vAPI.getURL = chrome.runtime.getURL;
 var i18nPlaceholders = {
     'genericYes': 'Yes',
     'genericNo': 'No',
+    'generidFilterReadError': '# Could not load data, please refresh.',
     
     
     'settingGeneralGroup': 'General',
@@ -97,8 +98,8 @@ var i18nPlaceholders = {
     '1pResourcesOriginal': 'uBlock Origin Resources',
     '1pResourcesNano': 'Nano Adblocker Extra Resources',
     '1pResourcesPeriod': '.',
-    '1pIDEHelp': 'Nano Filter IDE is powered by Ace and most shortcut keys ' +
-        'works the same.',
+    '1pFilterEditorHelp': 'Nano Filter Editor is powered by Ace and most ' +
+        'shortcut keys works the same.',
 
 
     'whitelistLinterAborted': 'Nano did not scan the rest of the lines ' +

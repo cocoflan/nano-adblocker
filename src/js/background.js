@@ -71,7 +71,7 @@ var µBlock = (function() { // jshint ignore:line
             webrtcIPAddressHidden: false,
             
             // Patch 2017-12-19: Add UI configuration
-            nanoDashboardAllowSelection: false,
+            nanoDashboardAllowSelection: true,
             nanoEditorWordSoftWrap: false,
             nanoViewerWordSoftWrap: false
         },

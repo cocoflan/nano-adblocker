@@ -170,6 +170,13 @@
                                 </label>
                             </div>
                             <div class="nano-option-row">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-dashboard-allow-selection">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="nanoDashboardAllowSelection" data-setting-type="bool" id="settings-dashboard-allow-selection" />
+                                    <span class="mdl-switch__label" data-i18n="settingsDashboardAllowSelectionPrompt"></span>
+                                </label>
+                            </div>
+                            <div class="nano-option-row">
                                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-editor-word-wrap">
                                     <input type="checkbox" class="mdl-switch__input"
                                            data-setting-name="nanoEditorWordSoftWrap" data-setting-type="bool" id="settings-editor-word-wrap" />
@@ -181,13 +188,6 @@
                                     <input type="checkbox" class="mdl-switch__input"
                                            data-setting-name="nanoViewerWordSoftWrap" data-setting-type="bool" id="settings-viewer-word-wrap" />
                                     <span class="mdl-switch__label" data-i18n="settingsViewerWordWrapPrompt"></span>
-                                </label>
-                            </div>
-                            <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-dashboard-allow-selection">
-                                    <input type="checkbox" class="mdl-switch__input"
-                                           data-setting-name="nanoDashboardAllowSelection" data-setting-type="bool" id="settings-dashboard-allow-selection" />
-                                    <span class="mdl-switch__label" data-i18n="settingsDashboardAllowSelectionPrompt"></span>
                                 </label>
                             </div>
                             <div class="nano-option-row">
@@ -268,9 +268,9 @@
                     <div class="mdl-card mdl-cell mdl-cell--12-col">
                         <div class="mdl-card__supporting-text">
                             <h4 data-i18n="settingPerSiteSwitchGroup"></h4>
-                            <p class="nano-font-size-16" id="nano-settings-default-behavior-info">
+                            <p class="nano-font-size-16">
                                 <span data-i18n="settingPerSiteSwitchGroupSynopsis"></span>
-                                <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Per-site-switches" target="_blank">
+                                <a class="mdl-button mdl-js-button mdl-button--icon nano-paragraph-info-adjust" href="https://github.com/gorhill/uBlock/wiki/Per-site-switches" target="_blank">
                                     <span class="material-icons">info_outline</span>
                                 </a>
                             </p>
@@ -338,9 +338,49 @@
             <section hidden id="nano-section-filters">
                 <p>Filters</p>
             </section>
-            <section hidden id="nano-section-rules">
-                <p>Rules</p>
-            </section>
+
+
+
+            <!-- My rules tab -->
+            <div class="mdl-layout__tab-panel" id="nano-section-rules">
+                <!-- General -->
+                <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+                    <div class="mdl-card mdl-cell mdl-cell--12-col">
+                        <div id="rules-main-editor"></div>
+                    </div>
+                </section>
+                <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+                    <div class="mdl-card mdl-cell mdl-cell--12-col">
+                        <div class="mdl-card__supporting-text">
+                            <p class="nano-font-size-16">
+                                <span data-i18n="1pFormatHint"></span>
+                                <a class="mdl-button mdl-js-button mdl-button--icon nano-paragraph-info-adjust" href="https://github.com/gorhill/uBlock/wiki/Static-filter-syntax" target="_blank">
+                                    <span class="material-icons">info_outline</span>
+                                </a>
+                            </p>
+                            <p class="nano-font-size-16">
+                                <span data-i18n="1pResourcesReference"></span>
+                                <a href="https://github.com/uBlockOrigin/uAssets/blob/master/filters/resources.txt" target="_blank" data-i18n="1pResourcesOriginal"></a>
+                                <span data-i18n="1pResourcesAnd"></span>
+                                <a href="https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt" target="_blank" data-i18n="1pResourcesNano"></a>
+                                <span data-i18n="1pResourcesPeriod"></span>
+                            </p>
+                            <p class="nano-font-size-16">
+                                <span data-i18n="1pFilterEditorHelp"></span>
+                                <a class="mdl-button mdl-js-button mdl-button--icon nano-paragraph-info-adjust" href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">
+                                    <span class="material-icons">info_outline</span>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+
+
+
+
+            <!-- TODO -->
             <section hidden id="nano-section-whitelist">
                 <p>Whitelist</p>
             </section>
@@ -370,16 +410,23 @@
         </div>
     </dialog>
 
+    <script src="lib/mdl/material.js"></script>
+
     <script src="js/vapi.js"></script>
     <script src="js/vapi-common.js"></script>
     <script src="js/vapi-client.js"></script>
     <script src="js/i18n.js"></script>
 
+    <script src="lib/ace/ace-1.2.9.js"></script>
+    <script src="lib/ace/ext-searchbox-1.2.9.js"></script>
+    <script src="js/nano-highlight.js"></script>
+    <script src="js/nano-ide.js"></script>
+
     <script src="js/nano-dashboard.js"></script>
     <script src="js/nano-dashboard-settings.js"></script>
     <!-- TODO -->
+    <script src="js/nano-dashboard-rules.js"></script>
+    <!-- TODO -->
     <script src="js/nano-dashboard-bootstrap.js"></script>
-
-    <script src="lib/mdl/material.js"></script>
 </body>
 </html>

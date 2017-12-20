@@ -33,8 +33,6 @@ window.tabSettings = new class tabSettings extends Tab {
 
             container.append(input, label);
 
-            // Might need a polyfill for Edge
-            // https://developer.mozilla.org/en-US/docs/Web/API/ChildNode/replaceWith
             textboxes[i].replaceWith(container);
         }
     }
@@ -52,6 +50,7 @@ window.tabSettings = new class tabSettings extends Tab {
                 super.init();
             });
         } else {
+            this.initialized = true;
             vAPI.messaging.send("dashboard", { what: "userSettings" }, (data) => {
                 const checkboxes = document.querySelectorAll("[id^='settings-'][data-setting-type='bool']");
                 for (let checkbox of checkboxes) {

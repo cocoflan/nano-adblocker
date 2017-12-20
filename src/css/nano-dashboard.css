@@ -96,7 +96,10 @@ dialog p {
 
 /* ===== Tabs Common ===== */
 
-/* https://github.com/google/material-design-lite/issues/1558 */
+/* 
+    https://github.com/google/material-design-lite/issues/1558
+    .mdl-button--raised is required, otherwise info buttons break
+*/
 .mdl-switch, .mdl-button.mdl-button--raised {
     height: auto;
 }
@@ -121,16 +124,16 @@ section.nano-section-center {
         margin-bottom: 20px;
     }
 
+    .mdl-card .mdl-card__supporting-text > *:nth-last-child(1) {
+        margin-bottom: 0px;
+    }
+
 .nano-option-row {
     padding-left: 20px;
     margin-bottom: 20px;
     min-height: 32px;
     color: #000000;
 }
-
-    .nano-option-row:nth-last-of-type(1) {
-        margin-bottom: 0px;
-    }
 
     .nano-option-row label {
         width: auto;
@@ -151,10 +154,6 @@ section.nano-section-center {
         padding-left: 10px;
         margin-bottom: 40px;
     }
-
-        .nano-option-row:nth-last-of-type(1) {
-            margin-bottom: 0px;
-        }
 }
 
 .mdl-switch__label.nano-info-adjust .mdl-button {
@@ -188,8 +187,24 @@ section.nano-section-center {
     margin-top: 25px;
 }
 
-/* ===== Settings Tab ===== */
-#nano-settings-default-behavior-info .mdl-button {
+.mdl-button.nano-paragraph-info-adjust {
     position: relative;
     top: -1px;
+}
+
+/* ===== My Rules Tab ===== */
+#nano-section-rules {
+    padding-top: 10px;
+}
+
+    #nano-section-rules > section > div:first-of-type {
+        padding: 10px;
+    }
+
+    #nano-section-rules > section {
+        margin-bottom: 10px;
+    }
+
+#rules-main-editor {
+    height: 70vh;
 }
