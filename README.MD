@@ -52,6 +52,10 @@ Available since 1.0.0.0
 
 Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pulling upstream changes, etc.) are not listed here. 
 
+- Add more settings 
+  - [`33386fdefb26e47e487f2c6a64dd70fe38a88e86`](https://github.com/NanoAdblocker/NanoCore/commit/33386fdefb26e47e487f2c6a64dd70fe38a88e86)
+  - [`d1af3d294d10d206f885a6e1239932c393ad8a5c`](https://github.com/NanoAdblocker/NanoCore/commit/d1af3d294d10d206f885a6e1239932c393ad8a5c)
+
 - Revamp dashboard with Material Design
   - [`b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b`](https://github.com/NanoAdblocker/NanoCore/commit/b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b)
   - [`7437f3bbc822652a2c9819d63e1161aad08d4fa1`](https://github.com/NanoAdblocker/NanoCore/commit/7437f3bbc822652a2c9819d63e1161aad08d4fa1)
