@@ -78,6 +78,9 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
   - [`bd83bd2ad767c3bd67a59f3677ac5a1ae5b705a9`](https://github.com/NanoAdblocker/NanoCore/commit/bd83bd2ad767c3bd67a59f3677ac5a1ae5b705a9)
   - [`79b69097c8c17d19169bb0715bd664686d4bcd52`](https://github.com/NanoAdblocker/NanoCore/commit/79b69097c8c17d19169bb0715bd664686d4bcd52)
   - [`802686b07c3ae1d14796ff5331a9d2d9e0228c98`](https://github.com/NanoAdblocker/NanoCore/commit/802686b07c3ae1d14796ff5331a9d2d9e0228c98)
+  - [`6f40af6fcc8b45371ee026fc4c30c8794659cf95`](https://github.com/NanoAdblocker/NanoCore/commit/6f40af6fcc8b45371ee026fc4c30c8794659cf95)
+  - [`1b0cb5212be9980bf78b6da56009da681415e5e5`](https://github.com/NanoAdblocker/NanoCore/commit/1b0cb5212be9980bf78b6da56009da681415e5e5)
+  - [`27759eb4618f1b95054bbc1ab7e1a5caf69e87cc`](https://github.com/NanoAdblocker/NanoCore/commit/27759eb4618f1b95054bbc1ab7e1a5caf69e87cc)
 
 - Make default settings better
   - [`000e6cc57f9de4ab5b431cbaed6a936c49788c29`](https://github.com/NanoAdblocker/NanoCore/commit/000e6cc57f9de4ab5b431cbaed6a936c49788c29)
