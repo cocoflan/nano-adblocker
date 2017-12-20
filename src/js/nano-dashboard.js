@@ -144,15 +144,15 @@ const updateCSS = (() => {
     let selectionCSS = document.createElement("style");
     let tooltipCSS = document.createElement("style");
 
-    selectionCSS.textContent = `* {` +
-        `user-select: text !important;` +
-        `-webkit-user-select: text !important;` +
-        `-moz-user-select: text !important;` +
-        `-ms-user-select: text !important;` +
-        `}`;
-    tooltipCSS.textContent = `.mdl-tooltip {` +
-        `display: none !important;` +
-        `}`;
+    selectionCSS.textContent = "* {" +
+        "user-select: text !important;" +
+        "-webkit-user-select: text !important;" +
+        "-moz-user-select: text !important;" +
+        "-ms-user-select: text !important;" +
+        "}";
+    tooltipCSS.textContent = ".mdl-tooltip {" +
+        "display: none !important;" +
+        "}";
 
     return () => {
         if (allowTextSelection) {
@@ -242,7 +242,7 @@ const readOneSettings = (name) => {
 {
     function replaceWith(elems, ...rest) {
         if (rest.length) {
-            throw new Error("ChildNode.replaceWith() polyfill needs an upgraded.");
+            throw new Error("ChildNode.replaceWith() polyfill needs an upgrade.");
         }
         this.parentNode.replaceChild(this, elem);
     }
