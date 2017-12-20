@@ -2,15 +2,24 @@
 "use strict";
 
 (async () => {
-    window.allowTextSelection = await readOneSettings("nanoDashboardAllowSelection");
-    window.disableTooltips = await readOneSettings("tooltipsDisabled");
-
+    allowTextSelection = await readOneSettings("nanoDashboardAllowSelection");
+    disableTooltips = await readOneSettings("tooltipsDisabled");
     updateCSS();
 
-    const lastTab = vAPI.localStorage.getItem("nanoDashboardLastVisitedTab");
-    if (window[lastTab] instanceof Tab) {
-        window[lastTab].init();
+    hasMutex = await new Promise((resolve) => {
+        vAPI.messaging.send("dashboard", { what: "obtainDashboardMutex" }, (data) => {
+            resolve(data);
+        });
+    });
+
+    if (hasMutex) {
+        const lastTab = vAPI.localStorage.getItem("nanoDashboardLastVisitedTab");
+        if (window[lastTab] instanceof Tab) {
+            window[lastTab].init();
+        } else {
+            tabSettings.init();
+        }
     } else {
-        tabSettings.init();
+        showInfoModal(vAPI.i18n("dashboardMutexError"));
     }
 })();

@@ -24,3 +24,4 @@
 /******************************************************************************/
 
 window.NanoDefenderExtensionID = 'ggolfgbegefeeoocgjbmkembbncoadlb';
+window.NanoReIsDashboardURL = /^chrome-extension:\/\/[a-z]+\/(?:nano-)?dashboard\.html/;

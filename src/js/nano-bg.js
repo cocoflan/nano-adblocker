@@ -65,4 +65,38 @@ vAPI.messaging.onNanoDefenderConnection(function(msg) {
 
 /******************************************************************************/
 
+// Patch 2017-12-08: Add mutex lock for dashboard
+nano.currentDashboardMutexTabID = null;
+nano.getDashboardMutex = function(sender) {
+    var id = sender.tab.id;
+
+    // Refresh?
+    if ( id === nano.currentDashboardMutexTabID ) {
+        return true;
+    }
+    
+    // First time opened?
+    if ( nano.currentDashboardMutexTabID === null ) {
+        nano.currentDashboardMutexTabID = id;
+        return true;
+    }
+
+    // Last one closed?
+    var page = nano.pageStoreFromTabId(nano.currentDashboardMutexTabID);
+    if ( !page ) {
+        nano.currentDashboardMutexTabID = id;
+        return true;
+    }
+    
+    // Last one navigated away?
+    if ( NanoReIsDashboardURL.test(page.rawURL) ) {
+        return false;
+    } else {
+        nano.currentDashboardMutexTabID = id;
+        return true;
+    }
+};
+
+/******************************************************************************/
+
 })();

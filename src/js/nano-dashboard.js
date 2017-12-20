@@ -11,12 +11,23 @@
  * @var {Tab}
  */
 let currentTab = null;
-
 /**
  * The current tab indicator for small screen.
  * @const {HTMLElement}
  */
 const currentTabTextElement = document.getElementById("nano-selected-tab");
+
+/**
+ * Whether this instance has the mutex lock.
+ * @const {boolean}
+ */
+let hasMutex = false;
+
+/**
+ * CSS flags.
+ * @var {boolean}
+ */
+let allowTextSelection, disableTooltips;
 
 /**
  * Update action buttons for this tab.
@@ -85,6 +96,10 @@ const Tab = class {
         this.content = content;
 
         const onclick = () => {
+            if (!hasMutex) {
+                return;
+            }
+
             if (currentTab === this) {
                 return;
             }
@@ -187,6 +202,29 @@ const pickFile = (callback) => {
     });
     filePicker.click();
 };
+
+/**
+ * Show a information modal.
+ * @function
+ * @param {string} msg - The message to show.
+ */
+const showInfoModal = (() => {
+    const dialog = document.getElementById("nano-info-dialog");
+    const content = dialog.querySelector("p");
+    const btnOK = dialog.querySelector("button");
+    btnOK.addEventListener("click", () => {
+        dialog.close();
+    });
+
+    return (msg) => {
+        if (window.HTMLDialogElement) {
+            content.textContent = msg;
+            dialog.showModal();
+        } else {
+            alert(msg);
+        }
+    };
+})();
 /**
  * Show a confirm modal.
  * @function

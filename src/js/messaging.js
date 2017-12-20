@@ -987,6 +987,10 @@ var onMessage = function(request, sender, callback) {
     case 'writeHiddenSettings':
         µb.hiddenSettingsFromString(request.content);
         break;
+    
+    case 'obtainDashboardMutex':
+        response = nano.getDashboardMutex(sender);
+        break;
 
     default:
         return vAPI.messaging.UNHANDLED;

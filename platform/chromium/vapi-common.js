@@ -70,7 +70,12 @@ vAPI.getURL = chrome.runtime.getURL;
 var i18nPlaceholders = {
     'genericYes': 'Yes',
     'genericNo': 'No',
+    'genericOK': 'OK',
     'generidFilterReadError': '# Could not load data, please refresh.',
+    
+    
+    'dashboardMutexError': 'Could not obtain mutex lock, do you have another ' +
+        'dashboard open?',
     
     
     'settingGeneralGroup': 'General',
