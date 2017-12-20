@@ -753,7 +753,8 @@
     // Extract update frequency information
     matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*days?/i);
     if ( matches !== null ) {
-        v = Math.max(parseInt(matches[1], 10), 2);
+        // Patch 2017-12-19: Lower minimum update frequency to 1 day, down from 2
+        v = Math.max(parseInt(matches[1], 10), 1);
         if ( v !== listEntry.updateAfter ) {
             this.assets.registerAssetSource(assetKey, { updateAfter: v });
         }
