@@ -789,8 +789,8 @@ var restoreUserData = function(request) {
 var resetUserData = function() {
     vAPI.cacheStorage.clear();
     vAPI.storage.clear();
-    // TODO 2017-12-12: Why not remove everything?
-    vAPI.localStorage.removeItem('hiddenSettings');
+    // Patch 2017-12-12: Completely clear local storage as well
+    vAPI.localStorage.clear();
 
     // Keep global counts, people can become quite attached to numbers
     µb.saveLocalSettings();

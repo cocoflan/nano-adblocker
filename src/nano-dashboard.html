@@ -129,6 +129,33 @@
                                 </label>
                             </div>
                             <div class="nano-option-row">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-context-menu-enabled">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="contextMenuEnabled" data-setting-type="bool" id="settings-context-menu-enabled" />
+                                    <span class="mdl-switch__label" data-i18n="settingsContextMenuPrompt"></span>
+                                </label>
+                            </div>
+                            <div class="nano-option-row">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-cloud-storage-enabled">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="cloudStorageEnabled" data-setting-type="bool" id="settings-cloud-storage-enabled" />
+                                    <span class="mdl-switch__label nano-info-adjust">
+                                        <span data-i18n="settingsCloudStorageEnabledPrompt"></span>
+                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Cloud-storage" target="_blank">
+                                            <span class="material-icons">info_outline</span>
+                                        </a>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- User interface -->
+                <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp nano-section-center">
+                    <div class="mdl-card mdl-cell mdl-cell--12-col">
+                        <div class="mdl-card__supporting-text">
+                            <h4 data-i18n="settingUserInterfaceGroup"></h4>
+                            <div class="nano-option-row">
                                 <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-icon-badge">
                                     <input type="checkbox" class="mdl-switch__input"
                                            data-setting-name="showIconBadge" data-setting-type="bool" id="settings-icon-badge" />
@@ -136,10 +163,24 @@
                                 </label>
                             </div>
                             <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-context-menu-enabled">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-editor-word-wrap">
                                     <input type="checkbox" class="mdl-switch__input"
-                                           data-setting-name="contextMenuEnabled" data-setting-type="bool" id="settings-context-menu-enabled" />
-                                    <span class="mdl-switch__label" data-i18n="settingsContextMenuPrompt"></span>
+                                           data-setting-name="nanoEditorWordSoftWrap" data-setting-type="bool" id="settings-editor-word-wrap" />
+                                    <span class="mdl-switch__label" data-i18n="settingsEditorWordWrapPrompt"></span>
+                                </label>
+                            </div>
+                            <div class="nano-option-row">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-viewer-word-wrap">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="nanoViewerWordSoftWrap" data-setting-type="bool" id="settings-viewer-word-wrap" />
+                                    <span class="mdl-switch__label" data-i18n="settingsViewerWordWrapPrompt"></span>
+                                </label>
+                            </div>
+                            <div class="nano-option-row">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-dashboard-allow-selection">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="nanoDashboardAllowSelection" data-setting-type="bool" id="settings-dashboard-allow-selection" />
+                                    <span class="mdl-switch__label" data-i18n="settingsDashboardAllowSelectionPrompt"></span>
                                 </label>
                             </div>
                             <div class="nano-option-row">
@@ -154,18 +195,6 @@
                                     <input type="checkbox" class="mdl-switch__input"
                                            data-setting-name="colorBlindFriendly" data-setting-type="bool" id="settings-color-blind-friendly" />
                                     <span class="mdl-switch__label" data-i18n="settingsColorBlindPrompt"></span>
-                                </label>
-                            </div>
-                            <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-cloud-storage-enabled">
-                                    <input type="checkbox" class="mdl-switch__input"
-                                           data-setting-name="cloudStorageEnabled" data-setting-type="bool" id="settings-cloud-storage-enabled" />
-                                    <span class="mdl-switch__label nano-info-adjust">
-                                        <span data-i18n="settingsCloudStorageEnabledPrompt"></span>
-                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Cloud-storage" target="_blank">
-                                            <span class="material-icons">info_outline</span>
-                                        </a>
-                                    </span>
                                 </label>
                             </div>
                         </div>
@@ -298,7 +327,6 @@
 
 
 
-            <!-- TODO: add option to enable text selection -->
             <!-- TODO -->
             <section hidden id="nano-section-filters">
                 <p>Filters</p>

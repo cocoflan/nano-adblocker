@@ -73,7 +73,13 @@ var i18nPlaceholders = {
     
     
     'settingGeneralGroup': 'General',
+    'settingUserInterfaceGroup': 'User interface',
     'settingOtherGroup': 'Other',
+    
+    'settingsDashboardAllowSelectionPrompt': 'Allow text selection in dashboard',
+    'settingsEditorWordWrapPrompt': 'Soft wrap long lines in filter editor',
+    'settingsViewerWordWrapPrompt': 'Soft wrap long lines in filter viewer',
+    
     'settingDiskUsage': 'Disk usage: ',
     'settingMebibyte': ' MiB',
     'settingsLastBackedupFilePrompt': 'Last backed up file:',

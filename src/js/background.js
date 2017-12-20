@@ -68,7 +68,12 @@ var µBlock = (function() { // jshint ignore:line
             requestLogMaxEntries: 1000,
             showIconBadge: true,
             tooltipsDisabled: false,
-            webrtcIPAddressHidden: false
+            webrtcIPAddressHidden: false,
+            
+            // Patch 2017-12-19: Add UI configuration
+            nanoDashboardAllowSelection: false,
+            nanoEditorWordSoftWrap: false,
+            nanoViewerWordSoftWrap: false
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
