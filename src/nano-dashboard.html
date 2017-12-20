@@ -400,13 +400,27 @@
         </main>
     </div>
 
-    <div hidden id="nano-could-ui">
+    <div hidden id="nano-cloud-ui">
         <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
             <div class="mdl-card mdl-cell mdl-cell--12-col">
                 <div class="mdl-card__supporting-text">
-                    <a class="mdl-button mdl-js-button mdl-button--icon nano-paragraph-info-adjust" href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">
-                        <span class="material-icons">info_outline</span>
-                    </a>
+                    <span class="nano-font-size-16" data-i18n="cloudDeviceNamePrompt"></span>
+                    <div class="mdl-textfield mdl-js-textfield nano-inline-textbox">
+                        <input class="mdl-textfield__input" type="text" id="nano-cloud-device-name">
+                        <label class="mdl-textfield__label" for="nano-cloud-device-name"></label>
+                    </div>
+                    <span class="nano-font-size-16" id="nano-cloud-state"></span>
+                </div>
+                <div class="mdl-card__actions mdl-card--border">
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="cloud-push" title="cloudPush">
+                        <i class="material-icons">cloud_upload</i>
+                    </button>
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="cloud-pull" title="cloudPull">
+                        <i class="material-icons">cloud_download</i>
+                    </button>
+                    <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="cloud-pull-merge" title="cloudPullAndMerge">
+                        <i class="material-icons">sync</i>
+                    </button>
                 </div>
             </div>
         </section>

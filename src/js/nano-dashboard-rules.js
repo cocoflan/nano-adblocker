@@ -57,6 +57,14 @@ window.tabRules = new class tabRules extends Tab {
         });
     }
     /**
+     * Initialize cloud.
+     * @method
+     * @override
+     */
+    initCloud() {
+        Cloud.init(true, "tpFiltersPane", this.content);
+    }
+    /**
      * Check for unsaved changes.
      * @method
      * @override

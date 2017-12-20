@@ -74,6 +74,11 @@ var i18nPlaceholders = {
     'generidFilterReadError': '# Could not load data, please refresh.',
     
     
+    'nanoCloudNoData': 'No cloud data',
+    'nanoCloudLastSync': 'Last sync: {{device}} at {{time}}',
+    'nanoCloudSyncFailed': 'Something went wrong:\n{{error}}',
+    
+    
     'dashboardMutexError': 'Could not obtain mutex lock, do you have another ' +
         'dashboard open?',
     
@@ -90,7 +95,7 @@ var i18nPlaceholders = {
     'settingMebibyte': ' MiB',
     'settingsLastBackedupFilePrompt': 'Last backed up file:',
     'settingsLastRestoredFilePrompt': 'Last restored file:',
-
+    
 
     'advancedSettingsAboutChanges': 'Nano Adblocker has different default ' +
         'values than uBlock Origin for these settings, assetFetchTimeout ' +

@@ -129,8 +129,17 @@ const Tab = class {
         this.content.classList.add("is-active");
         currentTabTextElement.textContent = this.btn2.children[1].textContent;
 
+        this.initCloud();
+
         currentTab = this;
         vAPI.localStorage.setItem("nanoDashboardLastVisitedTab", this.constructor.name);
+    }
+    /**
+     * Initialize cloud.
+     * @method
+     */
+    initCloud() {
+        Cloud.init(false);
     }
     /**
      * Check whether this tab is ready to be unloaded.
@@ -198,23 +207,187 @@ let cloudSyncEnabled = false;
  */
 const Cloud = {};
 /**
- * Main cloud UI.
+ * Cloud UI container.
  * @private @const {HTMLElement}
  */
-Cloud.mainUI = document.getElementById("nano-could-ui");
+Cloud.containerElem = document.getElementById("nano-cloud-ui");
 /**
- * Move cloud UI.
- * @function
- * @param {boolean} enabled - Whether cloud sync is enabled for this tab.
- * @param {HTMLElement} target - The main container of this tab, optional if not enabled.
+ * Cloud UI content element.
+ * @private @const {HTMLElement}
  */
-Cloud.moveUI = (enabled, target) => {
-    if (enabled) {
-        Cloud.mainUI.removeAttribute("hidden");
-        target.prepend(Cloud.mainUI);
+Cloud.contentElem = document.getElementById("nano-cloud-state");
+/**
+ * Cloud UI buttons.
+ * @private @const {HTMLElement}
+ */
+Cloud.pushBtn = document.getElementById("cloud-push");
+Cloud.pullBtn = document.getElementById("cloud-pull");
+Cloud.mergeBtn = document.getElementById("cloud-pull-merge");
+/**
+ * Whether one-time initialization was done.
+ * @private @var {boolean}
+ */
+Cloud.initialized = false;
+/**
+ * Initialize cloud UI.
+ * @function
+ * @param {boolean} enabled - Whether cloud sync is enabled for this tab, if false, other arguments are optional.
+ * @param {string} dataKey - The cloud data key.
+ * @param {HTMLElement} target - The main container of this tab, optional if not enabled.
+ * @param {Function} onPush - The function to call when push button is clicked, must return data to push.
+ * @param {Function} onPull - The function to call when pull button is clicked, pulled data will be passed over.
+ * @param {Function} onMerge - The function to call when merge button is clicked, pulled data will be passed over.
+ */
+Cloud.init = (enabled, dataKey, target, onPush, onPull, onMerge) => {
+    if (enabled && dataKey) {
+        Cloud.dataKey = dataKey;
+        Cloud.target = target;
+        Cloud.onPush = onPush;
+        Cloud.onPull = onPull;
+        Cloud.onMerge = onMerge;
+
+        target.prepend(Cloud.containerElem);
+
+        if (Cloud.initialized) {
+            Cloud.redrawUI(() => {
+                Cloud.containerElem.removeAttribute("hidden");
+            });
+        } else {
+            Cloud.initialized = true;
+            vAPI.messaging.send("cloudWidget", { what: "cloudGetOptions" }, (data) => {
+                if (!data || typeof data !== "object") {
+                    Cloud.initialized = false;
+                    return;
+                }
+
+                Cloud.defaultDeviceName = data.defaultDeviceName;
+                Cloud.deviceName = data.deviceName;
+
+                const inputElem = document.getElementById("nano-cloud-device-name");
+                inputElem.value = Cloud.deviceName || Cloud.defaultDeviceName;
+                inputElem.addEventListener("change", () => {
+                    if (!inputElem.value) {
+                        inputElem.value = Cloud.defaultDeviceName;
+                    }
+
+                    vAPI.messaging.send(
+                        "cloudWidget",
+                        {
+                            what: "cloudSetOptions",
+                            options: {
+                                deviceName: inputElem.value,
+                            },
+                        },
+                        (data) => {
+                            if (data && typeof data === "object") {
+                                Cloud.defaultDeviceName = data.defaultDeviceName;
+                                Cloud.deviceName = data.deviceName;
+                            }
+                        },
+                    );
+                });
+
+                Cloud.pushBtn.addEventListener("click", Cloud.pushBtnClick);
+                Cloud.pullBtn.addEventListener("click", Cloud.pullBtnClicked);
+                Cloud.mergeBtn.addEventListener("click", Cloud.mergeBtnClicked);
+
+                Cloud.init(enabled, dataKey, target, onPush, onPull, onMerge);
+            });
+        }
     } else {
-        Cloud.mainUI.setAttribute("hidden", "");
+        Cloud.containerElem.setAttribute("hidden", "");
     }
+};
+/**
+ * Read data and update cloud sync UI.
+ * @private @function
+ * @param {Function} [callback=noop] - The callback function, fetched data will be passed over.
+ */
+Cloud.redrawUI = (callback) => {
+    console.assert(Cloud.dataKey && typeof Cloud.dataKey === "string");
+
+    const timeOptions = {
+        weekday: "short",
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        timeZoneName: "short",
+    };
+
+    vAPI.messaging.send(
+        "cloudWidget",
+        {
+            what: "cloudPull",
+            datakey: Cloud.dataKey,
+        },
+        (data) => {
+            if (data && typeof data === "object") {
+                Cloud.data = data;
+
+                Cloud.pullBtn.MaterialButton.enabled();
+                Cloud.mergeBtn.MaterialButton.enabled();
+
+                const time = new Date(data.tstamp);
+                Cloud.contentElem.textContent = vAPI.i18n("nanoCloudLastSync")
+                    .replace("{{device}}", data.source)
+                    .replace("{{time}}", time.toLocaleString("fullwide", timeOptions));
+            } else {
+                Cloud.data = null;
+
+                Cloud.pullBtn.MaterialButton.disable();
+                Cloud.mergeBtn.MaterialButton.disable();
+
+                Cloud.contentElem.textContent = vAPI.i18n("nanoCloudNoData");
+            }
+
+            if (callback) {
+                callback();
+            }
+        },
+    );
+};
+/**
+ * Push button click handler.
+ * @private @function
+ */
+Cloud.pushBtnClick = () => {
+    console.assert(Cloud.dataKey && typeof Cloud.dataKey === "string" && typeof Cloud.onPush === "function");
+
+    vAPI.messaging.send(
+        "cloudWidget",
+        {
+            what: "cloudPush",
+            datakey: Cloud.dataKey,
+            data: Cloud.onPush(),
+        },
+        (error) => {
+            if (typeof error === "string") {
+                showInfoModal(vAPI.i18n("nanoCloudSyncFailed").replace("{{error}}", error || ""));
+            }
+            Cloud.redrawUI();
+        },
+    );
+};
+/**
+ * Pull button click handler.
+ * @private @function
+ */
+Cloud.pullBtnClicked = () => {
+    console.assert(Cloud.data && typeof Cloud.data === "object" && typeof Cloud.onPull === "function");
+
+    Cloud.onPull(Cloud.data);
+};
+/**
+ * Merge button click handler.
+ * @private @function
+ */
+Cloud.mergeBtnClicked = () => {
+    console.assert(Cloud.data && typeof Cloud.data === "object" && typeof Cloud.onMerge === "function");
+
+    Cloud.onMerge(Cloud.data);
 };
 
 // ===== Helper Functions =====

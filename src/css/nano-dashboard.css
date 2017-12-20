@@ -192,6 +192,25 @@ section.nano-section-center {
     top: -1px;
 }
 
+/* ===== Cloud UI ===== */
+
+#nano-cloud-ui > section {
+    margin-bottom: 10px;
+}
+
+#nano-cloud-ui .mdl-card {
+    min-height: initial;
+}
+
+#nano-cloud-ui .mdl-card__supporting-text {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#nano-cloud-ui .mdl-textfield.nano-inline-textbox {
+    width: 200px;
+}
+
 /* ===== My Rules Tab ===== */
 #nano-section-rules {
     padding-top: 10px;

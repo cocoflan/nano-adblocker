@@ -98,10 +98,7 @@ window.tabSettings = new class tabSettings extends Tab {
                     this.onResetBtnClicked();
                 });
 
-                vAPI.messaging.send("dashboard", { what: "getLocalData" }, (data) => {
-                    this.refreshState(data);
-                    super.init();
-                });
+                this.init();
             });
         }
     }
