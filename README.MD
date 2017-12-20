@@ -111,6 +111,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
   - [`1089b2e4fc95d0dccf2068c1d1edc32a263e4788`](https://github.com/NanoAdblocker/NanoCore/commit/1089b2e4fc95d0dccf2068c1d1edc32a263e4788)
   - [`b09bacb75bc6186c5760413c8ab6df6893661b5f`](https://github.com/NanoAdblocker/NanoCore/commit/b09bacb75bc6186c5760413c8ab6df6893661b5f)
   - [`b84d0149d29c2eb16f195e57d63c7bc24277c587`](https://github.com/NanoAdblocker/NanoCore/commit/b84d0149d29c2eb16f195e57d63c7bc24277c587)
+  - [`59289d3c0a61f36a95685ef89594af4b50d271c2`](https://github.com/NanoAdblocker/NanoCore/commit/59289d3c0a61f36a95685ef89594af4b50d271c2)
 
 - Add syntax highlighting to Nano Filter IDE
   - [`436f4de6fb23ffa3354bfab61b65730f40f75566`](https://github.com/NanoAdblocker/NanoCore/commit/436f4de6fb23ffa3354bfab61b65730f40f75566)
