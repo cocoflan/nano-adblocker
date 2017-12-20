@@ -4,7 +4,7 @@
 
 "use strict";
 
-// ===== Main Controllers =====
+// ===== Controllers =====
 
 /**
  * The tab that is currently active.
@@ -71,7 +71,7 @@ const closeDrawer = (() => {
  * Tab interface.
  * @class
  */
-window.Tab = class {
+const Tab = class {
     /**
      * Constructor.
      * @constructor
@@ -136,6 +136,39 @@ window.Tab = class {
     }
 };
 
+/**
+ * Update CSS for controlling text selection and tooltips.
+ * @function
+ */
+const updateCSS = (() => {
+    let selectionCSS = document.createElement("style");
+    let tooltipCSS = document.createElement("style");
+
+    selectionCSS.textContent = `* {` +
+        `user-select: text !important;` +
+        `-webkit-user-select: text !important;` +
+        `-moz-user-select: text !important;` +
+        `-ms-user-select: text !important;` +
+        `}`;
+    tooltipCSS.textContent = `.mdl-tooltip {` +
+        `display: none !important;` +
+        `}`;
+
+    return () => {
+        if (allowTextSelection) {
+            document.documentElement.append(selectionCSS);
+        } else {
+            selectionCSS.remove();
+        }
+
+        if (disableTooltips) {
+            document.documentElement.append(tooltipCSS);
+        } else {
+            tooltipCSS.remove();
+        }
+    };
+})();
+
 // ===== Helper Functions =====
 
 /**
@@ -183,6 +216,27 @@ const showConfirmModal = (() => {
         }
     };
 })();
+
+/**
+ * Read one settings.
+ * @function
+ * @param {string} name - The name of the settings.
+ * @return {Promise} Promise of this task.
+ */
+const readOneSettings = (name) => {
+    return new Promise((resolve) => {
+        vAPI.messaging.send(
+            "dashboard",
+            {
+                what: "userSettings",
+                name: name,
+            },
+            (data) => {
+                resolve(data);
+            },
+        );
+    });
+};
 
 // ===== Polyfills =====
 {

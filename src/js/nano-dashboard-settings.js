@@ -185,6 +185,21 @@ window.tabSettings = new class tabSettings extends Tab {
      * @param {boolean|number} val - The new value.
      */
     saveSettingsChange(name, val) {
+        let mustUpdateCSS = false;
+
+        if (name === "nanoDashboardAllowSelection") {
+            allowTextSelection = val;
+            mustUpdateCSS = true;
+        }
+        if (name === "tooltipsDisabled") {
+            disableTooltips = val;
+            mustUpdateCSS = true;
+        }
+
+        if (mustUpdateCSS) {
+            updateCSS();
+        }
+
         vAPI.messaging.send(
             "dashboard",
             {
