@@ -4,7 +4,7 @@
 
 "use strict";
 
-// ===== Controllers =====
+// ===== Dashboard Controller =====
 
 /**
  * The tab that is currently active.
@@ -183,6 +183,39 @@ const updateCSS = (() => {
         }
     };
 })();
+
+// ===== Cloud Controller =====
+
+/**
+ * Whether cloud sync is enabled.
+ * @var {boolean}
+ */
+let cloudSyncEnabled = false;
+
+/**
+ * Cloud controller.
+ * @const {Namespace}
+ */
+const Cloud = {};
+/**
+ * Main cloud UI.
+ * @private @const {HTMLElement}
+ */
+Cloud.mainUI = document.getElementById("nano-could-ui");
+/**
+ * Move cloud UI.
+ * @function
+ * @param {boolean} enabled - Whether cloud sync is enabled for this tab.
+ * @param {HTMLElement} target - The main container of this tab, optional if not enabled.
+ */
+Cloud.moveUI = (enabled, target) => {
+    if (enabled) {
+        Cloud.mainUI.removeAttribute("hidden");
+        target.prepend(Cloud.mainUI);
+    } else {
+        Cloud.mainUI.setAttribute("hidden", "");
+    }
+};
 
 // ===== Helper Functions =====
 

@@ -244,7 +244,7 @@ window.tabSettings = new class tabSettings extends Tab {
             }
 
             if (abort) {
-                alert(vAPI.i18n("aboutRestoreDataError"));
+                showInfoModal(vAPI.i18n("aboutRestoreDataError"));
                 return;
             }
 

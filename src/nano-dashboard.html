@@ -248,18 +248,6 @@
                                     </span>
                                 </label>
                             </div>
-                            <div class="nano-option-row">
-                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-no-csp-reports">
-                                    <input type="checkbox" class="mdl-switch__input"
-                                           data-setting-name="noCSPReports" data-setting-type="bool" id="settings-no-csp-reports" />
-                                    <span class="mdl-switch__label nano-info-adjust">
-                                        <span data-i18n="settingsNoCSPReportsPrompt"></span>
-                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Dashboard:-Settings#block-csp-reports" target="_blank">
-                                            <span class="material-icons">info_outline</span>
-                                        </a>
-                                    </span>
-                                </label>
-                            </div>
                         </div>
                     </div>
                 </section>
@@ -305,6 +293,18 @@
                                     <span class="mdl-switch__label nano-info-adjust">
                                         <span data-i18n="settingsNoRemoteFontsPrompt"></span>
                                         <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Per-site-switches#no-remote-fonts" target="_blank">
+                                            <span class="material-icons">info_outline</span>
+                                        </a>
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="nano-option-row">
+                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="settings-no-csp-reports">
+                                    <input type="checkbox" class="mdl-switch__input"
+                                           data-setting-name="noCSPReports" data-setting-type="bool" id="settings-no-csp-reports" />
+                                    <span class="mdl-switch__label nano-info-adjust">
+                                        <span data-i18n="settingsNoCSPReportsPrompt"></span>
+                                        <a class="mdl-button mdl-js-button mdl-button--icon" href="https://github.com/gorhill/uBlock/wiki/Dashboard:-Settings#block-csp-reports" target="_blank">
                                             <span class="material-icons">info_outline</span>
                                         </a>
                                     </span>
@@ -400,6 +400,18 @@
         </main>
     </div>
 
+    <div hidden id="nano-could-ui">
+        <section class="mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
+            <div class="mdl-card mdl-cell mdl-cell--12-col">
+                <div class="mdl-card__supporting-text">
+                    <a class="mdl-button mdl-js-button mdl-button--icon nano-paragraph-info-adjust" href="https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts" target="_blank">
+                        <span class="material-icons">info_outline</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
     <dialog class="mdl-dialog" id="nano-confirm-dialog">
         <div class="mdl-dialog__content">
             <p></p>
@@ -418,8 +430,6 @@
         </div>
     </dialog>
 
-    <script src="lib/mdl/material.js"></script>
-
     <script src="js/vapi.js"></script>
     <script src="js/vapi-common.js"></script>
     <script src="js/vapi-client.js"></script>
@@ -429,6 +439,9 @@
     <script src="lib/ace/ext-searchbox-1.2.9.js"></script>
     <script src="js/nano-highlight.js"></script>
     <script src="js/nano-ide.js"></script>
+
+    <script src="lib/mdl/material.js"></script>
+    <script src="js/dashboard-common.js"></script>
 
     <script src="js/nano-dashboard.js"></script>
     <script src="js/nano-dashboard-settings.js"></script>
