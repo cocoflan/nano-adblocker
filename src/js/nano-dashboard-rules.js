@@ -78,10 +78,13 @@ window.tabRules = new class tabRules extends Tab {
         }
 
         readOneSettings("nanoEditorWordSoftWrap").then((data) => {
+            console.assert(typeof data === "boolean");
             console.assert(this.editor === nanoIDE.editor);
+
             nanoIDE.setLineWrap(data);
 
             vAPI.messaging.send("dashboard", { what: "readUserFilters" }, (data) => {
+                console.assert(data && typeof data === "object");
                 console.assert(this.editor === nanoIDE.editor);
 
                 if (data.error) {
@@ -114,10 +117,12 @@ window.tabRules = new class tabRules extends Tab {
                 return nanoIDE.getLinuxValue();
             },
             (data) => {
-                // TODO
+                // Pull and overwrite
+                this.onCloudPull(data, false);
             },
             (data) => {
-                // TODO
+                // Pull and merge
+                this.onCloudPull(data, true);
             },
         );
     }
@@ -160,6 +165,21 @@ window.tabRules = new class tabRules extends Tab {
         this.changeCheckerTimer = setTimeout(this.changeChecker, 250);
     }
     /**
+     * Cloud pull.
+     * @method
+     * @param {string} data - The incoming cloud data.
+     * @param {boolean} merge - Whether the data should be merged into existing ones.
+     */
+    onCloudPull(data, merge) {
+        console.assert(typeof data === "string" && typeof merge === "boolean");
+        console.assert(this.editor === nanoIDE.editor);
+
+        if (merge) {
+            data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue(), data);
+        }
+        nanoIDE.setValueFocus(data);
+    }
+    /**
      * Handle import from file.
      * @method
      * @param {HTMLElement} elem - The file picker.
@@ -169,7 +189,48 @@ window.tabRules = new class tabRules extends Tab {
         console.assert(elem instanceof HTMLInputElement && elem.type === "file");
         console.assert(typeof append === "boolean");
 
+        const file = elem.files[0];
+        if (!file || !file.name || !file.type.startsWith("text")) {
+            return;
+        }
 
+        const reader = new FileReader();
+        reader.onload = () => {
+            let data = reader.result;
+            let processed = null;
+
+            console.assert(typeof data === "string");
+
+            const reAbpSubscriptionExtractor = /\n\[Subscription\]\n+url=~[^\n]+([\x08-\x7E]*?)(?:\[Subscription\]|$)/ig;
+            const reAbpFilterExtractor = /\[Subscription filters\]([\x08-\x7E]*?)(?:\[Subscription\]|$)/i;
+
+            const matches = reAbpSubscriptionExtractor.exec(data);
+            if (matches === null) {
+                processed = data;
+            } else {
+                let out = [];
+                let filterMatch;
+                while (matches !== null) {
+                    if (matches.length === 2) {
+                        filterMatch = reAbpFilterExtractor.exec(matches[1].trim());
+                        if (filterMatch !== null && filterMatch.length === 2) {
+                            out.push(filterMatch[1].trim().replace(/\\\[/g, "["));
+                        }
+                    }
+                    matches = reAbpSubscriptionExtractor.exec(s);
+                }
+                processed = out.join("\n");
+            }
+
+            console.assert(this.editor === nanoIDE.editor);
+
+            if (append) {
+                nanoIDE.setValueFocus(nanoIDE.getLinuxValue() + "\n" + processed);
+            } else {
+                nanoIDE.setValueFocus(processed);
+            }
+        };
+        reader.readAsText(file);
     }
 
     // ===== Button Handlers =====
@@ -202,6 +263,12 @@ window.tabRules = new class tabRules extends Tab {
                 }
             },
         );
+
+        this.btnApply.MaterialButton.disable();
+        this.btnRevert.MaterialButton.disable();
+
+        closeAllTooltips();
+
     }
     /**
      * Revert button click handler.
@@ -213,16 +280,19 @@ window.tabRules = new class tabRules extends Tab {
 
         nanoIDE.setValueFocus(this.lastSavedData);
         this.changed = false;
+
+        this.btnApply.MaterialButton.disable();
+        this.btnRevert.MaterialButton.disable();
+
+        closeAllTooltips();
     }
     /**
      * Import and append button click handler.
      * @method
      */
     onImportAppendBtnClicked() {
-        console.assert(this.editor === nanoIDE.editor);
-
         pickFile((elem) => {
-            this.onRestoreFilePicked(elem, true);
+            this.onImportFilePicked(elem, true);
         });
     }
     /**
@@ -232,6 +302,17 @@ window.tabRules = new class tabRules extends Tab {
     onExportBtnClicked() {
         console.assert(this.editor === nanoIDE.editor);
 
-        // TODO
+        const val = this.editor.getValue();
+        if (val.trim() === "") {
+            return;
+        }
+
+        const name = vAPI.i18n("1pExportFilename")
+            .replace("{{datetime}}", uBlockDashboard.dateNowToSensibleString())
+            .replace(/ +/g, "_");
+        vAPI.download({
+            "url": "data:text/plain;charset=utf-8," + encodeURIComponent(val),
+            "filename": name,
+        });
     }
 };

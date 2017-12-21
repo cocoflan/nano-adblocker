@@ -344,10 +344,10 @@ Cloud.redrawUI = (callback) => {
         },
         (data) => {
             if (data && typeof data === "object") {
-                Cloud.data = data;
+                Cloud.data = data.data;
 
-                Cloud.pullBtn.MaterialButton.enabled();
-                Cloud.mergeBtn.MaterialButton.enabled();
+                Cloud.pullBtn.MaterialButton.enable();
+                Cloud.mergeBtn.MaterialButton.enable();
 
                 const time = new Date(data.tstamp);
                 Cloud.contentElem.textContent = vAPI.i18n("nanoCloudLastSync")
@@ -395,7 +395,7 @@ Cloud.pushBtnClick = () => {
  * @private @function
  */
 Cloud.pullBtnClicked = () => {
-    console.assert(Cloud.data && typeof Cloud.data === "object" && typeof Cloud.onPull === "function");
+    console.assert(Cloud.data && typeof Cloud.data === "string" && typeof Cloud.onPull === "function");
 
     Cloud.onPull(Cloud.data);
 };
@@ -404,7 +404,7 @@ Cloud.pullBtnClicked = () => {
  * @private @function
  */
 Cloud.mergeBtnClicked = () => {
-    console.assert(Cloud.data && typeof Cloud.data === "object" && typeof Cloud.onMerge === "function");
+    console.assert(Cloud.data && typeof Cloud.data === "string" && typeof Cloud.onMerge === "function");
 
     Cloud.onMerge(Cloud.data);
 };
