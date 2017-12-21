@@ -304,6 +304,7 @@ window.tabRules = new class tabRules extends Tab {
 
         const val = this.editor.getValue();
         if (val.trim() === "") {
+            showInfoModal(vAPI.i18n("genericNothingToExport"));
             return;
         }
 

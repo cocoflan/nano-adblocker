@@ -75,6 +75,7 @@ var i18nPlaceholders = {
         'will not be saved.',
     'genericFilterReadError': '# Could not load data, please refresh.',
     'genericDataSaveError': 'Could not save data, please try again.',
+    'genericNothingToExport': 'Nothing to export.',
     
     
     'nanoCloudNoData': 'No cloud data',
