@@ -42,7 +42,7 @@ var cachedUserFilters = '';
 
 function userFiltersChanged(changed) {
     if ( typeof changed !== 'boolean' ) {
-        changed = editor.getValue().trim() !== cachedUserFilters;
+        changed = nanoIDE.getLinuxValue().trim() !== cachedUserFilters;
     }
     uDom.nodeFromId('userFiltersApply').disabled = !changed;
     uDom.nodeFromId('userFiltersRevert').disabled = !changed;
@@ -102,7 +102,7 @@ var handleImportFilePicker = function() {
 
     var fileReaderOnLoadHandler = function() {
         var sanitized = abpImporter(this.result);
-        nanoIDE.setValueFocus(editor.getValue().trim() + '\n' + sanitized);
+        nanoIDE.setValueFocus(nanoIDE.getLinuxValue().trim() + '\n' + sanitized);
         userFiltersChanged();
     };
     var file = this.files[0];
@@ -131,6 +131,7 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportUserFiltersToFile = function() {
+    // Just get value, not Linux value
     var val = editor.getValue().trim();
     if ( val === '' ) {
         return;
@@ -161,7 +162,7 @@ var applyChanges = function() {
 
     var request = {
         what: 'writeUserFilters',
-        content: editor.getValue()
+        content: nanoIDE.getLinuxValue()
     };
     messaging.send('dashboard', request, onWritten);
 };
@@ -175,8 +176,7 @@ var revertChanges = function() {
 /******************************************************************************/
 
 var getCloudData = function() {
-    //return uDom.nodeFromId('userFilters').value;
-    return editor.getValue();
+    return nanoIDE.getLinuxValue();
 };
 
 var setCloudData = function(data, append) {
@@ -184,7 +184,7 @@ var setCloudData = function(data, append) {
         return;
     }
     if ( append ) {
-        data = uBlockDashboard.mergeNewLines(editor.getValue(), data);
+        data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue(), data);
     }
     nanoIDE.setValueFocus(data);
     userFiltersChanged();

@@ -73,7 +73,8 @@ var i18nPlaceholders = {
     'genericOK': 'OK',
     'genericUnsavedChange': 'Do you want to leave this tab? Changes you made ' + 
         'will not be saved.',
-    'generidFilterReadError': '# Could not load data, please refresh.',
+    'genericFilterReadError': '# Could not load data, please refresh.',
+    'genericDataSaveError': 'Could not save data, please try again.',
     
     
     'nanoCloudNoData': 'No cloud data',

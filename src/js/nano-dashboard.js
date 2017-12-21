@@ -412,10 +412,20 @@ Cloud.mergeBtnClicked = () => {
 // ===== Helper Functions =====
 
 /**
+ * Close all tooltips.
+ * @function
+ */
+const closeAllTooltips = () => {
+    const tooltips = document.querySelectorAll(".mdl-tooltip.is-active");
+    for (let tooltip of tooltips) {
+        tooltip.classList.remove("is-active");
+    }
+};
+
+/**
  * Pick a file.
  * @function
- * @param {Function} callback - The function to call.
- ** @param {HTMLElement} elem - The file picker.
+ * @param {Function} callback - The callback function, the input element used to pick the file will be passed over.
  */
 const pickFile = (callback) => {
     console.assert(typeof callback === "function");
