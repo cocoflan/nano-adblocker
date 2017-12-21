@@ -14,6 +14,9 @@ https://github.com/NanoAdblocker/NanoFilters/issues
 ### Screenshots (Required)
 
 
+### Screenshot of console (Required, press `F12` to open the console)
+
+
 ### URLs where this issue occurs (Required if applicable)
 
 
