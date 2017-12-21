@@ -12,19 +12,21 @@ Please open an issue if there is something you want us to know.
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
-### [\[Work in progress\] Get it for Firefox](https://github.com/NanoAdblocker/NanoCore/issues/41)
+### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
-### [\[Work in progress\] Get it for Edge](https://github.com/NanoAdblocker/NanoCore/issues/40)
+### [Edge version discuttion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
 
 ## Notable Change
 
-### \[Work in progress\] Nano Dashboard, clean and modern
+### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/33)\] Nano Dashboard
 
-![Screenshot](https://i.imgur.com/LUAu7KO.png)
+<!--, clean and modern
+
+![Screenshot](https://i.imgur.com/LUAu7KO.png)-->
 
 Not yet available
 
-### \[Work in progress\] Nano Filter Linter, neat and saves frustration
+### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/1)\] Nano Filter Linter, neat and saves frustration
 
 ![Screenshot](https://i.imgur.com/IkTaEQ3.png)
 
@@ -84,6 +86,8 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
   - [`cbb7db10970eb7f2893711d381a7c8b4ca9de3af`](https://github.com/NanoAdblocker/NanoCore/commit/cbb7db10970eb7f2893711d381a7c8b4ca9de3af)
   - [`e113cea5ce04aa14fd881e0f67ae431c47aa05d5`](https://github.com/NanoAdblocker/NanoCore/commit/e113cea5ce04aa14fd881e0f67ae431c47aa05d5)
   - [`ddfce3a21477a39a5f338bda3829e9461f8b6d37`](https://github.com/NanoAdblocker/NanoCore/commit/ddfce3a21477a39a5f338bda3829e9461f8b6d37)
+  - [`b07325cdfeef7901b6053306011ffb051cd09454`](https://github.com/NanoAdblocker/NanoCore/commit/b07325cdfeef7901b6053306011ffb051cd09454)
+  - [`4e071e353ea5434c13adae5badcd91c5034d95a4`](https://github.com/NanoAdblocker/NanoCore/commit/4e071e353ea5434c13adae5badcd91c5034d95a4)
 
 - Make default settings better
   - [`000e6cc57f9de4ab5b431cbaed6a936c49788c29`](https://github.com/NanoAdblocker/NanoCore/commit/000e6cc57f9de4ab5b431cbaed6a936c49788c29)
