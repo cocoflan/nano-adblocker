@@ -24,4 +24,5 @@
 /******************************************************************************/
 
 window.NanoDefenderExtensionID = 'ggolfgbegefeeoocgjbmkembbncoadlb';
+window.NanoAdblockerDeveloperModeExtensionID = 'jdcnenncdjlhclmdpjeplfefbkimfalp';
 window.NanoReIsDashboardURL = /^chrome-extension:\/\/[a-z]+\/(?:nano-)?dashboard\.html/;

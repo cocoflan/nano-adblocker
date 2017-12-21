@@ -65,8 +65,14 @@ vAPI.getURL = chrome.runtime.getURL;
 
 /******************************************************************************/
 
-// Patch 2017-12-07: Add a couple placeholders, might need a real i18n system
-// soon...
+vAPI.getExtensionID = function() {
+    return chrome.runtime.id;
+};
+
+/******************************************************************************/
+
+// Patch 2017-12-07: Add a couple placeholders
+// The new and robust i18n system is coming after the new dashboard
 var i18nPlaceholders = {
     'genericYes': 'Yes',
     'genericNo': 'No',

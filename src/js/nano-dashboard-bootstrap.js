@@ -2,6 +2,14 @@
 "use strict";
 
 (async () => {
+    // I got an email saying it does not work at all, well, the new dashboard does not always work as it
+    // is not done yet, I don't think I have any link that leads to it in user-accessible UI
+    // Automatically bump back to old dashboard if not loaded in developer mode
+    if (vAPI.getExtensionID() !== NanoAdblockerDeveloperModeExtensionID) {
+        location.href = "dashboard.html";
+        return;
+    }
+
     allowTextSelection = await readOneSettings("nanoDashboardAllowSelection");
     disableTooltips = await readOneSettings("tooltipsDisabled");
     updateCSS(); // Assertion inside
