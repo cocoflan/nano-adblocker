@@ -15,6 +15,8 @@ window.tabRules = new class tabRules extends Tab {
         );
 
         this.initialized = false;
+
+        this.cloudKey = "tpFiltersPane";
         this.changed = false;
         this.lastSavedData = null;
     }
@@ -39,8 +41,12 @@ window.tabRules = new class tabRules extends Tab {
         }
 
         readOneSettings("nanoEditorWordSoftWrap").then((data) => {
+            console.assert(this.editor === nanoIDE.editor);
             nanoIDE.setLineWrap(data);
+
             vAPI.messaging.send("dashboard", { what: "readUserFilters" }, (data) => {
+                console.assert(this.editor === nanoIDE.editor);
+
                 if (data.error) {
                     nanoIDE.setValueFocus(vAPI.i18n("generidFilterReadError"), -1);
                 } else {
@@ -62,7 +68,7 @@ window.tabRules = new class tabRules extends Tab {
      * @override
      */
     initCloud() {
-        Cloud.init(true, "tpFiltersPane", this.content);
+        Cloud.init(true, this.cloudKey, this.content);
     }
     /**
      * Check for unsaved changes.
@@ -80,6 +86,8 @@ window.tabRules = new class tabRules extends Tab {
     unload() {
         this.changed = false;
         this.lastSavedData = null;
+
+        console.assert(this.editor === nanoIDE.editor);
         nanoIDE.setValueFocus("");
 
         super.unload();

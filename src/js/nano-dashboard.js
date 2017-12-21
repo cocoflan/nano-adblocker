@@ -43,7 +43,14 @@ const drawActionBtns = (() => {
     const icons = document.querySelectorAll("[id^='nano-action-'] > span");
     const tooltips = document.querySelectorAll("[data-mdl-for^='nano-action-']");
 
+    // There should be at least 5
+    console.assert(buttons.length >= 5);
+    console.assert(buttons.length === icons.length && icons.length === tooltips.length);
+
     return (inIcons, inTooltips, inHandlers) => {
+        console.assert(inIcons.length === inTooltips.length && inTooltips.length === inHandlers.length);
+        console.assert(inIcons.length <= buttons.length);
+
         for (let i = 0; i < buttons.length; i++) {
             if (i < inIcons.length) {
                 icons[i].textContent = inIcons[i];
@@ -124,6 +131,8 @@ const Tab = class {
      * @method
      */
     init() {
+        console.assert(hasMutex);
+
         this.btn1.classList.add("is-active");
         this.btn2.classList.add("is-active");
         this.content.classList.add("is-active");
@@ -179,6 +188,8 @@ const updateCSS = (() => {
         "}";
 
     return () => {
+        console.assert(typeof allowTextSelection === "boolean" && typeof disableTooltips === "boolean");
+
         if (allowTextSelection) {
             document.documentElement.append(selectionCSS);
         } else {
@@ -239,7 +250,11 @@ Cloud.initialized = false;
  * @param {Function} onMerge - The function to call when merge button is clicked, pulled data will be passed over.
  */
 Cloud.init = (enabled, dataKey, target, onPush, onPull, onMerge) => {
-    if (enabled && dataKey) {
+    if (enabled) {
+        console.assert(dataKey && typeof dataKey === "string");
+        console.assert(target instanceof HTMLDivElement);
+        console.assert(typeof onPush === "function" && typeof onPull === "function" && typeof onMerge === "function");
+
         Cloud.dataKey = dataKey;
         Cloud.target = target;
         Cloud.onPush = onPush;
@@ -399,6 +414,8 @@ Cloud.mergeBtnClicked = () => {
  ** @param {HTMLElement} elem - The file picker.
  */
 const pickFile = (callback) => {
+    console.assert(typeof callback === "function");
+
     // Do not have to be attached to DOM.
     // It should be really rare that we need to pick a file, we will not cache the element.
     let filePicker = document.createElement("input");
@@ -416,13 +433,21 @@ const pickFile = (callback) => {
  */
 const showInfoModal = (() => {
     const dialog = document.getElementById("nano-info-dialog");
+
+    console.assert(dialog);
+
     const content = dialog.querySelector("p");
     const btnOK = dialog.querySelector("button");
+
+    console.assert(content && btnOK);
+
     btnOK.addEventListener("click", () => {
         dialog.close();
     });
 
     return (msg) => {
+        console.assert(typeof msg === "string");
+
         if (window.HTMLDialogElement) {
             content.textContent = msg;
             dialog.showModal();
@@ -439,10 +464,17 @@ const showInfoModal = (() => {
  */
 const showConfirmModal = (() => {
     const dialog = document.getElementById("nano-confirm-dialog");
+
+    console.assert(dialog);
+
     const content = dialog.querySelector("p");
     const [btnNo, btnYes] = dialog.querySelectorAll("button");
 
+    console.assert(content && btnNo && btnYes);
+
     return (msg, callback) => {
+        console.assert(typeof msg === "string" && typeof callback === "function");
+
         if (window.HTMLDialogElement) {
             content.textContent = msg;
             btnYes.onclick = () => {
@@ -468,6 +500,8 @@ const showConfirmModal = (() => {
  * @return {Promise} Promise of this task.
  */
 const readOneSettings = (name) => {
+    console.assert(name && typeof name === "string");
+
     return new Promise((resolve) => {
         vAPI.messaging.send(
             "dashboard",
@@ -484,10 +518,12 @@ const readOneSettings = (name) => {
 
 // ===== Polyfills =====
 {
-    function replaceWith(elems, ...rest) {
+    function replaceWith(elem, ...rest) {
+        console.assert(elem instanceof HTMLElement);
         if (rest.length) {
             throw new Error("ChildNode.replaceWith() polyfill needs an upgrade.");
         }
+
         this.parentNode.replaceChild(this, elem);
     }
 

@@ -64,6 +64,10 @@ window.tabSettings = new class tabSettings extends Tab {
                 }
 
                 const inputs = document.querySelectorAll("[id^='nano-settings-textbox-']");
+
+                // We only have 1 textbox for now
+                console.assert(inputs.length === 1);
+
                 // Inputs are to be handled individually
                 inputs[0].dataset.settingName = "largeMediaSize";
                 inputs[0].dataset.settingType = "input";
@@ -111,6 +115,8 @@ window.tabSettings = new class tabSettings extends Tab {
      * @param {Object} data - The state data.
      */
     refreshState(data) {
+        console.assert(data && typeof data === "object");
+
         const timeOptions = {
             weekday: "long",
             year: "numeric",
@@ -181,6 +187,8 @@ window.tabSettings = new class tabSettings extends Tab {
      * @param {boolean|number} val - The new value.
      */
     saveSettingsChange(name, val) {
+        console.assert(typeof name === "string" && val !== undefined);
+
         let mustUpdateCSS = false;
 
         if (name === "nanoDashboardAllowSelection") {
@@ -211,6 +219,8 @@ window.tabSettings = new class tabSettings extends Tab {
      * @param {HTMLElement} elem - The file picker.
      */
     onRestoreFilePicked(elem) {
+        console.assert(elem instanceof HTMLInputElement && elem.type === "file");
+
         const file = elem.files[0];
         if (!file || !file.name || !file.type.startsWith("text")) {
             return;

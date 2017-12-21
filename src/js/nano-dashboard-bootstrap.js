@@ -4,13 +4,15 @@
 (async () => {
     allowTextSelection = await readOneSettings("nanoDashboardAllowSelection");
     disableTooltips = await readOneSettings("tooltipsDisabled");
-    updateCSS();
+    updateCSS(); // Assertion inside
 
     hasMutex = await new Promise((resolve) => {
         vAPI.messaging.send("dashboard", { what: "obtainDashboardMutex" }, (data) => {
             resolve(data);
         });
     });
+
+    console.assert(typeof hasMutex === "boolean");
 
     if (hasMutex) {
         const lastTab = vAPI.localStorage.getItem("nanoDashboardLastVisitedTab");
