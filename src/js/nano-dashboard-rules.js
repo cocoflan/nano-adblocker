@@ -79,7 +79,7 @@ window.tabRules = new class tabRules extends Tab {
         return this.changed;
     }
     /**
-     * Do clean up.
+     * Discard changes and unload.
      * @method
      * @override
      */

@@ -24,4 +24,17 @@
     } else {
         showInfoModal(vAPI.i18n("dashboardMutexError"));
     }
+
+    addEventListener("beforeunload", (e) => {
+        if (currentTab && currentTab.hasChanges()) {
+            // Calling e.preventDefault() is the only correct way to handle this, but unfortunately browsers
+            // are ignoring the specs
+            // https://html.spec.whatwg.org/multipage/browsing-the-web.html#the-beforeunloadevent-interface
+            //e.preventDefault();
+
+            const msg = vAPI.i18n("genericUnsavedChange");
+            e.returnValue = msg;
+            return msg;
+        }
+    });
 })();

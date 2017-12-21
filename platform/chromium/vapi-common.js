@@ -71,6 +71,8 @@ var i18nPlaceholders = {
     'genericYes': 'Yes',
     'genericNo': 'No',
     'genericOK': 'OK',
+    'genericUnsavedChange': 'Do you want to leave this tab? Changes you made ' + 
+        'will not be saved.',
     'generidFilterReadError': '# Could not load data, please refresh.',
     
     

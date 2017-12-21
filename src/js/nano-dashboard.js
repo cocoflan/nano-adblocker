@@ -115,13 +115,17 @@ const Tab = class {
 
             if (currentTab) {
                 if (currentTab.hasChanges()) {
-                    return;
+                    showConfirmModal(vAPI.i18n("genericUnsavedChange"), () => {
+                        currentTab.unload();
+                        this.init();
+                    });
                 } else {
                     currentTab.unload();
+                    this.init();
                 }
+            } else {
+                this.init();
             }
-
-            this.init();
         };
         this.btn1.addEventListener("click", onclick);
         this.btn2.addEventListener("click", onclick);
@@ -446,7 +450,7 @@ const showInfoModal = (() => {
     });
 
     return (msg) => {
-        console.assert(typeof msg === "string");
+        console.assert(msg && typeof msg === "string");
 
         if (window.HTMLDialogElement) {
             content.textContent = msg;
@@ -473,7 +477,7 @@ const showConfirmModal = (() => {
     console.assert(content && btnNo && btnYes);
 
     return (msg, callback) => {
-        console.assert(typeof msg === "string" && typeof callback === "function");
+        console.assert(msg && typeof msg === "string" && typeof callback === "function");
 
         if (window.HTMLDialogElement) {
             content.textContent = msg;
