@@ -12,6 +12,8 @@ Please open an issue if there is something you want us to know.
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
+### [(Beta) Get it for Firefox](https://addons.mozilla.org/en-US/firefox/addon/real-nano-adblocker/)
+
 ### [Firefox version developer discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
 ### [Edge version developer discuttion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
