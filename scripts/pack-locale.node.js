@@ -84,7 +84,7 @@ const uBOVersion = "v1.14.22";
                 }
             }
 
-            result[key].message = result[key].message.replace(/uBlock Origin|uBlock\u2080|uBlock(?!\/)|uBO/g, "Nano").replace("/ublock/g", "nano");
+            result[key].message = result[key].message.replace(/uBlock Origin|uBlock\u2080|uBlock(?!\/)|uBO/g, "Nano").replace(/ublock/g, "nano");
 
             if (key === "aboutBasedOn") {
                 result[key].message = result[key].message.replace("Nano", "uBlock Origin").replace("{{@version}}", uBOVersion);

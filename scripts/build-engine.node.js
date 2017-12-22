@@ -37,10 +37,11 @@ global.setupCwd = () => {
 };
 
 /**
- * The base path for build output.
- * @const {string}
+ * Find the base path for build output.
+ * @function
+ * @return {string} The base path for build output.
  */
-global.baseBuildPath = (() => {
+global.baseBuildPath = () => {
     global.isChrome = global.isFirefox = global.isEdge = false;
 
     let buildPath;
@@ -61,7 +62,7 @@ global.baseBuildPath = (() => {
     assert(buildPath !== undefined);
 
     return buildPath;
-})();
+};
 
 /**
  * Do common initialization then return base build path.
@@ -76,7 +77,7 @@ exports.ezInit = (() => {
             abortOnRejection();
             setupCwd();
         }
-        return baseBuildPath;
+        return baseBuildPath();
     };
 })();
 
