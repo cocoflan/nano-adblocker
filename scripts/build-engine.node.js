@@ -46,15 +46,15 @@ global.baseBuildPath = (() => {
     let buildPath;
     switch (process.argv[2]) {
         case "--chromium":
-            buildPath = "dist/build/Nano.chromium";
+            buildPath = "dist/build/Nano_Chromium";
             global.isChrome = true;
             break;
         case "--firefox":
-            buildPath = "dist/build/Nano.firefox";
+            buildPath = "dist/build/Nano_Firefox";
             global.isFirefox = true;
             break;
         case "--edge":
-            buildPath = "dist/build/Nano.edge";
+            buildPath = "dist/build/Nano_Edge";
             global.isEdge = true;
             break;
     }
