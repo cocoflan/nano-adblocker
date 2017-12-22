@@ -4,6 +4,13 @@
  */
 "use strict";
 
+/**
+ * The version of uBlock Origin that Nano Adblocker is based on.
+ * Need to manually clear build output if this constant is changed.
+ * @const {string}
+ */
+const uBOVersion = "v1.14.22";
+
 (async () => {
     console.log("[Nano] Pack Locale :: Started");
 
@@ -36,14 +43,19 @@
         }
     }
 
-    const processOne = async (lang) => {
+    const processOne = async (lang, hasExtra) => {
         await createDirectory(localePath + "/" + lang);
 
-        // Outdate check should be already done
-        let [orignal, extra] = await Promise.all([
-            fs.readFile("src/_locales/" + lang + "/messages.json", "utf8"),
-            fs.readFile("src/_nano-locales/" + lang + "/messages.json", "utf8"),
-        ]);
+        let original, extra;
+        if (hasExtra) {
+            [original, extra] = await Promise.all([
+                fs.readFile("src/_locales/" + lang + "/messages.json", "utf8"),
+                fs.readFile("src/_nano-locales/" + lang + "/messages.json", "utf8"),
+            ]);
+        } else {
+            original = await fs.readFile("src/_locales/" + lang + "/messages.json", "utf8");
+            extra = "{}";
+        }
         original = JSON.parse(original);
         extra = JSON.parse(extra);
 
@@ -54,8 +66,8 @@
 
             assert(!originalHas || !extraHas);
             if (originalHas) {
-                assert(orignal[key] && typeof orignal[key] === "object" && typeof orignal[key].message === "string");
-                result[key] = orignal[key];
+                assert(original[key] && typeof original[key] === "object" && typeof original[key].message === "string");
+                result[key] = original[key];
             } else if (extraHas) {
                 assert(extra[key] && typeof extra[key] === "object" && typeof extra[key].message === "string");
                 result[key] = extra[key];
@@ -71,9 +83,15 @@
                     result[key] = enExtra[key];
                 }
             }
+
+            result[key].message = result[key].message.replace(/uBlock Origin|uBlock\u2080|uBlock(?!\/)|uBO/g, "Nano").replace("/ublock/g", "nano");
+
+            if (key === "aboutBasedOn") {
+                result[key].message = result[key].message.replace("Nano", "uBlock Origin").replace("{{@version}}", uBOVersion);
+            }
         }
 
-        await fs.writeFile(localePath + "/" + lang + "/messages.json", JSON.stringify(result), { encoding: "utf8" });
+        await fs.writeFile(localePath + "/" + lang + "/messages.json", JSON.stringify(result, null, 2), { encoding: "utf8" });
     };
 
     const [langsOriginal, langsExtra] = await Promise.all([
@@ -81,16 +99,16 @@
         fs.readdir("src/_nano-locales"),
     ]);
     let tasks = [];
-    for (let lang in langsOriginal) {
+    for (let lang of langsOriginal) {
         if (langsExtra.includes(lang)) {
             tasks.push(smartBuildFile([
                 "src/_locales/" + lang + "/messages.json",
                 "src/_nano-locales/" + lang + "/messages.json",
-            ], localePath + "/" + lang + "/messages.json", processOne, lang));
+            ], localePath + "/" + lang + "/messages.json", processOne, lang, true));
         } else {
             tasks.push(smartBuildFile([
                 "src/_locales/" + lang + "/messages.json",
-            ], localePath + "/" + lang + "/messages.json", processOne, lang));
+            ], localePath + "/" + lang + "/messages.json", processOne, lang, false));
         }
     }
     await Promise.all(tasks);

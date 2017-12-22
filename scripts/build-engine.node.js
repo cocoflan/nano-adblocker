@@ -153,9 +153,9 @@ global.createDirectory = async (dir) => {
  * @param {Array.<string>} dependencies - Paths to dependencies of the output file.
  * @param {string} output - The path to the output file.
  * @param {AsyncFunction} build - The build function.
- * @param {Any} [passback=undefined] - The argument to pass back to the build function.
+ * @param {...Any} [passback=undefined] - The argument to pass back to the build function.
  */
-global.smartBuildFile = async (dependencies, output, build, passback) => {
+global.smartBuildFile = async (dependencies, output, build, ...passback) => {
     let stats = [];
     for (let dependency of dependencies) {
         stats.push(fs.lstat(dependency));
@@ -168,7 +168,7 @@ global.smartBuildFile = async (dependencies, output, build, passback) => {
         outputStat = dependenciesStat.pop();
     } catch (e) {
         assert(e.code === "ENOENT");
-        await build(passback);
+        await build(...passback);
         return;
     }
 
@@ -183,7 +183,7 @@ global.smartBuildFile = async (dependencies, output, build, passback) => {
     }
 
     if (mustRebuild) {
-        await build(passback);
+        await build(...passback);
     }
 };
 
