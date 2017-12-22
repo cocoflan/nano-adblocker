@@ -1,4 +1,7 @@
-// Helper functions
+// Build scripts core logic
+// node <build-script> <platform> [--trace-fs]
+// Available build scripts: look into /scripts directory
+// Available platforms: --chromium, --firefox, --edge
 "use strict";
 
 /**
@@ -68,12 +71,36 @@ exports.ezInit = () => {
 global.fs = (() => {
     const ofs = require("fs");
     const { promisify } = require("util");
-    return {
+
+    const newfs = {
         copyFile: promisify(ofs.copyFile),
         lstat: promisify(ofs.lstat),
         mkdir: promisify(ofs.mkdir),
         readdir: promisify(ofs.readdir),
     };
+
+    if (process.argv.includes("--trace-fs")) {
+        return {
+            copyFile: (...args) => {
+                console.log("TraceFS :: copyFile", args);
+                return newfs.copyFile(...args);
+            },
+            lstat: (...args) => {
+                console.log("TraceFS :: lstat", args);
+                return newfs.lstat(...args);
+            },
+            mkdir: (...args) => {
+                console.log("TraceFS :: mkdir", args);
+                return newfs.mkdir(...args);
+            },
+            readdir: (...args) => {
+                console.log("TraceFS :: readdir", args);
+                return newfs.readdir(...args);
+            },
+        }
+    } else {
+        return newfs;
+    }
 })();
 
 /**
@@ -137,9 +164,9 @@ global.smartCopyDirectory = async (source, target) => {
 
     let tasks = [];
     for (let i = 0; i < files.length; i++) {
-        tasks.push(fs.lstat(files[i]));
+        tasks.push(fs.lstat(source + "/" + files[i]));
     }
-    await Promise.all(tasks);
+    tasks = await Promise.all(tasks);
 
     let copyTasks = [];
     for (let i = 0; i < tasks.length; i++) {

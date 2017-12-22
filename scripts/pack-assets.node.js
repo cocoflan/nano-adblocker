@@ -1,5 +1,6 @@
-// Package assets, assume to be executed either at git root of NanoCore or at /scripts of NanoCore
+// Package assets, assume to be executed either at / or /scripts of NanoCore
 // Also expects NanoFilters to be in the same parent directory as NanoCore
+// Must be ran after everything else is built
 "use strict";
 
 (async () => {
