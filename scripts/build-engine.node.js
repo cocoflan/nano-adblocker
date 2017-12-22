@@ -90,6 +90,7 @@ global.fs = (() => {
     const { promisify } = require("util");
 
     const newfs = {
+        appendFile: promisify(ofs.appendFile),
         copyFile: promisify(ofs.copyFile),
         lstat: promisify(ofs.lstat),
         mkdir: promisify(ofs.mkdir),
@@ -100,6 +101,10 @@ global.fs = (() => {
 
     if (process.argv.includes("--trace-fs")) {
         return {
+            appendFile: (...args) => {
+                console.log("[Nano] TraceFS :: appendFile", args);
+                return newfs.appendFile(...args);
+            },
             copyFile: (...args) => {
                 console.log("[Nano] TraceFS :: copyFile", args);
                 return newfs.copyFile(...args);
