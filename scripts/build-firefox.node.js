@@ -14,21 +14,27 @@
 
     let manifest = await fs.readFile(basePath + "/manifest.json", "utf8");
     manifest = JSON.parse(manifest);
+
+    manifest["incognito"] = "spanning";
+    delete manifest["options_page"];
+    delete manifest["storage"];
     delete manifest["minimum_chrome_version"];
     manifest["applications"] = {
         "gecko": {
             "strict_min_version": "52.0",
         },
     };
+
     await fs.writeFile(basePath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
 
     const files = await fs.readdir("platform/webext");
     let tasks = [];
     for (let file of files) {
-        if (file.endsWith(".js"));
-        tasks.push(fs.copyFile("platform/webext/" + file, basePath + "/js/" + file));
+        if (file.endsWith(".js")) {
+            tasks.push(fs.copyFile("platform/webext/" + file, basePath + "/js/" + file));
+        }
     }
     await Promise.all(tasks);
 
-    console.log("[Nano] Apply Firefox Patch :: Started");
+    console.log("[Nano] Apply Firefox Patch :: Done");
 })();
