@@ -133,7 +133,7 @@
 
   "whitelistLinterAborted": {
     "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
-    "description": "Warning message to show when Nano Whitelist Linter aborted because there are too many errors"
+    "description": "Warning message to show when the whitelist validator aborted because there are too many errors"
   },
   "whitelistLinterTooManyWarnings": {
     "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",

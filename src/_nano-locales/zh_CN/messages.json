@@ -68,11 +68,11 @@
     "description": "English: Allow text selection in dashboard"
   },
   "settingsEditorWordWrapPrompt": {
-    "message": "在规则编辑器中启用自动换行",
+    "message": "在规则编辑器中启用自动换行（ soft warp ）",
     "description": "English: Soft wrap long lines in filter editor"
   },
   "settingsViewerWordWrapPrompt": {
-    "message": "在规则查看器中启用自动换行",
+    "message": "在规则查看器中启用自动换行（ soft warp ）",
     "description": "English: Soft wrap long lines in filter viewer"
   },
 
@@ -133,7 +133,7 @@
 
   "whitelistLinterAborted": {
     "message": "Nano 没有验证剩下的规则，因为已经有过多的错误。",
-    "description": "Warning message to show when Nano Whitelist Linter aborted because there are too many errors"
+    "description": "Warning message to show when the whitelist validator aborted because there are too many errors"
   },
   "whitelistLinterTooManyWarnings": {
     "message": "Nano 没有检查剩下的规则，因为已经有过多的警告。",
