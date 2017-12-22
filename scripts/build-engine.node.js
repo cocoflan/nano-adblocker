@@ -94,6 +94,7 @@ global.fs = (() => {
         mkdir: promisify(ofs.mkdir),
         readdir: promisify(ofs.readdir),
         readFile: promisify(ofs.readFile),
+        writeFile: promisify(ofs.writeFile),
     };
 
     if (process.argv.includes("--trace-fs")) {
@@ -117,6 +118,10 @@ global.fs = (() => {
             readFile: (...args) => {
                 console.log("[Nano] TraceFS :: readFile", args);
                 return newfs.readFile(...args);
+            },
+            writeFile: (...args) => {
+                console.log("[Nano] TraceFS :: writeFile", args);
+                return newfs.writeFile(...args);
             },
         }
     } else {
@@ -147,9 +152,10 @@ global.createDirectory = async (dir) => {
  * @async @function
  * @param {Array.<string>} dependencies - Paths to dependencies of the output file.
  * @param {string} output - The path to the output file.
- * @param {AsyncFunction} build - The build function, first two arguments will be passed back in case you need them.
+ * @param {AsyncFunction} build - The build function.
+ * @param {Any} [passback=undefined] - The argument to pass back to the build function.
  */
-global.smartBuildFile = async (dependencies, output, build) => {
+global.smartBuildFile = async (dependencies, output, build, passback) => {
     let stats = [];
     for (let dependency of dependencies) {
         stats.push(fs.lstat(dependency));
@@ -162,7 +168,7 @@ global.smartBuildFile = async (dependencies, output, build) => {
         outputStat = dependenciesStat.pop();
     } catch (e) {
         assert(e.code === "ENOENT");
-        await build(dependencies, output);
+        await build(passback);
         return;
     }
 
@@ -177,7 +183,7 @@ global.smartBuildFile = async (dependencies, output, build) => {
     }
 
     if (mustRebuild) {
-        await build(dependencies, output);
+        await build(passback);
     }
 };
 
@@ -216,7 +222,7 @@ global.smartCopyFile = async (source, target) => {
  * @param {boolean} [deep=true] - Whether subdirectories should be copied too.
  */
 global.smartCopyDirectory = async (source, target, deep = true) => {
-    createDirectory(target);
+    await createDirectory(target);
 
     const files = await fs.readdir(source);
 

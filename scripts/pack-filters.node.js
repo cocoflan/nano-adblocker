@@ -9,7 +9,7 @@
     console.log("[Nano] Pack Filters :: Started");
 
     const assetsPath = require("./build-engine.node.js").ezInit() + "/assets";
-    createDirectory(assetsPath);
+    await createDirectory(assetsPath);
 
     await Promise.all([
         smartCopyFile("assets/assets.json", assetsPath + "/assets.json"),
