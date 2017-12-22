@@ -42,7 +42,7 @@ global.setupCwd = () => {
  * @return {string} The base path for build output.
  */
 global.baseBuildPath = () => {
-    global.isChrome = global.isFirefox = global.isEdge = false;
+    global.isChromium = global.isFirefox = global.isEdge = false;
 
     let buildPath;
     switch (process.argv[2]) {
