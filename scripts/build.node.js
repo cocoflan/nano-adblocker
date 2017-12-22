@@ -10,7 +10,7 @@
     await smartCopyDirectory("src/css", outputPath + "/css");
     await smartCopyDirectory("src/nano-img", outputPath + "/img");
     await smartCopyDirectory("src/js", outputPath + "/js");
-    await smartCopyDirectory("src/lib", outputPath + "/js");
+    await smartCopyDirectory("src/lib", outputPath + "/lib");
     await smartCopyDirectory("src", outputPath, false);
     await smartCopyDirectory("platform/chromium", outputPath + "/js", false);
     await Promise.all([
