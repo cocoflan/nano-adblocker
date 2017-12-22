@@ -23,7 +23,7 @@
 
     "browser_action": {
         "default_icon": {
-            "128": "img/browsericons/128_on.png"
+            "128": "img/128_on.png"
         },
         "default_title": "Nano Adblocker",
         "default_popup": "popup.html"

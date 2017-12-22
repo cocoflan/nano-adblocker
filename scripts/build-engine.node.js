@@ -1,7 +1,12 @@
-// Build scripts core logic
-// node <build-script> <platform> [--trace-fs]
-// Available build scripts: look into /scripts directory
-// Available platforms: --chromium, --firefox, --edge
+/**
+ * Build engine library, all scripts depending on this one assume to be
+ * executed either at / or /scripts of NanoCore.
+ *
+ * node <build-script> <platform> [--trace-fs]
+ * Available build scripts: look into /scripts directory
+ * Available platforms: --chromium, --firefox, --edge
+ * Optionally log all file system calls
+ */
 "use strict";
 
 /**
@@ -36,16 +41,21 @@ global.setupCwd = () => {
  * @const {string}
  */
 global.baseBuildPath = (() => {
+    global.isChrome = global.isFirefox = global.isEdge = false;
+
     let buildPath;
     switch (process.argv[2]) {
         case "--chromium":
             buildPath = "dist/build/Nano.chromium";
+            global.isChrome = true;
             break;
         case "--firefox":
             buildPath = "dist/build/Nano.firefox";
+            global.isFirefox = true;
             break;
         case "--edge":
             buildPath = "dist/build/Nano.edge";
+            global.isEdge = true;
             break;
     }
     assert(buildPath !== undefined);
@@ -58,11 +68,17 @@ global.baseBuildPath = (() => {
  * @function
  * @return {string} Base build path.
  */
-exports.ezInit = () => {
-    abortOnRejection();
-    setupCwd();
-    return baseBuildPath;
-};
+exports.ezInit = (() => {
+    let initialized = false;
+    return () => {
+        if (!initialized) {
+            initialized = true;
+            abortOnRejection();
+            setupCwd();
+        }
+        return baseBuildPath;
+    };
+})();
 
 /**
  * The promisified fs namespace.
@@ -122,6 +138,45 @@ global.createDirectory = async (dir) => {
 };
 
 /**
+ * Call a function if output is outdated.
+ * @async @function
+ * @param {Array.<string>} dependencies - Paths to dependencies of the output file.
+ * @param {string} output - The path to the output file.
+ * @param {Function} build - The build function, first two arguments will be passed back in case you need them.
+ */
+global.smartBuildFile = async (dependencies, output, build) => {
+    let stats = [];
+    for (let dependency of dependencies) {
+        stats.push(fs.lstat(dependency));
+    }
+    stats.push(fs.lstat(output));
+
+    let dependenciesStat, outputStat;
+    try {
+        dependenciesStat = await Promise.all(stats);
+        outputStat = dependenciesStat.pop();
+    } catch (e) {
+        assert(e.code === "ENOENT");
+        build(dependencies, output);
+        return;
+    }
+
+    assert(outputStat.isFile() && !outputStat.isSymbolicLink());
+    let mustRebuild = false;
+    for (let dependencyStat of dependenciesStat) {
+        assert(dependencyStat.isFile() && !dependencyStat.isSymbolicLink());
+        if (dependencyStat.mtimeMs > outputStat.mtimeMs) {
+            mustRebuild = true;
+            // Do not break, as we need to assert the rest of the files
+        }
+    }
+
+    if (mustRebuild) {
+        build(dependencies, output);
+    }
+};
+
+/**
  * Copy source file to target and overwrite it if source file is newer.
  * @async @function
  * @param {string} source - The path to the source file.
@@ -140,13 +195,10 @@ global.smartCopyFile = async (source, target) => {
         return;
     }
 
-    // Make sure things are not obviously off
     assert(sourceStat.isFile() && !sourceStat.isSymbolicLink());
     assert(targetStat.isFile() && !targetStat.isSymbolicLink());
 
-    const sourceTime = sourceStat.mtimeMs;
-    const targetTime = targetStat.mtimeMs;
-    if (sourceTime > targetTime) {
+    if (sourceStat.mtimeMs > targetStat.mtimeMs) {
         await fs.copyFile(source, target);
     }
 };
@@ -156,8 +208,9 @@ global.smartCopyFile = async (source, target) => {
  * @async @function
  * @param {string} source - The path to the source directory.
  * @param {string} target - The path to the target directory.
+ * @param {boolean} [deep=true] - Whether subdirectories should be copied too.
  */
-global.smartCopyDirectory = async (source, target) => {
+global.smartCopyDirectory = async (source, target, deep = true) => {
     createDirectory(target);
 
     const files = await fs.readdir(source);
@@ -167,14 +220,17 @@ global.smartCopyDirectory = async (source, target) => {
         tasks.push(fs.lstat(source + "/" + files[i]));
     }
     tasks = await Promise.all(tasks);
+    assert(files.length === tasks.length);
 
     let copyTasks = [];
     for (let i = 0; i < tasks.length; i++) {
         assert(!tasks[i].isSymbolicLink());
 
         if (tasks[i].isDirectory()) {
-            // Make sure to not get things overloaded
-            await smartCopyDirectory(source + "/" + files[i], target + "/" + files[i]);
+            if (deep) {
+                // Make sure to not get things overloaded
+                await smartCopyDirectory(source + "/" + files[i], target + "/" + files[i]);
+            }
             continue;
         }
 

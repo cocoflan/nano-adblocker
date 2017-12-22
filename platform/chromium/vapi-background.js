@@ -653,10 +653,10 @@ vAPI.setIcon = (function() {
         titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
     var iconPaths = [
         {
-            '128': 'img/browsericons/128_off.png'
+            '128': 'img/128_off.png'
         },
         {
-            '128': 'img/browsericons/128_on.png'
+            '128': 'img/128_on.png'
         }
     ];
 

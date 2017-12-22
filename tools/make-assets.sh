@@ -22,7 +22,6 @@ mkdir $DES
 cp ./assets/assets.json $DES/
 
 mkdir $DES/ThirdParty
-
 cp -R ../$RESOURCES/ThirdParty/* $DES/ThirdParty/
 
 mkdir $DES/NanoFilters
