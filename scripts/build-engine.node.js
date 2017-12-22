@@ -142,7 +142,7 @@ global.createDirectory = async (dir) => {
  * @async @function
  * @param {Array.<string>} dependencies - Paths to dependencies of the output file.
  * @param {string} output - The path to the output file.
- * @param {Function} build - The build function, first two arguments will be passed back in case you need them.
+ * @param {AsyncFunction} build - The build function, first two arguments will be passed back in case you need them.
  */
 global.smartBuildFile = async (dependencies, output, build) => {
     let stats = [];
@@ -157,7 +157,7 @@ global.smartBuildFile = async (dependencies, output, build) => {
         outputStat = dependenciesStat.pop();
     } catch (e) {
         assert(e.code === "ENOENT");
-        build(dependencies, output);
+        await build(dependencies, output);
         return;
     }
 
@@ -172,7 +172,7 @@ global.smartBuildFile = async (dependencies, output, build) => {
     }
 
     if (mustRebuild) {
-        build(dependencies, output);
+        await build(dependencies, output);
     }
 };
 

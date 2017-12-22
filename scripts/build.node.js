@@ -11,11 +11,11 @@
     await smartCopyDirectory("src/nano-img", outputPath + "/img");
     await smartCopyDirectory("src/js", outputPath + "/js");
     await smartCopyDirectory("src/lib", outputPath + "/js");
-    await smartCopyDirectory("src", output, false);
+    await smartCopyDirectory("src", outputPath, false);
     await smartCopyDirectory("platform/chromium", outputPath + "/js", false);
     await Promise.all([
         smartCopyDirectory("platform/chromium/other", outputPath),
-        smartCopyFile("LICENSE", outputPath),
+        smartCopyFile("LICENSE", outputPath + "/LICENSE"),
     ]);
 
     console.log("[Nano] Build Core :: Done");
