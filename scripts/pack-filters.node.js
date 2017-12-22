@@ -17,5 +17,8 @@
     ]);
     await smartCopyDirectory("../NanoFilters/ThirdParty", assetsPath + "/ThirdParty");
 
+    // Also parse the assets file to make sure it is valid
+    JSON.parse(await fs.readFile(assetsPath + "/assets.json", "utf8"));
+
     console.log("[Nano] Pack Filters :: Done");
 })();
