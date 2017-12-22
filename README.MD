@@ -16,6 +16,8 @@ Please open an issue if there is something you want us to know.
 
 ### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
 
+## For Developers
+
 ### [Firefox version developer discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
 ### [Edge version developer discuttion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
