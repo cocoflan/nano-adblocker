@@ -18,9 +18,9 @@ Please open an issue if there is something you want us to know.
 
 ## For Developers
 
-### [Firefox version developer discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
+### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
-### [Edge version developer discuttion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
+### [Edge version discuttion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
 
 ## Notable Change
 
