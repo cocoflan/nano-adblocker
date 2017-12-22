@@ -5,7 +5,7 @@
     console.log("[Nano] Build Core :: Started");
 
     const outputPath = require("./build-engine.node.js").ezInit();
-    createDirectory(outputPath);
+    await createDirectory(outputPath);
 
     await smartCopyDirectory("src/css", outputPath + "/css");
     await smartCopyDirectory("src/nano-img", outputPath + "/img");

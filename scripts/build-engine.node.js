@@ -98,19 +98,19 @@ global.fs = (() => {
     if (process.argv.includes("--trace-fs")) {
         return {
             copyFile: (...args) => {
-                console.log("TraceFS :: copyFile", args);
+                console.log("[Nano] TraceFS :: copyFile", args);
                 return newfs.copyFile(...args);
             },
             lstat: (...args) => {
-                console.log("TraceFS :: lstat", args);
+                console.log("[Nano] TraceFS :: lstat", args);
                 return newfs.lstat(...args);
             },
             mkdir: (...args) => {
-                console.log("TraceFS :: mkdir", args);
+                console.log("[Nano] TraceFS :: mkdir", args);
                 return newfs.mkdir(...args);
             },
             readdir: (...args) => {
-                console.log("TraceFS :: readdir", args);
+                console.log("[Nano] TraceFS :: readdir", args);
                 return newfs.readdir(...args);
             },
         }
