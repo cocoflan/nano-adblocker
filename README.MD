@@ -14,7 +14,7 @@ Please open an issue if there is something you want us to know.
 
 ### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
 
-### [Get Nano Defender](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
+### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
 
 ### [Firefox version developer discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
