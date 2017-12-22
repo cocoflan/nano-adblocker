@@ -1,83 +1,83 @@
 {
   "genericYes": {
-    "message": "ÊÇ",
+    "message": "æ˜¯",
     "description": "The word yes, used in dialogs"
   },
   "genericNo": {
-    "message": "·ñ",
+    "message": "å¦",
     "description": "The word no, used in dialogs"
   },
   "genericOK": {
-    "message": "È·¶¨",
+    "message": "ç¡®å®š",
     "description": "The word OK, used in dialogs"
   },
 
   "genericUnsavedChange": {
-    "message": "ÄúÈ·¶¨ÒªÀë¿ªÕâ¸ö±êÇ©Ã´£¿Î´±£´æµÄ¸ü¸Ä½«»á¶ªÊ§¡£",
+    "message": "æ‚¨ç¡®å®šè¦ç¦»å¼€è¿™ä¸ªæ ‡ç­¾ä¹ˆï¼Ÿæœªä¿å­˜çš„æ›´æ”¹å°†ä¼šä¸¢å¤±ã€‚",
     "description": "A warning when the user is about to leave a tab without saving"
   },
   "genericFilterReadError": {
-    "message": "# Î´ÄÜ¶ÁÈ¡Êı¾İ£¬ÇëË¢ĞÂ¡£",
+    "message": "# æœªèƒ½è¯»å–æ•°æ®ï¼Œè¯·åˆ·æ–°ã€‚",
     "description": "Message to show when filter data could not be loaded"
   },
   "genericDataSaveError": {
-    "message": "Î´ÄÜ±£´æÊı¾İ£¬ÇëÖØÊÔ¡£",
+    "message": "æœªèƒ½ä¿å­˜æ•°æ®ï¼Œè¯·é‡è¯•ã€‚",
     "description": "Message to show when changes could not be saved"
   },
   "genericNothingToExport": {
-    "message": "Ã»ÓĞÈÎºÎÊı¾İĞèÒªµ¼³ö¡£",
+    "message": "æ²¡æœ‰ä»»ä½•æ•°æ®éœ€è¦å¯¼å‡ºã€‚",
     "description": "Message to show when the user clicked export to file button but there is nothing to export"
   },
 
 
   "nanoCloudNoData": {
-    "message": "Ã»ÓĞÔÆ¶ËÊı¾İ¡£",
+    "message": "æ²¡æœ‰äº‘ç«¯æ•°æ®ã€‚",
     "description": "English: No cloud data"
   },
   "nanoCloudLastSync": {
-    "message": "ÉÏ´ÎÍ¬²½£º {{device}} ÔÚ {{time}}",
+    "message": "ä¸Šæ¬¡åŒæ­¥ï¼š {{device}} åœ¨ {{time}}",
     "description": "English: Last sync: {{device}} at {{time}}"
   },
   "nanoCloudSyncFailed": {
-    "message": "³öÏÖÁËÒ»Ğ©ÎÊÌâ£º\n{{error}}",
+    "message": "å‡ºç°äº†ä¸€äº›é—®é¢˜ï¼š\n{{error}}",
     "description": "English: Something went wrong:\n{{error}}"
   },
 
 
   "dashboardMutexError": {
-    "message": "Î´ÄÜ»ñÈ¡»¥³âËø£¬ÄúÊÇ·ñÒÑ¾­´ò¿ªÒ»¸ö¿ØÖÆÃæ°åÁË£¿",
+    "message": "æœªèƒ½è·å–äº’æ–¥é”ï¼Œæ‚¨æ˜¯å¦å·²ç»æ‰“å¼€ä¸€ä¸ªæ§åˆ¶é¢æ¿äº†ï¼Ÿ",
     "description": "Message to show when mutex lock is held by another instance of the dashboard"
   },
 
 
   "settingGeneralGroup": {
-    "message": "»ù±¾",
+    "message": "åŸºæœ¬",
     "description": "Settings tab general group name"
   },
   "settingUserInterfaceGroup": {
-    "message": "½çÃæ",
+    "message": "ç•Œé¢",
     "description": "Settings tab user interface group name"
   },
   "settingOtherGroup": {
-    "message": "ÆäËû",
+    "message": "å…¶ä»–",
     "description": "Settings tab other group name"
   },
 
   "settingsDashboardAllowSelectionPrompt": {
-    "message": "ÔÊĞíÔÚ¿ØÖÆÃæ°åÖĞÑ¡ÔñÎÄ×Ö",
+    "message": "å…è®¸åœ¨æ§åˆ¶é¢æ¿ä¸­é€‰æ‹©æ–‡å­—",
     "description": "English: Allow text selection in dashboard"
   },
   "settingsEditorWordWrapPrompt": {
-    "message": "ÔÚ¹æÔò±à¼­Æ÷ÖĞÆôÓÃ×Ô¶¯»»ĞĞ£¨ soft warp £©",
+    "message": "åœ¨è§„åˆ™ç¼–è¾‘å™¨ä¸­å¯ç”¨è‡ªåŠ¨æ¢è¡Œï¼ˆ soft warp ï¼‰",
     "description": "English: Soft wrap long lines in filter editor"
   },
   "settingsViewerWordWrapPrompt": {
-    "message": "ÔÚ¹æÔò²é¿´Æ÷ÖĞÆôÓÃ×Ô¶¯»»ĞĞ£¨ soft warp £©",
+    "message": "åœ¨è§„åˆ™æŸ¥çœ‹å™¨ä¸­å¯ç”¨è‡ªåŠ¨æ¢è¡Œï¼ˆ soft warp ï¼‰",
     "description": "English: Soft wrap long lines in filter viewer"
   },
 
   "settingDiskUsage": {
-    "message": "Õ¼ÓÃ¿Õ¼ä£º ",
+    "message": "å ç”¨ç©ºé—´ï¼š ",
     "description": "Disk usage prompt"
   },
   "settingMebibyte": {
@@ -85,88 +85,88 @@
     "description": "Symbol for mebibyte"
   },
   "settingsLastBackedupFilePrompt": {
-    "message": "ÉÏ´Î±¸·İÎÄ¼şÃû£º ",
+    "message": "ä¸Šæ¬¡å¤‡ä»½æ–‡ä»¶åï¼š ",
     "description": "Last backed up file name prompt"
   },
   "settingsLastRestoredFilePrompt": {
-    "message": "ÉÏ´Î»Ö¸´ÎÄ¼şÃû£º ",
+    "message": "ä¸Šæ¬¡æ¢å¤æ–‡ä»¶åï¼š ",
     "description": "Last restored file name prompt"
   },
 
 
   "advancedSettingsAboutChanges": {
-    "message": "Nano µÄÄ¬ÈÏ¸ß¼¶ÉèÖÃºÍ uBlock Origin ÓĞËù²»Í¬£¬ assetFetchTimeout Ä¬ÈÏÎª 60 £¬ manualUpdateAssetFetchPeriod Ä¬ÈÏÎª 500 ¡£",
+    "message": "Nano çš„é»˜è®¤é«˜çº§è®¾ç½®å’Œ uBlock Origin æœ‰æ‰€ä¸åŒï¼Œ assetFetchTimeout é»˜è®¤ä¸º 60 ï¼Œ manualUpdateAssetFetchPeriod é»˜è®¤ä¸º 500 ã€‚",
     "description": "Describe the difference in default advanced settings between Nano Adblocker and uBlock Origin"
   },
   "advancemessagedPageName": {
-    "message": "¸ß¼¶",
+    "message": "é«˜çº§",
     "description": "Advanced settings tab name"
   },
 
 
   "1pResourcesReference": {
-    "message": "Nano ÓµÓĞÁ½Ì××ÊÔ´£¬",
+    "message": "Nano æ‹¥æœ‰ä¸¤å¥—èµ„æºï¼Œ",
     "description": "English: Nano Adblocker comes with two sets of resources,"
   },
   "1pResourcesOriginal": {
-    "message": "uBlock Origin µÄ×ÊÔ´",
+    "message": "uBlock Origin çš„èµ„æº",
     "description": "English: uBlock Origin Resources"
   },
   "1pResourcesAnd": {
-    "message": "ºÍ",
+    "message": "å’Œ",
     "description": "English: and"
   },
   "1pResourcesNano": {
-    "message": "Nano µÄ¶îÍâ×ÊÔ´",
+    "message": "Nano çš„é¢å¤–èµ„æº",
     "description": "English: Nano Extra Resources"
   },
   "1pResourcesPeriod": {
-    "message": "¡£",
+    "message": "ã€‚",
     "description": "Period symbol"
   },
 
   "1pFilterEditorHelp": {
-    "message": "Nano ¹æÔò±à¼­Æ÷ÊÇÓÉ Ace Çı¶¯µÄ£¬´ó²¿·Ö¿ì½İ¼ü¶¼Ò»Ñù¡£",
+    "message": "Nano è§„åˆ™ç¼–è¾‘å™¨æ˜¯ç”± Ace é©±åŠ¨çš„ï¼Œå¤§éƒ¨åˆ†å¿«æ·é”®éƒ½ä¸€æ ·ã€‚",
     "description": "Explain the similarity between Nano Filter Editor and Ace in terms of shortcut keys"
   },
 
 
   "whitelistLinterAborted": {
-    "message": "Nano Ã»ÓĞÑéÖ¤Ê£ÏÂµÄ¹æÔò£¬ÒòÎªÒÑ¾­ÓĞ¹ı¶àµÄ´íÎó¡£",
+    "message": "Nano æ²¡æœ‰éªŒè¯å‰©ä¸‹çš„è§„åˆ™ï¼Œå› ä¸ºå·²ç»æœ‰è¿‡å¤šçš„é”™è¯¯ã€‚",
     "description": "Warning message to show when the whitelist validator aborted because there are too many errors"
   },
   "whitelistLinterTooManyWarnings": {
-    "message": "Nano Ã»ÓĞ¼ì²éÊ£ÏÂµÄ¹æÔò£¬ÒòÎªÒÑ¾­ÓĞ¹ı¶àµÄ¾¯¸æ¡£",
+    "message": "Nano æ²¡æœ‰æ£€æŸ¥å‰©ä¸‹çš„è§„åˆ™ï¼Œå› ä¸ºå·²ç»æœ‰è¿‡å¤šçš„è­¦å‘Šã€‚",
     "description": "Warning message to show when Nano Whitelist Linter aborted because there are too many warnings"
   },
 
   "whitelistLinterInvalidHostname": {
-    "message": "Õâ¸öÖ÷»úÃû³ÆÎŞĞ§¡£",
+    "message": "è¿™ä¸ªä¸»æœºåç§°æ— æ•ˆã€‚",
     "description": "Error message to show when a hostname whitelist is not valid"
   },
   "whitelistLinterInvalidRegExp": {
-    "message": "Õâ¸öÕıÔò±í´ïÊ½ÎŞĞ§¡£",
+    "message": "è¿™ä¸ªæ­£åˆ™è¡¨è¾¾å¼æ— æ•ˆã€‚",
     "description": "Error message to show when a regular expression whitelist is not valid"
   },
   "whitelistLinterInvalidURL": {
-    "message": "Õâ¸öÂ·¾¶ÎŞĞ§¡£",
+    "message": "è¿™ä¸ªè·¯å¾„æ— æ•ˆã€‚",
     "description": "Error message to show when a URL whitelist is not valid"
   },
 
   "whitelistLinterSuspeciousRegExp": {
-    "message": "ÕâĞĞ±»½âÎö³ÉÁËÕıÔò±í´ïÊ½£¬ÄúÈ·¶¨ÕâÊÇÕıÈ·µÄÃ´£¿",
+    "message": "è¿™è¡Œè¢«è§£ææˆäº†æ­£åˆ™è¡¨è¾¾å¼ï¼Œæ‚¨ç¡®å®šè¿™æ˜¯æ­£ç¡®çš„ä¹ˆï¼Ÿ",
     "description": "Warning message to show when a whitelist is parsed as a regular expression whitelist but it is unlikely to be the intention"
   },
 
 
   "matrixPageName": {
-    "message": "Ö÷»ú¾ØÕó",
+    "message": "ä¸»æœºçŸ©é˜µ",
     "description": "Hosts matrix tab name"
   },
 
 
   "aboutBasedOn": {
-    "message": "»ùÓÚ uBlock Origin {{@version}}",
+    "message": "åŸºäº uBlock Origin {{@version}}",
     "description": "English: Based on uBlock Origin {{@version}}"
   }
 }
