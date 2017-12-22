@@ -29,6 +29,10 @@ const uBOVersion = "v1.14.22";
     assert(enExtra && typeof enExtra === "object");
 
     for (let key in enOriginal) {
+        if (key === "dummy") {
+            continue;
+        }
+
         if (enOriginal.hasOwnProperty(key)) {
             assert(!allKeys.includes(key));
             assert(enOriginal[key] && typeof enOriginal[key] === "object" && typeof enOriginal[key].message === "string");
