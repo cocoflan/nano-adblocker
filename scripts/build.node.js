@@ -1,4 +1,6 @@
-// Build core extension files, but not assets
+/**
+ * Build core extension files.
+ */
 "use strict";
 
 (async () => {

@@ -93,6 +93,7 @@ global.fs = (() => {
         lstat: promisify(ofs.lstat),
         mkdir: promisify(ofs.mkdir),
         readdir: promisify(ofs.readdir),
+        readFile: promisify(ofs.readFile),
     };
 
     if (process.argv.includes("--trace-fs")) {
@@ -112,6 +113,10 @@ global.fs = (() => {
             readdir: (...args) => {
                 console.log("[Nano] TraceFS :: readdir", args);
                 return newfs.readdir(...args);
+            },
+            readFile: (...args) => {
+                console.log("[Nano] TraceFS :: readFile", args);
+                return newfs.readFile(...args);
             },
         }
     } else {
