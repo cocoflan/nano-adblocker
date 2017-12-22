@@ -98,7 +98,7 @@
     "message": "Nano has different default values than uBlock Origin for these settings, assetFetchTimeout defaults to 60 and manualUpdateAssetFetchPeriod defaults to 500.",
     "description": "Describe the difference in default advanced settings between Nano Adblocker and uBlock Origin"
   },
-  "advancemessagedPageName": {
+  "advancedPageName": {
     "message": "Advanced",
     "description": "Advanced settings tab name"
   },

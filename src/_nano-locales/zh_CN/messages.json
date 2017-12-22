@@ -98,7 +98,7 @@
     "message": "Nano 的默认高级设置和 uBlock Origin 有所不同， assetFetchTimeout 默认为 60 ， manualUpdateAssetFetchPeriod 默认为 500 。",
     "description": "Describe the difference in default advanced settings between Nano Adblocker and uBlock Origin"
   },
-  "advancemessagedPageName": {
+  "advancedPageName": {
     "message": "高级",
     "description": "Advanced settings tab name"
   },
