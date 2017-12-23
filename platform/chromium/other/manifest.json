@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Nano Adblocker",
-    "version": "1.0.0.19",
+    "version": "1.0.0.20",
 
     "commands": {
         "launch-element-zapper": {
