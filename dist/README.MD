@@ -17,6 +17,8 @@ and the last line apply some platform specific patch.
 
 When coding, chances are the first command alone is enough to synchronize changes. 
 
+The build result can be found in `/dist/build` directory. 
+
 ## Chromium
 
 Run the following commands: 
@@ -42,4 +44,4 @@ node build-firefox.node.js --firefox
 If you have changed vAPI scripts or the manifest, then you need to run the platform specific build script on top of the first line. 
 
 The Firefox version of Nano Defender can be built with `node build-defender.node.js --firefox`. The Chromium version uses another 
-build scripts which can be found in the `/Continuous Integration` directory of Nano Defender repository. 
+build scripts which can be found in the `/Continuous Integration` directory of NanoDefender repository. 
