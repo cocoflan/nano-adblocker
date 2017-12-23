@@ -8,15 +8,17 @@ different:
 - `assetFetchTimeout` defaults to `60`
 - `manualUpdateAssetFetchPeriod` defaults to `500`
 
-Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. 
+Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
+settings can change and break at any time, make sure to backup your settings if you want to play around with them. Also file 
+bug reports if they do break for you, or otherwise behave in a way that contradict the description below. 
 
 ### `Force recompile` button (Not yet available)
 
 Discard compiled filters and selfies and recompile everything, Nano Adblocker will restart. Unsaved settings will be **discarded**. 
 If you have changed a settings that requires a recompilation to work, you need to press `Apply changes` **first** to save that settings. 
 
-How it works: When the button is clicked, `compiledMagic` and `selfieMagic` will be set to empty strings, then restart the app 
-to trigger recompilation. 
+How it works: When the button is clicked, `compiledMagic` and `selfieMagic` will be set to empty strings, and the extension will 
+be reloaded to trigger recompilation. 
 
 ### `_nanoIgnoreThridPartyWhitelist` settings (Not yet available)
 
