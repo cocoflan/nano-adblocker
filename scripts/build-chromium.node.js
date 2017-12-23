@@ -8,6 +8,8 @@
     console.log("[Nano] Apply Chromium Patch :: Started");
 
     const localePath = require("./build-engine.node.js").ezInit() + "/_locales";
+    assert(isChromium);
+
     await smartCopyDirectory(localePath + "/nb", localePath + "/no");
 
     console.log("[Nano] Apply Chromium Patch :: Done");

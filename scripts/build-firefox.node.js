@@ -11,6 +11,7 @@
     console.log("[Nano] Apply Firefox Patch :: Started");
 
     const basePath = require("./build-engine.node.js").ezInit();
+    assert(isFirefox);
 
     let manifest = await fs.readFile(basePath + "/manifest.json", "utf8");
     manifest = JSON.parse(manifest);

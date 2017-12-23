@@ -6,7 +6,9 @@
 
 (async () => {
     console.log("[Nano] Build Defender :: Started");
+
     const buildPath = require("./build-engine.node.js").ezInit() + "_Defender";
+    assert(isFirefox);
 
     await smartCopyDirectory("../NanoDefender/Extension Compiler/Extension", buildPath);
 
