@@ -9,8 +9,8 @@ different:
 - `manualUpdateAssetFetchPeriod` defaults to `500`
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
-settings can change and break at any time, make sure to backup your settings if you want to play around with them. Also file 
-bug reports if they do break for you, or otherwise behave in a way that contradict the description below. 
+settings can change or break at any time, make sure to backup your settings if you want to play around with them. Also file 
+bug reports if they do break for you, or otherwise behave in a way that contradicts the description below. 
 
 ### `Force recompile` button (Not yet available)
 
