@@ -36,4 +36,4 @@ When set to `true`, Nano Adblocker will no longer discard slow filters when comp
 already compiled will not be affected immediately. Use the `Force Recompile` button to trigger recompilation immediately. 
 
 Enabling this settings will likely cause performanced to be flushed down the toilet, make sure you have a really fast computer when 
-using this settings. 
+playing around with this settings. 
