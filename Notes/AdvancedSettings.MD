@@ -12,7 +12,7 @@ Beside different defaults, Nano Adblocker also offers a few more functionalities
 
 ### `Force recompile` button (Not yet available)
 
-Discard compiled filters and selfies and recompile everything. Nano Adblocker will restart. Unsaved settings will be **discarded**. 
+Discard compiled filters and selfies and recompile everything, Nano Adblocker will restart. Unsaved settings will be **discarded**. 
 If you have changed a settings that requires a recompilation to work, you need to press `Apply changes` **first** to save that settings. 
 
 How it works: When the button is clicked, `compiledMagic` and `selfieMagic` will be set to empty strings, then restart the app 
