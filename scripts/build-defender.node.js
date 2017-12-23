@@ -17,7 +17,7 @@
     manifest = JSON.parse(manifest);
 
     manifest["description"] = "An anti-adblock defuser for Nano Adblocker";
-    manifest["homepage_url"] = "https://github.com/NanoAdblocker/NanoDefender";
+    manifest["homepage_url"] = "https://github.com/NanoAdblocker/NanoDefender/";
     delete manifest["minimum_chrome_version"];
     manifest["applications"] = {
         "gecko": {
