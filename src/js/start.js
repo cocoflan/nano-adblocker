@@ -262,7 +262,8 @@ var onSelectedFilterListsLoaded = function() {
         'compiledMagic': '',
         'dynamicFilteringString': 'behind-the-scene * 3p noop\nbehind-the-scene * 3p-frame noop',
         'urlFilteringString': '',
-        'hostnameSwitchesString': '',
+        // Patch 2017-12-23: Defaults to block all CSP reports
+        'hostnameSwitchesString': 'no-csp-reports: * true',
         'lastRestoreFile': '',
         'lastRestoreTime': 0,
         'lastBackupFile': '',
