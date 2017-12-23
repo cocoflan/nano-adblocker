@@ -1,7 +1,7 @@
 /**
  * Pack filters.
  * NanoFilters must be in the same parent directory as NanoCore.
- * Expectes the extension core is already built.
+ * Expects the extension core to be already built.
  */
 "use strict";
 

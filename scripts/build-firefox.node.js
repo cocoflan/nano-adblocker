@@ -1,7 +1,7 @@
 /**
  * Apply patches for Firefox, there is unfortunately no easy way to
  * smart-build this part.
- * Expectes the extension core is already built.
+ * Expects the extension core to be already built.
  * Because the manifest is only copied if the source has changed,
  * this script does not have to run on every debug build.
  */

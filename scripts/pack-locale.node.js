@@ -1,6 +1,6 @@
 /**
  * Process and pack locale.
- * Expectes the extension core is already built.
+ * Expects the extension core to be already built.
  */
 "use strict";
 
