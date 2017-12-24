@@ -9,7 +9,7 @@
  * Need to manually clear build output if this constant is changed.
  * @const {string}
  */
-const uBOVersion = "v1.14.22";
+const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commit after v1.14.23b2";
 
 (async () => {
     console.log("[Nano] Pack Locale :: Started");
