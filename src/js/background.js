@@ -129,7 +129,7 @@ var µBlock = (function() { // jshint ignore:line
         // read-only
         systemSettings: {
             compiledMagic: 'vrgorlgelgws',
-            selfieMagic: 'vrgorlgelgws'
+            selfieMagic: 'pxpclstriajk'
         },
 
         restoreBackupSettings: {

@@ -665,6 +665,7 @@ var FilterContainer = function() {
     };
 
     this.userScripts = new Map();
+    this.userScriptCache = new µb.MRUCache(32);
 
     // Short-lived: content is valid only during one function call. These
     // is to prevent repeated allocation/deallocation overheads -- the
@@ -673,6 +674,7 @@ var FilterContainer = function() {
     this.setRegister0 = new Set();
     this.setRegister1 = new Set();
     this.setRegister2 = new Set();
+    this.mapRegister0 = new Map();
 
     this.reset();
 };
@@ -721,8 +723,9 @@ FilterContainer.prototype.reset = function() {
 
     this.scriptTagFilters = {};
     this.scriptTagFilterCount = 0;
+
     this.userScripts.clear();
-    this.userScriptCount = 0;
+    this.userScriptCache.reset();
 };
 
 /******************************************************************************/
@@ -778,7 +781,6 @@ FilterContainer.prototype.compileSelector = (function() {
     var reAfterBeforeSelector = /^(.+?)(::?after|::?before)$/,
         reStyleSelector = /^(.+?):style\((.+?)\)$/,
         reStyleBad = /url\([^)]+\)/,
-        reScriptSelector = /^script:(contains|inject)\((.+)\)$/,
         reExtendedSyntax = /\[-(?:abp|ext)-[a-z-]+=(['"])(?:.+?)(?:\1)\]/,
         reExtendedSyntaxParser = /\[-(?:abp|ext)-([a-z-]+)=(['"])(.+?)\2\]/,
         div = document.createElement('div');
@@ -865,7 +867,7 @@ FilterContainer.prototype.compileSelector = (function() {
         }
 
         // `script:` filter?
-        if ( (matches = reScriptSelector.exec(raw)) !== null ) {
+        if ( (matches = this.reScriptSelector.exec(raw)) !== null ) {
             // :inject
             if ( matches[1] === 'inject' ) {
                 return raw;
@@ -1411,7 +1413,7 @@ FilterContainer.prototype.fromCompiledContent = function(
         // js, hash, example.com, script:contains(...)
         // js, hash, example.com, script:inject(...)
         case 6:
-            this.createScriptFilter(args[1], args[2], args[3]);
+            this.createScriptFilter(args);
             break;
 
         // https://github.com/chrisaljoudi/uBlock/issues/497
@@ -1465,7 +1467,7 @@ FilterContainer.prototype.skipGenericCompiledContent = function(reader) {
         // js, hash, example.com, script:inject(...)
         case 6:
             this.duplicateBuster.add(fingerprint);
-            this.createScriptFilter(args[1], args[2], args[3]);
+            this.createScriptFilter(args);
             break;
 
         // https://github.com/chrisaljoudi/uBlock/issues/497
@@ -1515,7 +1517,7 @@ FilterContainer.prototype.skipCompiledContent = function(reader) {
             fingerprint = reader.fingerprint();
             if ( this.duplicateBuster.has(fingerprint) === false ) {
                 this.duplicateBuster.add(fingerprint);
-                this.createScriptFilter(args[1], args[2], args[3]);
+                this.createScriptFilter(args);
             }
             continue;
         }
@@ -1526,12 +1528,12 @@ FilterContainer.prototype.skipCompiledContent = function(reader) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.createScriptFilter = function(hash, hostname, selector) {
-    if ( selector.startsWith('script:contains') ) {
-        return this.createScriptTagFilter(hash, hostname, selector);
+FilterContainer.prototype.createScriptFilter = function(args) {
+    if ( args[3].startsWith('script:inject') ) {
+        return this.createUserScriptRule(args);
     }
-    if ( selector.startsWith('script:inject') ) {
-        return this.createUserScriptRule(hash, hostname, selector);
+    if ( args[3].startsWith('script:contains') ) {
+        return this.createScriptTagFilter(args);
     }
 };
 
@@ -1542,8 +1544,9 @@ FilterContainer.prototype.createScriptFilter = function(hash, hostname, selector
 //                 ^   ^
 //                16   -1
 
-FilterContainer.prototype.createScriptTagFilter = function(hash, hostname, selector) {
-    var token = selector.slice(16, -1);
+FilterContainer.prototype.createScriptTagFilter = function(args) {
+    var hostname = args[2],
+        token = args[3].slice(16, -1);
     token = token.startsWith('/') && token.endsWith('/')
         ? token.slice(1, -1)
         : token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -1603,8 +1606,9 @@ FilterContainer.prototype.retrieveScriptTagRegex = function(domain, hostname) {
 
 // userScripts{hash} => FilterHostname | FilterBucket
 
-FilterContainer.prototype.createUserScriptRule = function(hash, hostname, selector) {
-    var filter = new FilterHostname(selector, hostname);
+FilterContainer.prototype.createUserScriptRule = function(args) {
+    var hash = args[1],
+        filter = new FilterHostname(args[3].slice(14, -1), args[2]);
     var bucket = this.userScripts.get(hash);
     if ( bucket === undefined ) {
         this.userScripts.set(hash, filter);
@@ -1613,7 +1617,6 @@ FilterContainer.prototype.createUserScriptRule = function(hash, hostname, select
     } else {
         this.userScripts.set(hash, new FilterBucket(bucket, filter));
     }
-    this.userScriptCount += 1;
 };
 
 /******************************************************************************/
@@ -1625,29 +1628,34 @@ FilterContainer.prototype.createUserScriptRule = function(hash, hostname, select
 //               ^                 ^
 //              14                 -1
 
-FilterContainer.prototype.retrieveUserScripts = function(domain, hostname) {
-    if ( this.userScriptCount === 0 ) { return; }
+FilterContainer.prototype.retrieveUserScripts = function(
+    domain,
+    hostname,
+    details
+) {
+    if ( this.userScripts.size === 0 ) { return; }
     if ( µb.hiddenSettings.ignoreScriptInjectFilters === true ) { return; }
 
     var reng = µb.redirectEngine;
     if ( !reng ) { return; }
 
-    var out = [],
-        scripts = new Map(),
+    this.mapRegister0.clear();
+
+    var toInject = this.mapRegister0,
         pos = domain.indexOf('.'),
         entity = pos !== -1 ? domain.slice(0, pos) + '.*' : '';
 
     // Implicit
     var hn = hostname;
     for (;;) {
-        this._lookupUserScript(scripts, hn + '.js', reng, out);
+        this._lookupUserScript(hn + '.js', reng, toInject);
         if ( hn === domain ) { break; }
         pos = hn.indexOf('.');
         if ( pos === -1 ) { break; }
         hn = hn.slice(pos + 1);
     }
     if ( entity !== '' ) {
-        this._lookupUserScript(scripts, entity + '.js', reng, out);
+        this._lookupUserScript(entity + '.js', reng, toInject);
     }
 
     // Explicit (hash is domain).
@@ -1660,12 +1668,10 @@ FilterContainer.prototype.retrieveUserScripts = function(domain, hostname) {
         bucket.retrieve(entity, selectors);
     }
     for ( var selector of selectors ) {
-        this._lookupUserScript(scripts, selector.slice(14, -1).trim(), reng, out);
+        this._lookupUserScript(selector, reng, toInject);
     }
 
-    if ( out.length === 0 ) {
-        return;
-    }
+    if ( toInject.size === 0 ) { return; }
 
     // https://github.com/gorhill/uBlock/issues/2835
     //   Do not inject scriptlets if the site is under an `allow` rule.
@@ -1678,42 +1684,65 @@ FilterContainer.prototype.retrieveUserScripts = function(domain, hostname) {
 
     // Exceptions should be rare, so we check for exception only if there are
     // scriptlets returned.
-    var exceptions = new Set(),
-        j, token;
+    var exceptions = new Set();
     if ( (bucket = this.userScripts.get('!' + domain)) ) {
         bucket.retrieve(hostname, exceptions);
     }
     if ( entity !== '' && (bucket = this.userScripts.get('!' + entity)) ) {
         bucket.retrieve(hostname, exceptions);
     }
-    for ( var exception of exceptions ) {
-        token = exception.slice(14, -1);
-        if ( (j = scripts.get(token)) !== undefined ) {
-            out[j] = '// User script "' + token + '" excepted.\n';
+
+    // Return an array of scriptlets, and log results if needed. 
+    var out = [],
+        logger = µb.logger.isEnabled() ? µb.logger : null,
+        isException;
+
+    for ( var entry of toInject ) {
+        if ( (isException = exceptions.has(entry[0])) === false ) {
+            out.push(entry[1]);
         }
+        if ( logger === null ) { continue; }
+        logger.writeOne(
+            details.tabId,
+            'cosmetic',
+            {
+                source: 'cosmetic',
+                raw: (isException ? '#@#' : '##') + 'script:inject(' + entry[0] + ')'
+            },
+            'dom',
+            details.locationURL,
+            null,
+            hostname
+        );
     }
 
     return out.join('\n');
 };
 
-FilterContainer.prototype._lookupUserScript = function(dict, raw, reng, out) {
-    if ( dict.has(raw) ) { return; }
-    var token, args,
-        pos = raw.indexOf(',');
-    if ( pos === -1 ) {
-        token = raw;
-    } else {
-        token = raw.slice(0, pos).trim();
-        args = raw.slice(pos + 1).trim();
+FilterContainer.prototype._lookupUserScript = function(raw, reng, toInject) {
+    if ( toInject.has(raw) ) { return; }
+    if ( this.userScriptCache.resetTime < reng.modifyTime ) {
+        this.userScriptCache.reset();
     }
-    var content = reng.resourceContentFromName(token, 'application/javascript');
-    if ( !content ) { return; }
-    if ( args ) {
-        content = this._fillupUserScript(content, args);
+    var content = this.userScriptCache.lookup(raw);
+    if ( content === undefined ) {
+        var token, args,
+            pos = raw.indexOf(',');
+        if ( pos === -1 ) {
+            token = raw;
+        } else {
+            token = raw.slice(0, pos).trim();
+            args = raw.slice(pos + 1).trim();
+        }
+        content = reng.resourceContentFromName(token, 'application/javascript');
         if ( !content ) { return; }
+        if ( args ) {
+            content = this._fillupUserScript(content, args);
+            if ( !content ) { return; }
+        }
+        this.userScriptCache.add(raw, content);
     }
-    dict.set(raw, out.length);
-    out.push(content);
+    toInject.set(raw, content);
 };
 
 // Fill template placeholders. Return falsy if:
@@ -1762,8 +1791,7 @@ FilterContainer.prototype.toSelfie = function() {
         genericDonthideArray: µb.arrayFrom(this.genericDonthideSet),
         scriptTagFilters: this.scriptTagFilters,
         scriptTagFilterCount: this.scriptTagFilterCount,
-        userScripts: selfieFromMap(this.userScripts),
-        userScriptCount: this.userScriptCount
+        userScripts: selfieFromMap(this.userScripts)
     };
 };
 
@@ -1798,7 +1826,6 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
     this.scriptTagFilters = selfie.scriptTagFilters;
     this.scriptTagFilterCount = selfie.scriptTagFilterCount;
     this.userScripts = mapFromSelfie(selfie.userScripts);
-    this.userScriptCount = selfie.userScriptCount;
     this.frozen = true;
 };
 
@@ -1911,10 +1938,7 @@ FilterContainer.prototype.randomAlphaToken = function() {
 
 /******************************************************************************/
 
-FilterContainer.prototype.retrieveGenericSelectors = function(
-    request,
-    sender
-) {
+FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     if ( this.acceptedCount === 0 ) { return; }
     if ( !request.ids && !request.classes ) { return; }
 
@@ -1995,9 +2019,8 @@ FilterContainer.prototype.retrieveGenericSelectors = function(
     // cosmetic filters now.
     if (
         this.supportsUserStylesheets &&
-        sender instanceof Object &&
-        sender.tab instanceof Object &&
-        typeof sender.frameId === 'number'
+        request.tabId !== undefined &&
+        request.frameId !== undefined
     ) {
         var injected = [];
         if ( out.simple.length !== 0 ) {
@@ -2009,10 +2032,10 @@ FilterContainer.prototype.retrieveGenericSelectors = function(
             out.complex = [];
         }
         out.injected = injected.join(',\n');
-        vAPI.insertCSS(sender.tab.id, {
+        vAPI.insertCSS(request.tabId, {
             code: out.injected + '\n{display:none!important;}',
             cssOrigin: 'user',
-            frameId: sender.frameId,
+            frameId: request.frameId,
             runAt: 'document_start'
         });
     }
@@ -2030,7 +2053,6 @@ FilterContainer.prototype.retrieveGenericSelectors = function(
 
 FilterContainer.prototype.retrieveDomainSelectors = function(
     request,
-    sender,
     options
 ) {
     if ( !request.locationURL ) { return; }
@@ -2041,7 +2063,8 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         domain = this.µburi.domainFromHostname(hostname) || hostname,
         pos = domain.indexOf('.'),
         entity = pos === -1 ? '' : domain.slice(0, pos - domain.length) + '.*',
-        cacheEntry = this.selectorCache.get(hostname);
+        cacheEntry = this.selectorCache.get(hostname),
+        entry;
 
     // https://github.com/chrisaljoudi/uBlock/issues/587
     // out.ready will tell the content script the cosmetic filtering engine is
@@ -2177,7 +2200,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         if ( options.noGenericCosmeticFiltering !== true ) {
             var exceptionHash = out.exceptionFilters.join();
             for ( var type in this.highlyGeneric ) {
-                var entry = this.highlyGeneric[type];
+                entry = this.highlyGeneric[type];
                 var str = entry.mru.lookup(exceptionHash);
                 if ( str === undefined ) {
                     str = { s: entry.str };
@@ -2206,8 +2229,9 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     }
 
     // Scriptlet injection.
-    out.scripts = this.retrieveUserScripts(domain, hostname);
+    out.scripts = this.retrieveUserScripts(domain, hostname, request);
 
+    // CSS selectors for collapsible blocked elements
     if ( cacheEntry ) {
         var networkFilters = [];
         cacheEntry.retrieve('net', networkFilters);
@@ -2219,9 +2243,8 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     //   cosmetic filters now.
     if (
         this.supportsUserStylesheets &&
-        sender instanceof Object &&
-        sender.tab instanceof Object &&
-        typeof sender.frameId === 'number'
+        request.tabId !== undefined &&
+        request.frameId !== undefined
     ) {
         var injectedHideFilters = [];
         if ( out.declarativeFilters.length !== 0 ) {
@@ -2244,16 +2267,16 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
         var details = {
             code: '',
             cssOrigin: 'user',
-            frameId: sender.frameId,
+            frameId: request.frameId,
             runAt: 'document_start'
         };
         if ( out.injectedHideFilters.length !== 0 ) {
             details.code = out.injectedHideFilters + '\n{display:none!important;}';
-            vAPI.insertCSS(sender.tab.id, details);
+            vAPI.insertCSS(request.tabId, details);
         }
         if ( out.networkFilters.length !== 0 ) {
             details.code = out.networkFilters + '\n{display:none!important;}';
-            vAPI.insertCSS(sender.tab.id, details);
+            vAPI.insertCSS(request.tabId, details);
             out.networkFilters = '';
         }
     }

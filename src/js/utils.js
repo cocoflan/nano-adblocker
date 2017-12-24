@@ -351,6 +351,7 @@
     this.size = size;
     this.array = [];
     this.map = new Map();
+    this.resetTime = Date.now();
 };
 
 µBlock.MRUCache.prototype = {
@@ -372,14 +373,18 @@
     lookup: function(key) {
         var value = this.map.get(key);
         if ( value !== undefined && this.array[0] !== key ) {
-            this.array.splice(this.array.indexOf(key), 1);
-            this.array.unshift(key);
+            var i = this.array.indexOf(key);
+            do {
+                this.array[i] = this.array[i-1];
+            } while ( --i );
+            this.array[0] = key;
         }
         return value;
     },
     reset: function() {
         this.array = [];
         this.map.clear();
+        this.resetTime = Date.now();
     }
 };
 
