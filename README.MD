@@ -1,6 +1,6 @@
 # Nano Adblocker Core
 
-Just another adblocker
+The bleeding edge adblocker
 
 Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock) and will stay in sync with latest features of uBlock 
 Origin. 
