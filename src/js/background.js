@@ -42,7 +42,7 @@ var µBlock = (function() { // jshint ignore:line
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset',
         
-        _nanoIgnoreThridPartyWhitelist: false,
+        _nanoIgnoreThirdPartyWhitelist: false,
         _nanoIgnorePerformanceAuditing: false
     };
 

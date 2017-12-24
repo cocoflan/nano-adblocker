@@ -20,7 +20,7 @@ If you have changed a settings that requires a recompilation to work, you need t
 How it works: When the button is clicked, `compiledMagic` and `selfieMagic` will be set to empty strings, and the extension will 
 be reloaded to trigger recompilation. 
 
-### `_nanoIgnoreThridPartyWhitelist` settings (Not yet available)
+### `_nanoIgnoreThirdPartyWhitelist` settings (Not yet available)
 
 Default: `false`
 
