@@ -2,11 +2,16 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>uBlock — Asset</title>
+<!-- TODO 2017-12-07: Why this title is not using i18n? -->
+<title>Nano — Filter Viewer</title>
 <style>
 #content {
     font: 12px monospace;
     white-space: pre;
+    }
+html, body, #content {
+    margin: 0;
+    height: 100%;
     }
 </style>
 </head>
@@ -18,6 +23,11 @@
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-client.js"></script>
 <script src="js/udom.js"></script>
+<!-- Patch 2017-12-11: Optimize asset viewer -->
+<script src="lib/ace/ace-1.2.9.js"></script>
+<script src="lib/ace/ext-searchbox-1.2.9.js"></script>
+<script src="js/nano-highlight.js"></script>
+<script src="js/nano-ide.js"></script>
 <script src="js/asset-viewer.js"></script>
 
 </body>

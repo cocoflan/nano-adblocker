@@ -2,30 +2,29 @@
 #
 # This script assumes a linux environment
 
+# Patch 2017-12-06: Point resources repository to our own
+RESOURCES=NanoFilters
+REMOTE=https://github.com/NanoAdblocker/NanoFilters.git
+
 DES=$1/assets
 
 printf "*** Packaging assets in $DES... "
 
 if [ -n "${TRAVIS_TAG}" ]; then
   pushd .. > /dev/null
-  git clone https://github.com/uBlockOrigin/uAssets.git
+  git clone $REMOTE
   popd > /dev/null
 fi
 
+# Patch 2017-12-08: Clean up directory structure
 rm -rf $DES
 mkdir $DES
-cp    ./assets/assets.json                                       $DES/
+cp ./assets/assets.json $DES/
 
-mkdir $DES/thirdparties
-cp -R ../uAssets/thirdparties/easylist-downloads.adblockplus.org $DES/thirdparties/
-cp -R ../uAssets/thirdparties/mirror1.malwaredomains.com         $DES/thirdparties/
-cp -R ../uAssets/thirdparties/pgl.yoyo.org                       $DES/thirdparties/
-cp -R ../uAssets/thirdparties/publicsuffix.org                   $DES/thirdparties/
-cp -R ../uAssets/thirdparties/www.malwaredomainlist.com          $DES/thirdparties/
+mkdir $DES/ThirdParty
+cp -R ../$RESOURCES/ThirdParty/* $DES/ThirdParty/
 
-mkdir $DES/ublock
-cp -R ../uAssets/filters/*                                       $DES/ublock/
-# Optional filter lists: do not include in package
-rm    $DES/ublock/annoyances.txt
+mkdir $DES/NanoFilters
+cp -R ../$RESOURCES/NanoFilters/* $DES/NanoFilters/
 
 echo "done."

@@ -173,11 +173,18 @@
         if ( !bin || Array.isArray(bin.selectedFilterLists) === false ) {
             µb.assets.metadata(function(availableLists) {
                 µb.saveSelectedFilterLists(µb.autoSelectRegionalFilterLists(availableLists));
+                
+                // Patch 2017-12-16: Fix potential race condition on slow devices
+                //console.log(nano.selectedFilterLists);
+                nano.selectedFilterListsLoaded = true;
                 callback();
             });
             return;
         }
         µb.selectedFilterLists = bin.selectedFilterLists;
+        
+        //console.log(nano.selectedFilterLists);
+        nano.selectedFilterListsLoaded = true;
         callback();
     });
 };
@@ -593,7 +600,7 @@
 
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
-        // This happens for assets which do not exist, ot assets with no
+        // This happens for assets which do not exist, or assets with no
         // content.
         var toLoad = [];
         for ( var assetKey in lists ) {
@@ -682,7 +689,8 @@
     // Extract update frequency information
     matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*days?/i);
     if ( matches !== null ) {
-        v = Math.max(parseInt(matches[1], 10), 2);
+        // Patch 2017-12-19: Lower minimum update frequency to 1 day, down from 2
+        v = Math.max(parseInt(matches[1], 10), 1);
         if ( v !== listEntry.updateAfter ) {
             this.assets.registerAssetSource(assetKey, { updateAfter: v });
         }
@@ -815,15 +823,25 @@
         }
         onDone();
     };
-
-    var onResourcesLoaded = function(details) {
+    
+    // Patch 2017-12-09: Add nano-resources
+    // Must load after ublock-resources so we can override their resources if
+    // needed
+    var onNanoResourcesLoaded = function(details) {
         if ( details.content !== '' ) {
-            content = details.content;
+            content += '\n\n' + details.content;
         }
         if ( µb.hiddenSettings.userResourcesLocation === 'unset' ) {
             return onDone();
         }
         µb.assets.fetchText(µb.hiddenSettings.userResourcesLocation, onUserResourcesLoaded);
+    };
+
+    var onResourcesLoaded = function(details) {
+        if ( details.content !== '' ) {
+            content = details.content;
+        }
+        nano.assets.get('nano-resources', onNanoResourcesLoaded);
     };
 
     this.assets.get('ublock-resources', onResourcesLoaded);

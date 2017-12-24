@@ -32,15 +32,18 @@ var µBlock = (function() { // jshint ignore:line
         oneMinute = 60 * oneSecond;
 
     var hiddenSettingsDefault = {
-        assetFetchTimeout: 30,
+        assetFetchTimeout: 60,
         autoUpdateAssetFetchPeriod: 120,
         autoUpdatePeriod: 7,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
-        manualUpdateAssetFetchPeriod: 2000,
+        manualUpdateAssetFetchPeriod: 500,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
-        userResourcesLocation: 'unset'
+        userResourcesLocation: 'unset',
+        
+        _nanoIgnoreThridPartyWhitelist: false,
+        _nanoIgnorePerformanceAuditing: false
     };
 
     return {
@@ -68,7 +71,12 @@ var µBlock = (function() { // jshint ignore:line
             requestLogMaxEntries: 1000,
             showIconBadge: true,
             tooltipsDisabled: false,
-            webrtcIPAddressHidden: false
+            webrtcIPAddressHidden: false,
+            
+            // Patch 2017-12-19: Add UI configuration
+            nanoDashboardAllowSelection: true,
+            nanoEditorWordSoftWrap: false,
+            nanoViewerWordSoftWrap: false
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
@@ -173,5 +181,10 @@ var µBlock = (function() { // jshint ignore:line
     };
 
 })();
+
+/******************************************************************************/
+
+// Patch 2017-12-07: Make debugging less painful
+var nano = µBlock;
 
 /******************************************************************************/

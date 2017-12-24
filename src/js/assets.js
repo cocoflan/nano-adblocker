@@ -86,7 +86,7 @@ api.fetchText = function(url, onLoad, onError) {
     }
 
     var contentLoaded = 0,
-        timeoutAfter = µBlock.hiddenSettings.assetFetchTimeout * 1000 || 30000,
+        timeoutAfter = µBlock.hiddenSettings.assetFetchTimeout * 1000 || 60000,
         timeoutTimer,
         xhr = new XMLHttpRequest();
 
@@ -284,7 +284,7 @@ var registerAssetSource = function(assetKey, dict) {
         entry.contentURL = [];
     }
     if ( typeof entry.updateAfter !== 'number' ) {
-        entry.updateAfter = 5;
+        entry.updateAfter = 3;
     }
     if ( entry.submitter ) {
         entry.submitTime = Date.now(); // To detect stale entries
@@ -367,6 +367,7 @@ var getAssetSourceRegistry = function(callback) {
     var registryReady = function() {
         var callers = assetSourceRegistryStatus;
         assetSourceRegistryStatus = 'ready';
+        // TODO 2017-12-12: Woudln't a for...of loop be better?
         var fn;
         while ( (fn = callers.shift()) ) {
             fn(assetSourceRegistry);
@@ -947,8 +948,9 @@ var updateNext = function() {
             if ( cacheEntry && (cacheEntry.writeTime + assetEntry.updateAfter * 86400000) > now ) {
                 continue;
             }
+            // Patch 2017-12-09: Add nano-resources
             // Update of user scripts/resources forbidden?
-            if ( assetKey === 'ublock-resources' && noRemoteResources ) {
+            if ( (assetKey === 'ublock-resources' || assetKey === 'nano-resources') && noRemoteResources ) {
                 continue;
             }
             if (
