@@ -13,6 +13,7 @@
     await smartCopyDirectory("../NanoDefender/Extension Compiler/Extension", buildPath);
 
     // This is not beautiful, but good enough
+    await fs.copyFile("../NanoDefender/Extension Compiler/Extension/common.js", buildPath + "/common.js");
     await fs.appendFile(buildPath + "/common.js", "\na.isFirefox = true;\na.debugMode = false;\n", { encoding: "utf8" });
 
     let manifest = await fs.readFile(buildPath + "/manifest.json", "utf8");
