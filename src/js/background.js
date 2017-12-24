@@ -40,7 +40,10 @@ var µBlock = (function() { // jshint ignore:line
         manualUpdateAssetFetchPeriod: 500,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
-        userResourcesLocation: 'unset'
+        userResourcesLocation: 'unset',
+        
+        _nanoIgnoreThridPartyWhitelist: false,
+        _nanoIgnorePerformanceAuditing: false
     };
 
     return {

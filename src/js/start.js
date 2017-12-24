@@ -106,6 +106,8 @@ var onVersionReady = function(lastVersion) {
     // Starting with 1.9.17, non-advanced users can have access to the dynamic
     // filtering pane in read-only mode. Still, it should not be visible by
     // default.
+    /*
+    // Patch 2017-12-23: Not needed for Nano Adblocker
     if ( lastVersion.localeCompare('1.9.17') < 0 ) {
         if (
             µb.userSettings.advancedUserEnabled === false &&
@@ -115,6 +117,7 @@ var onVersionReady = function(lastVersion) {
             µb.keyvalSetOne('dynamicFilteringEnabled', false);
         }
     }
+    */
     if ( lastVersion !== vAPI.app.version ) {
         vAPI.storage.set({ version: vAPI.app.version });
     }
