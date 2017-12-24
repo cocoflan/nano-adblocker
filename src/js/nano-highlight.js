@@ -71,12 +71,12 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Options
                 {
                     token: 'invalid.illegal',
-                    regex: /\$,/,
+                    regex: /\$(?!.+?\$),/,
                     next: 'options'
                 },
                 {
                     token: 'keyword.control',
-                    regex: /\$/,
+                    regex: /\$(?!.+?\$)/,
                     next: 'options'
                 },
                 // Domains (default)
@@ -167,6 +167,12 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     token: 'keyword.control',
                     regex: /\)$/,
                     next: 'start'
+                },
+                // Separator
+                {
+                    token: 'keyword.operator',
+                    regex: /,/,
+                    next: 'script_inject_part2'
                 },
                 // Parameters (default)
                 {
