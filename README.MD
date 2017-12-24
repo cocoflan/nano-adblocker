@@ -60,6 +60,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
 - Add more settings 
   - [`33386fdefb26e47e487f2c6a64dd70fe38a88e86`](https://github.com/NanoAdblocker/NanoCore/commit/33386fdefb26e47e487f2c6a64dd70fe38a88e86)
   - [`d1af3d294d10d206f885a6e1239932c393ad8a5c`](https://github.com/NanoAdblocker/NanoCore/commit/d1af3d294d10d206f885a6e1239932c393ad8a5c)
+  - [`4a0b22fa7b49b22e2b054c70890f33024488c018`](https://github.com/NanoAdblocker/NanoCore/commit/4a0b22fa7b49b22e2b054c70890f33024488c018)
 
 - Revamp dashboard with Material Design
   - [`b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b`](https://github.com/NanoAdblocker/NanoCore/commit/b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b)
@@ -94,6 +95,8 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
 
 - Make default settings better
   - [`000e6cc57f9de4ab5b431cbaed6a936c49788c29`](https://github.com/NanoAdblocker/NanoCore/commit/000e6cc57f9de4ab5b431cbaed6a936c49788c29)
+  - [`b499e73dd2747aac16cf6e36548afb5f8fa8a7a7`](https://github.com/NanoAdblocker/NanoCore/commit/b499e73dd2747aac16cf6e36548afb5f8fa8a7a7)
+  - [`d5e03d89a2f0860abdb6469c4210ce25b97742b2`](https://github.com/NanoAdblocker/NanoCore/commit/d5e03d89a2f0860abdb6469c4210ce25b97742b2)
 
 - Add Edge support
   - [`2ac10284a86178b4989681525c333cf3b136bb31`](https://github.com/NanoAdblocker/NanoCore/commit/2ac10284a86178b4989681525c333cf3b136bb31)
@@ -136,6 +139,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
   - [`9de1343622336c8b58705440dade623b4600033e`](https://github.com/NanoAdblocker/NanoCore/commit/9de1343622336c8b58705440dade623b4600033e)
   - [`66c2bafcecdc2813f331d198f1bf4aead797e829`](https://github.com/NanoAdblocker/NanoCore/commit/66c2bafcecdc2813f331d198f1bf4aead797e829)
   - [`a79f47948595f2e4bf0a8222afea111c8a0e2b40`](https://github.com/NanoAdblocker/NanoCore/commit/a79f47948595f2e4bf0a8222afea111c8a0e2b40)
+  - [`d8dbdfc529d6595bdbf4cc3a8f3d740f90366434`](https://github.com/NanoAdblocker/NanoCore/commit/d8dbdfc529d6595bdbf4cc3a8f3d740f90366434)
 
 - Add integration with Nano Defender
   - [`4d75ad29ab1d223a553cd074096ceedb26e1a99d`](https://github.com/NanoAdblocker/NanoCore/commit/4d75ad29ab1d223a553cd074096ceedb26e1a99d)
