@@ -161,6 +161,12 @@
   },
 
 
+  "filterViewerPageName": {
+    "message": "Nano — Filter Viewer",
+    "description": "Title of the filter viewer"
+  },
+
+
   "aboutBasedOn": {
     "message": "Based on uBlock Origin {{@version}}",
     "description": "English: Based on uBlock Origin {{@version}}"
