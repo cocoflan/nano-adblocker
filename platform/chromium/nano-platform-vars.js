@@ -25,7 +25,7 @@
 
 window.NanoDefenderExtensionID = 'ggolfgbegefeeoocgjbmkembbncoadlb';
 window.NanoReIsDashboardURL = new RegExp('^' + chrome.runtime.getURL('') +
-    '(?:nano-)?dashboard\\.html$');
+    '(?:nano-)?dashboard\\.html');
 
 /******************************************************************************/
 
