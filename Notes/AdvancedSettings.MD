@@ -1,7 +1,7 @@
 # Advanced Settings
 
 If you are not familiar with advanced settings of uBlock Origin, 
-[first read this](https://github.com/gorhill/uBlock/wiki/Advanced-settings). 
+[**first read this**](https://github.com/gorhill/uBlock/wiki/Advanced-settings). 
 
 In Nano Adblocker, most of the advanced settings are the same as uBlock Origin, however, the default value of some settings are 
 different: 
@@ -9,10 +9,13 @@ different:
 - `manualUpdateAssetFetchPeriod` defaults to `500`
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
-settings can change or break at any time, make sure to backup your settings if you want to play around with them. Also file 
+settings **can change or break at any time**, make sure to backup your settings if you want to play around with them. Also file 
 bug reports if they do break for you, or otherwise behave in a way that contradicts the description below. 
 
-### `Force recompile` button (Not yet available)
+When a functionality is marked as not yet available, it may show in the advanced settings page, but will not work at all or not 
+work as expected. 
+
+### `_nanoForceRecompile` invokable (Not yet available)
 
 Discard compiled filters and selfies and recompile everything, Nano Adblocker will restart. Unsaved settings will be **discarded**. 
 If you have changed a settings that requires a recompilation to work, you need to press `Apply changes` **first** to save that settings. 
@@ -20,7 +23,7 @@ If you have changed a settings that requires a recompilation to work, you need t
 How it works: When the button is clicked, `compiledMagic` and `selfieMagic` will be set to empty strings, and the extension will 
 be reloaded to trigger recompilation. 
 
-### `_nanoIgnoreThirdPartyWhitelist` settings (Not yet available)
+### `_nanoIgnoreThirdPartyWhitelist` toggleable (Not yet available)
 
 Default: `false`
 
@@ -30,7 +33,7 @@ button to trigger recompilation immediately.
 
 Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
 
-### `_nanoIgnorePerformanceAuditing` settings (Not yet available)
+### `_nanoIgnorePerformanceAuditing` toggleable (Not yet available)
 
 Default: `false`
 
