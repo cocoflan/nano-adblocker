@@ -18,6 +18,10 @@
 
     manifest["incognito"] = "spanning";
     delete manifest["options_page"];
+    manifest["options_ui"] = {
+        "open_in_tab": true,
+        "page": "dashboard.html",
+    };
     delete manifest["storage"];
     delete manifest["minimum_chrome_version"];
     manifest["applications"] = {

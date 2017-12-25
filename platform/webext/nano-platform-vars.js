@@ -29,4 +29,4 @@ window.NanoReIsDashboardURL = new RegExp('^' + chrome.runtime.getURL('') +
 
 /******************************************************************************/
 
-window.NanoAdblockerDeveloperModeExtensionID = 'ddpbcnlkcmfohkiddckifkdcichjffmb';
+window.NanoAdblockerDeveloperModeExtensionID = '';
