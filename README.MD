@@ -61,6 +61,7 @@ Housekeeping changes (renaming, formatting, resources update, minor UI tweak, pu
   - [`33386fdefb26e47e487f2c6a64dd70fe38a88e86`](https://github.com/NanoAdblocker/NanoCore/commit/33386fdefb26e47e487f2c6a64dd70fe38a88e86)
   - [`d1af3d294d10d206f885a6e1239932c393ad8a5c`](https://github.com/NanoAdblocker/NanoCore/commit/d1af3d294d10d206f885a6e1239932c393ad8a5c)
   - [`4a0b22fa7b49b22e2b054c70890f33024488c018`](https://github.com/NanoAdblocker/NanoCore/commit/4a0b22fa7b49b22e2b054c70890f33024488c018)
+  - [`729679a0593d2f15e5ff964f21471058efea2d96`](https://github.com/NanoAdblocker/NanoCore/commit/729679a0593d2f15e5ff964f21471058efea2d96)
 
 - Revamp dashboard with Material Design
   - [`b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b`](https://github.com/NanoAdblocker/NanoCore/commit/b18d8de051c52581a1aeed1d2ed9ffa7ff9f167b)
