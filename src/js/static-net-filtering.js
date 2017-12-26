@@ -1578,7 +1578,12 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
         }
         // https://github.com/uBlockOrigin/uAssets/issues/192
         if ( opt === 'badfilter' ) {
-            // Patch 2017-12-26: Process discard third party whitelist compile flag
+            // Patch 2017-12-26: Process discard third party whitelist compile
+            // flag
+            // Although badfilter option can be used to disable whitelists,
+            // all of them are already disabled with this flag
+            // Things will break really badly anyway, no reason to keep
+            // badfilter rules
             if ( !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
                 this.unsupported = true;
                 return this;
