@@ -975,6 +975,11 @@ var onMessage = function(request, sender, callback) {
         µb.hiddenSettingsFromString(request.content);
         break;
     
+    // Patch 2017-12-26: Add force recompile to advanced settings dashboard
+    case 'invokeHiddenSettings_nanoForceRecompile':
+        nano.nanoForceRecompile();
+        break;
+    
     case 'obtainDashboardMutex':
         response = nano.getDashboardMutex(sender);
         break;

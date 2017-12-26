@@ -110,4 +110,15 @@ nano.privilegedFiltersAssetKeys = [
 
 /******************************************************************************/
 
+// Patch 2017-12-26: Add force recompile to advanced settings dashboard
+nano.nanoForceRecompile = function() {
+    vAPI.storage.set({
+        'compiledMagic': '',
+        'selfieMagic': ''
+    });
+    vAPI.app.restart();
+};
+
+/******************************************************************************/
+
 })();
