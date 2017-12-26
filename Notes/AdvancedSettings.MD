@@ -15,13 +15,18 @@ open an issue when they break for you, or otherwise behave in a way that contrad
 When a functionality is marked as not yet available, it may show in the advanced settings page, but will not work at all, not 
 work as expected, or cause breakage when touched. 
 
-### `_nanoForceRecompile` invokable (Not yet available)
+When a functionality is marked as experimental, it may work properly, work sometimes, not work at all, not work as expected, or 
+cause breakage when touched. 
+
+### `_nanoForceRecompile` invokable (experimental)
+
+Available in tip-of-tree of `add-compile-flag` branch
 
 When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which all filters will be recompiled. 
 Unsaved settings will be **discarded**. If you have changed a settings that requires a recompilation to work, you need to press 
 `Apply changes` **first** to save that settings. 
 
-### `_nanoIgnorePerformanceAuditing` toggleable (Not yet available)
+### `_nanoIgnorePerformanceAuditing` toggleable (not yet available)
 
 Default: `false`
 
@@ -31,7 +36,9 @@ already compiled will not be affected immediately. Invoke `_nanoForceRecompile` 
 Enabling this settings will likely cause performanced to be flushed down the toilet, make sure you have a *really* fast computer when 
 playing around with this settings. 
 
-### `_nanoIgnoreThirdPartyWhitelist` toggleable (Not yet available)
+### `_nanoIgnoreThirdPartyWhitelist` toggleable (experimental)
+
+Available in tip-of-tree of `add-compile-flag` branch
 
 Default: `false`
 
@@ -41,7 +48,7 @@ to trigger recompilation immediately.
 
 Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
 
-### `_nanoMakeUserFiltersPrivileged` toggleable (Not yet available)
+### `_nanoMakeUserFiltersPrivileged` toggleable (not yet available)
 
 Default: `false`
 
