@@ -108,7 +108,7 @@ var nanoForceRecompile = function() {
     messaging.send(
         'dashboard',
         {
-            what: 'invokeHiddenSettings_nanoForceRecompile'
+            what: 'hiddenInvoke_nanoForceRecompile'
         }
     );
 };

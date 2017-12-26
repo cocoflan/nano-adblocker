@@ -976,7 +976,7 @@ var onMessage = function(request, sender, callback) {
         break;
     
     // Patch 2017-12-26: Add force recompile to advanced settings dashboard
-    case 'invokeHiddenSettings_nanoForceRecompile':
+    case 'hiddenInvoke_nanoForceRecompile':
         nano.nanoForceRecompile();
         break;
     
