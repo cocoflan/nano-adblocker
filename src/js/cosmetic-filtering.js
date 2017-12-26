@@ -1147,6 +1147,7 @@ FilterContainer.prototype.keyFromSelector = function(selector) {
 
 // Patch 2017-12-26: Accept compile flags for altering compiler behavior
 FilterContainer.prototype.compile = function(s, writer, nanoCF) {
+    // Patch 2017-12-26: Pass compile flags over
     var parsed = this.parser.parse(s, nanoCF);
     if ( parsed.cosmetic === false ) {
         return false;

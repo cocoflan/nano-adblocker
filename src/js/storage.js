@@ -807,7 +807,7 @@
         //   ...#blah blah blah
         // because some ABP filters uses the `#` character (URL fragment)
         // Notes 2017-12-25: This is common in hosts files, however, it is bad
-        // style for other filters, a warning will be dispatched
+        // style for other filters, a warning will be dispatched from linter
         pos = line.indexOf('#');
         if ( pos !== -1 && reIsWhitespaceChar.test(line.charAt(pos - 1)) ) {
             line = line.slice(0, pos).trim();
