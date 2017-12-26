@@ -27,8 +27,7 @@ cause breakage when touched.
 Available since tip-of-tree of `add-compile-flag` branch
 
 When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which all filters will be recompiled. 
-Unsaved settings will be **discarded**. If you have changed a settings that requires a recompilation to work, you need to press 
-`Apply changes` **first** to save that settings. 
+Any unsaved changes will be **discarded**. 
 
 ---
 
@@ -36,8 +35,8 @@ Unsaved settings will be **discarded**. If you have changed a settings that requ
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will no longer discard slow filters when compiling filters **in the future**. Filters that are 
-already compiled will not be affected immediately. Invoke `_nanoForceRecompile` to trigger recompilation immediately. 
+When set to `true`, Nano Adblocker will no longer discard slow filters when compiling filters **in the future**. Similarly, setting 
+this toggle to `false` **or turning off advanced mode** will **not** immediately cause slow filters to be immediately removed. 
 
 Enabling this settings will likely cause performanced to be flushed down the toilet, make sure you have a *really* fast computer when 
 playing around with this settings. 
@@ -51,8 +50,8 @@ Available since tip-of-tree of `add-compile-flag` branch
 Default: `false`
 
 When set to `true`, Nano Adblocker will discard exception and `badfilter` rules from all filter lists except `My filters` when 
-compiling filters **in the future**. Filters that are already compiled will not be affected immediately. Invoke `_nanoForceRecompile` 
-to trigger recompilation immediately. 
+compiling filters **in the future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** 
+immediately cause discarded filters to be added. 
 
 Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
 
@@ -62,6 +61,4 @@ Enabling this settings **will** break many websites and you are to fix them **by
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will treat user filters as a privileged filter. 
-
-We have not yet decided what extra a privileged filter can do. 
+When set to `true`, Nano Adblocker will treat user filters as a privileged filter. This does not do anything useful for now. 
