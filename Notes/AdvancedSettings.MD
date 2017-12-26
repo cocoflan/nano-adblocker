@@ -14,15 +14,15 @@ open an issue when they break for you, or otherwise behave in a way that contrad
 
 ---
 
-When a functionality is marked as `not yet available`, it may show in the advanced settings page, but will not work at all, not 
+When a functionality is marked as `[unavailable]`, it may show in the advanced settings page, but will not work at all, not 
 work as expected, or cause breakage when touched. 
 
-When a functionality is marked as `experimental`, it may work properly, work sometimes, not work at all, not work as expected, or 
+When a functionality is marked as `[experimental]`, it may work properly, work sometimes, not work at all, not work as expected, or 
 cause breakage when touched. 
 
 ---
 
-### `_nanoForceRecompile` invokable `experimental`
+### `_nanoForceRecompile` invokable `[experimental]`
 
 Available since tip-of-tree of `add-compile-flag` branch
 
@@ -31,7 +31,7 @@ Any unsaved changes will be **discarded**.
 
 ---
 
-### `_nanoIgnorePerformanceAuditing` toggleable `not yet available`
+### `_nanoIgnorePerformanceAuditing` toggleable `[unavailable]`
 
 Default: `false`
 
@@ -43,7 +43,7 @@ playing around with this settings.
 
 ---
 
-### `_nanoIgnoreThirdPartyWhitelist` toggleable `experimental`
+### `_nanoIgnoreThirdPartyWhitelist` toggleable `[experimental]`
 
 Available since tip-of-tree of `add-compile-flag` branch
 
@@ -57,7 +57,7 @@ Enabling this settings **will** break many websites and you are to fix them **by
 
 ---
 
-### `_nanoMakeUserFiltersPrivileged` toggleable `not yet available`
+### `_nanoMakeUserFiltersPrivileged` toggleable `[unavailable]`
 
 Default: `false`
 
