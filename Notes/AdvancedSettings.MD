@@ -40,3 +40,11 @@ already compiled will not be affected immediately. Invoke `_nanoForceRecompile` 
 
 Enabling this settings will likely cause performanced to be flushed down the toilet, make sure you have a *really* fast computer when 
 playing around with this settings. 
+
+### `_nanoMakeUserFiltersPrivileged` toggleable (Not yet available)
+
+Default: `false`
+
+When set to `true`, Nano Adblocker will treat user filters as a privileged filter. 
+
+We have not yet decided what extra a privileged filter can do. 
