@@ -39,7 +39,7 @@ When set to `true`, Nano Adblocker will no longer discard slow filter rules from
 future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** cause slow filters to be 
 immediately removed. 
 
-Performanced will be flushed down the toilet if not used properly, make sure you have a *really* fast computer when playing 
+Performanced *will* be flushed down the toilet if not used properly, make sure you have a *really* fast computer when playing 
 around with this settings. 
 
 ---
