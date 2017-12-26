@@ -36,7 +36,7 @@ Any unsaved changes will be **discarded**.
 Default: `false`
 
 When set to `true`, Nano Adblocker will no longer discard slow filters when compiling filters **in the future**. Similarly, setting 
-this toggle to `false` **or turning off advanced mode** will **not** immediately cause slow filters to be immediately removed. 
+this toggle to `false` **or turning off advanced mode** will **not** cause slow filters to be immediately removed. 
 
 Enabling this settings will likely cause performanced to be flushed down the toilet, make sure you have a *really* fast computer when 
 playing around with this settings. 
@@ -51,7 +51,7 @@ Default: `false`
 
 When set to `true`, Nano Adblocker will discard exception and `badfilter` rules from all filter lists except `My filters` when 
 compiling filters **in the future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** 
-immediately cause discarded filters to be added. 
+cause discarded filters to be immediately added. 
 
 Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
 
