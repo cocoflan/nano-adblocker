@@ -99,4 +99,15 @@ nano.getDashboardMutex = function(sender) {
 
 /******************************************************************************/
 
+// Patch 2017-12-26: Mark some filter lists as privileged
+nano.privilegedFiltersAssetKeys = [
+    'nano-filters',
+    'nano-timer',
+    'nano-annoyance',
+    'nano-whitelist',
+    'nano-defender'
+];
+
+/******************************************************************************/
+
 })();

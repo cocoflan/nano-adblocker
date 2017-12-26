@@ -245,7 +245,8 @@ FilterParser.prototype.reset = function() {
 
 /******************************************************************************/
 
-FilterParser.prototype.parse = function(raw) {
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterParser.prototype.parse = function(raw, nanoCF) {
     // important!
     this.reset();
 
@@ -356,11 +357,20 @@ FilterParser.prototype.parse = function(raw) {
     //   ##.foo:matches-css-after(...)
     //   ##.foo:matches-css-before(...)
     //   ##:xpath(...)
+    // Notes 2017-12-26: If we are to keep slow filters, we cannot simply mark
+    // the filter as valid here, as assumptions made by following code will no
+    // longer be valid
     if (
         this.hostnames.length === 0 &&
         this.unhide === 0 &&
         this.reNeedHostname.test(this.suffix)
     ) {
+        this.invalid = true;
+        return this;
+    }
+    
+    // Patch 2017-12-26: Process discard third party whitelist compile flag
+    if ( this.unhide === 1 && !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
         this.invalid = true;
         return this;
     }
@@ -1135,8 +1145,9 @@ FilterContainer.prototype.keyFromSelector = function(selector) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.compile = function(s, writer) {
-    var parsed = this.parser.parse(s);
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterContainer.prototype.compile = function(s, writer, nanoCF) {
+    var parsed = this.parser.parse(s, nanoCF);
     if ( parsed.cosmetic === false ) {
         return false;
     }

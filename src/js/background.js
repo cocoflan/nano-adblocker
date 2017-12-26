@@ -43,7 +43,8 @@ var µBlock = (function() { // jshint ignore:line
         userResourcesLocation: 'unset',
         
         _nanoIgnoreThirdPartyWhitelist: false,
-        _nanoIgnorePerformanceAuditing: false
+        _nanoIgnorePerformanceAuditing: false,
+        _nanoMakeUserFiltersPrivileged: false
     };
 
     return {

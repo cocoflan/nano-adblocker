@@ -728,18 +728,36 @@
     // Notes 2017-12-25: Some assertion really will not slow things down, maybe
     // 50 checks per day, I will be really surprised if it even takes a
     // cumulative 1 ms per week
+    //
     // However, this will alert me right away when gorhill changed stuff that
     // will break Nano
+    //
+    // The asset key is either the key of assets.json entry, the update URL
+    // of the filter, or special keys for user filters
     console.assert(typeof assetKey === 'string' && assetKey.length);
     
-    // Patch 2017-12-25: Add compile flags
+    // Patch 2017-12-25: Add compile flags, all flags are computed here
     // Notes 2017-12-25: The linter is a global singleton
     var nanoCompileFlags = {
         firstParty: assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey,
+        isPartial: assetKey === nano.nanoPartialUserFiltersKey,
+        
+        isPrivileged: nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1,
         
         keepSlowFilters: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing,
         strip3pWhitelist: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist
     };
+    if (
+        nanoCompileFlags.firstParty &&
+        nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoMakeUserFiltersPrivileged
+    ) {
+        nanoCompileFlags.isPrivileged = true;
+    }
+    
+    // TODO 2017-12-26: Initialize linter
+    
+    // TODO 2017-12-26: For debugging only
+    console.log('[Nano] Compile :: ', assetKey, nanoCompileFlags);
     
     var networkFilters = new this.CompiledLineWriter(),
         cosmeticFilters = new this.CompiledLineWriter();
