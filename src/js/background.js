@@ -145,6 +145,8 @@ var µBlock = (function() { // jshint ignore:line
         assetsBootstrapLocation: 'assets/assets.json',
 
         userFiltersPath: 'user-filters',
+        // Patch 2017-12-25: Add a special asset key for partial user filters
+        nanoPartialUserFiltersKey: 'nano-partial-user-filters',
         pslAssetKey: 'public_suffix_list.dat',
 
         selectedFilterLists: [],
