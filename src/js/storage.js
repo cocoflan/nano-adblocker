@@ -756,8 +756,8 @@
     
     // TODO 2017-12-26: Initialize linter
     
-    // TODO 2017-12-26: For debugging only
-    console.log('[Nano] Compile :: ', assetKey, nanoCompileFlags);
+    // For debugging only
+    //console.log('[Nano] Compile ::', assetKey, nanoCompileFlags);
     
     var networkFilters = new this.CompiledLineWriter(),
         cosmeticFilters = new this.CompiledLineWriter();

@@ -1685,7 +1685,8 @@ FilterParser.prototype.translate = function() {
 
 **/
 
-FilterParser.prototype.parse = function(raw) {
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterParser.prototype.parse = function(raw, nanoCF) {
     // important!
     this.reset();
 
@@ -1713,6 +1714,10 @@ FilterParser.prototype.parse = function(raw) {
     // block or allow filter?
     // Important: this must be executed before parsing options
     if ( s.startsWith('@@') ) {
+        if ( !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
+            this.unsupported = true;
+            return this;
+        }
         this.action = AllowAction;
         s = s.slice(2);
     }
@@ -2094,7 +2099,8 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.compile = function(raw, writer) {
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterContainer.prototype.compile = function(raw, writer, nanoCF) {
     // ORDER OF TESTS IS IMPORTANT!
 
     // Ignore empty lines
@@ -2103,7 +2109,7 @@ FilterContainer.prototype.compile = function(raw, writer) {
         return false;
     }
 
-    var parsed = this.filterParser.parse(s);
+    var parsed = this.filterParser.parse(s, nanoCF);
 
     // Ignore element-hiding filters
     if ( parsed.elemHiding ) {
