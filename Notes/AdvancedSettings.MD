@@ -21,16 +21,6 @@ When invoked, Nano Adblocker will discard compiled filters and selfies then rest
 Unsaved settings will be **discarded**. If you have changed a settings that requires a recompilation to work, you need to press 
 `Apply changes` **first** to save that settings. 
 
-### `_nanoIgnoreThirdPartyWhitelist` toggleable (Not yet available)
-
-Default: `false`
-
-When set to `true`, Nano Adblocker will discard exception and `badfilter` rules from all filter lists except `My filters` when 
-compiling filters **in the future**. Filters that are already compiled will not be affected immediately. Invoke `_nanoForceRecompile` 
-to trigger recompilation immediately. 
-
-Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
-
 ### `_nanoIgnorePerformanceAuditing` toggleable (Not yet available)
 
 Default: `false`
@@ -40,6 +30,16 @@ already compiled will not be affected immediately. Invoke `_nanoForceRecompile` 
 
 Enabling this settings will likely cause performanced to be flushed down the toilet, make sure you have a *really* fast computer when 
 playing around with this settings. 
+
+### `_nanoIgnoreThirdPartyWhitelist` toggleable (Not yet available)
+
+Default: `false`
+
+When set to `true`, Nano Adblocker will discard exception and `badfilter` rules from all filter lists except `My filters` when 
+compiling filters **in the future**. Filters that are already compiled will not be affected immediately. Invoke `_nanoForceRecompile` 
+to trigger recompilation immediately. 
+
+Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
 
 ### `_nanoMakeUserFiltersPrivileged` toggleable (Not yet available)
 
