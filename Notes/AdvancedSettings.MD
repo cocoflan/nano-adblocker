@@ -30,7 +30,7 @@ Even when a functionality is considered stable, it is not guaranteed to always w
 Available since 1.0.0.22
 
 When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which *all* filters will be recompiled. 
-**Any unsaved changes will be discarded**. 
+**Any unsaved changes will be discarded** during the restart and all opened extension pages will be closed. 
 
 ---
 
