@@ -32,9 +32,8 @@
 
 // Patch 2017-12-13: Add linter for whitelist
 nano.WhitelistLinter = function() {
-    this.warnings = [];
-    
     this.reSuspeciousRegExp = /^\/[0-9a-zA-Z-_.]+\/$/;
+    this.reset();
 };
 
 /******************************************************************************/
@@ -67,10 +66,59 @@ nano.WhitelistLinter.prototype.lint = function(line, lineNum) {
 };
 
 /******************************************************************************/
-/******************************************************************************/
 
 nano.whitelistLinter = new nano.WhitelistLinter();
 
+/******************************************************************************/
+/******************************************************************************/
+
+// Patch 2017-12-27: Add linter for user filters
+nano.FilterLinter = function() {
+    this.reset();
+};
+
+/******************************************************************************/
+
+nano.FilterLinter.prototype.reset = function() {
+    this.warnings = [];
+    this.errors = [];
+    
+    this.lastLine = 0;
+    this.lastMeaningfulLine = 0;
+};
+
+/******************************************************************************/
+
+// Save and restore linting result to cache storage
+nano.FilterLinter.prototype.saveResult = function() {
+    
+};
+nano.FilterLinter.prototype.restoreResult = function() {
+    
+};
+
+/******************************************************************************/
+
+// Add an error or warning, up to first 50 errors and 100 warnings can be stored
+// An extra error or warning will be dispatched when the limit is hit
+nano.FilterLinter.prototype.dispatchError = function() {
+    
+};
+nano.FilterLinter.prototype.dispatchWarning = function() {
+    
+};
+
+/******************************************************************************/
+
+nano.FilterLinter.prototype.lint = function() {
+    
+};
+
+/******************************************************************************/
+
+nano.filterLinter = new nano.FilterLinter();
+
+/******************************************************************************/
 /******************************************************************************/
 
 })();
