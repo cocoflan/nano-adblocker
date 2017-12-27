@@ -65,4 +65,4 @@ Setting this toggle to `true` **will definitely** break *many* websites and you 
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will treat user filters as a privileged filter. This does not do anything useful for now. 
+When set to `true`, Nano Adblocker will treat user filters as a privileged filter. What privileged filters can do is not yet decided. 
