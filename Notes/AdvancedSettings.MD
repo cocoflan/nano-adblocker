@@ -54,7 +54,7 @@ When set to `true`, Nano Adblocker will discard exception and `badfilter` rules 
 compiling filters **in the future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** 
 cause discarded filters to be immediately restored. 
 
-Enabling this settings **will** break many websites and you are to fix them **by yourself**. 
+Setting this toggle to `true` **will** break many websites and you are to fix them **by yourself**. 
 
 ---
 
