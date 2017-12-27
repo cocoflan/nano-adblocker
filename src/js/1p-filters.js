@@ -38,6 +38,22 @@ var cachedUserFilters = '';
 
 /******************************************************************************/
 
+// Patch 2017-12-27: Show linter result in the editor
+function renderLinterAnnotation() {
+    var renderAnnotation = function(data) {
+        editor.session.setAnnotations(data.errors.concat(data.warnings));
+    };
+    messaging.send(
+        'dashboard',
+        { 
+            what: 'fetchUserFilterLintingResult'
+        },
+        renderAnnotation
+    );
+}
+
+/******************************************************************************/
+
 // This is to give a visual hint that the content of user blacklist has changed.
 
 function userFiltersChanged(changed) {
@@ -61,6 +77,9 @@ function renderUserFilters(first) {
             nanoIDE.setValueFocus(details.content);
         }
         userFiltersChanged(false);
+        
+        // Patch 2017-12-27: Also render annotations
+        renderLinterAnnotation();
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);
 }
@@ -70,6 +89,10 @@ function renderUserFilters(first) {
 function allFiltersApplyHandler() {
     messaging.send('dashboard', { what: 'reloadAllFilters' });
     uDom('#userFiltersApply').prop('disabled', true );
+
+    // Patch 2017-12-27: Render new annotations, need to wait a bit for filters
+    // to be compiled
+    setTimeout(renderLinterAnnotation, 500);
 }
 
 /******************************************************************************/

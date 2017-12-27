@@ -165,11 +165,12 @@
   },
 
   "filterLinterGenericError": {
-    "message": "Nano discarded this line because it is not a valid filter",
+    "message": "Nano discarded this rule because it is not valid (Generic fallback error message)",
     "description": "A generic error message when a rule is discarded"
   },
+
   "filterLinterDiscardedLocalhostHostEntry": {
-    "message": "Nano discarded this line because it is a localhost declaration of a host file entry",
+    "message": "This host file entry is not valid because it is localhost declaration",
     "description": "Error message to show when localhost declaration of a host file is discarded"
   },
 
