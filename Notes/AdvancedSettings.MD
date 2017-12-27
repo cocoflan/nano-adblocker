@@ -10,7 +10,8 @@ different:
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
 functionalities **can change or break at any time**, make sure to backup your settings if you want to play around with them. Please 
-open an issue when they break for you, or otherwise behave in a way that contradicts the description below. 
+open an issue when they break for you, or otherwise behave in a way that contradicts the description below. We cannot fix issues 
+that we are not aware of, please take the time to report issues you encounter. 
 
 ---
 
@@ -20,14 +21,16 @@ work as expected, or cause breakage when touched.
 When a functionality is marked as `[experimental]`, it may work properly, work sometimes, not work at all, not work as expected, or 
 cause breakage when touched. 
 
+Even when a functionality is considered stable, it is not guaranteed to always work. **Use at your own risk!** 
+
 ---
 
 ### `_nanoForceRecompile` invokable `[experimental]`
 
 Available since 1.0.0.22
 
-When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which all filters will be recompiled. 
-Any unsaved changes will be **discarded**. 
+When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which *all* filters will be recompiled. 
+**Any unsaved changes will be discarded**. 
 
 ---
 
