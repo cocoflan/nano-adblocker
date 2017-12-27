@@ -24,7 +24,7 @@ cause breakage when touched.
 
 ### `_nanoForceRecompile` invokable `[experimental]`
 
-Available since tip-of-tree of `add-compile-flag` branch
+Available since 1.0.0.22
 
 When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which all filters will be recompiled. 
 Any unsaved changes will be **discarded**. 
@@ -46,7 +46,7 @@ around with this settings.
 
 ### `_nanoIgnoreThirdPartyWhitelist` toggleable `[experimental]`
 
-Available since tip-of-tree of `add-compile-flag` branch
+Available since 1.0.0.22
 
 Default: `false`
 
