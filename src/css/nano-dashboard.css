@@ -22,6 +22,11 @@ dialog p {
     color: #000000;
 }
 
+/* Some user agents do not default to a monospace font */
+textarea, input[type="text"] {
+    font-family: monospace;
+}
+
 /* ===== Header and Navigation ===== */
 
 .mdl-layout__header-row {

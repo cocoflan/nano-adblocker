@@ -66,3 +66,8 @@ button.important:hover {
     visibility: hidden;
     width: 0;
     }
+
+/* Patch 2017-12-27: Fix text spacing for some user agents */
+textarea, input[type="text"] {
+    font-family: monospace;
+    }
