@@ -155,6 +155,25 @@
   },
 
 
+  "filterLinterDeprecatedCommentBracket": {
+    "message": "Using '[' to denote comment is deprecated, use '!' instead",
+    "description": "Warning message to show when '[' is used to denote comment instead of '!'"
+  },
+  "filterLinterDeprecatedInlineComment": {
+    "message": "Inline comments are deprecated",
+    "description": "Warning message to show when inline comment is used"
+  },
+
+  "filterLinterGenericError": {
+    "message": "Nano discarded this line because it is not a valid filter",
+    "description": "A generic error message when a rule is discarded"
+  },
+  "filterLinterDiscardedLocalhostHostEntry": {
+    "message": "Nano discarded this line because it is a localhost declaration of a host file entry",
+    "description": "Error message to show when localhost declaration of a host file is discarded"
+  },
+
+
   "matrixPageName": {
     "message": "Hosts matrix",
     "description": "Hosts matrix tab name"

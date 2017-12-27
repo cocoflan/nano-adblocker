@@ -753,8 +753,15 @@
         nanoCompileFlags.isPrivileged = true;
     }
     
-    // Notes 2017-12-25: The linter is a global singleton
-    // TODO 2017-12-26: Initialize linter
+    // Notes 2017-12-25: The linter is a global singleton, filter compilation
+    // is synchronous, so this is safe
+    // Patch 2017-12-27: Initialize linter
+    if ( assetKey === nano.userFiltersPath ) {
+        nano.filterLinter.reset();
+        nano.filterLinter.changed = true;
+    }
+    // TODO 2017-12-27: See what need to be done to synchronized filter fragment
+    // line number
     
     // For debugging only
     //console.log('[Nano] Compile ::', assetKey, nanoCompileFlags);
@@ -780,12 +787,27 @@
         // rhill 2014-04-18: The trim is important here, as without it there
         // could be a lingering `\r` which would cause problems in the
         // following parsing code.
+        
+        // Patch 2017-12-27: Update linter line number
+        nano.filterLinter.lastLine++;
 
         if ( line.length === 0 ) { continue; }
-
+        
+        // Patch 2017-12-27: Save last meaningful line for linting filter
+        // fragment in the future
+        nano.filterLinter.lastMeaningfulLine = nano.filterLinter.lastLine;
+        
         // Strip comments
         c = line.charAt(0);
-        if ( c === '!' || c === '[' ) { continue; }
+        // Patch 2017-12-27: Deprecate '[' for comment unless it is header
+        if ( c === '!' ) { continue; }
+        if ( c === '[' ) {
+            if ( nanoCompileFlags.firstParty && nano.filterLinter.lastLine !== 0 ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedCommentBracket'));
+            }
+            
+            continue;
+        }
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
@@ -807,9 +829,14 @@
         //   ...#blah blah blah
         // because some ABP filters uses the `#` character (URL fragment)
         // Notes 2017-12-25: This is common in hosts files, however, it is bad
-        // style for other filters, a warning will be dispatched from linter
+        // style for other filters
         pos = line.indexOf('#');
         if ( pos !== -1 && reIsWhitespaceChar.test(line.charAt(pos - 1)) ) {
+            // Patch 2017-12-27: Deprecate inline comments for user filters
+            if ( nanoCompileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedInlineComment'));
+            }
+            
             line = line.slice(0, pos).trim();
         }
 
@@ -820,16 +847,45 @@
             // Ignore hosts file redirect configuration
             // 127.0.0.1 localhost
             // 255.255.255.255 broadcasthost
-            if ( reIsLocalhostRedirect.test(line) ) { continue; }
+            if ( reIsLocalhostRedirect.test(line) ) {
+                // Patch 2017-12-27: Show error message when localhost entry of
+                // a host file is discarded
+                if ( nanoCompileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
+                }
+                
+                continue;
+            }
             line = line.replace(reLocalIp, '').trim();
         }
 
-        if ( line.length === 0 ) { continue; }
+        if ( line.length === 0 ) {
+            // Patch 2017-12-27: Show error message when localhost entry of a
+            // host file is discarded
+            if ( nanoCompileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
+            }
+        
+            continue;
+        }
 
         // Patch 2017-12-25: Pass compile flags over
-        staticNetFilteringEngine.compile(line, networkFilters, nanoCompileFlags);
+        // Patch 2017-12-27: Log invalid filters with filter linter
+        if ( staticNetFilteringEngine.compile(line, networkFilters, nanoCompileFlags) ) {
+            continue;
+        }
+        
+        // Notes 2017-12-27: The filter is invalid if reached this point
+        if ( nanoCompileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterGenericError'));
+        }
     }
 
+    // Patch 2017-12-27: Store linting result
+    if ( nanoCompileFlags.firstParty ) {
+        nano.filterLinter.saveResult();
+    }
+    
     return networkFilters.toString() +
            '\n/* end of network - start of cosmetic */\n' +
            cosmeticFilters.toString();

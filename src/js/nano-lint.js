@@ -83,17 +83,20 @@ nano.FilterLinter = function() {
 /******************************************************************************/
 
 nano.FilterLinter.prototype.reset = function() {
+    // IMPORTANT! Any change in this function must be reflected in saveResult
+    // and restoreResult
+
     // This flag will be set to true when a full user filters recompilation is
     // initiated
     this.changed = false;
 
-    // Any change in this function must be reflected in saveResult and
-    // restoreResult
     this.warnings = [];
     this.errors = [];
     
-    this.lastLine = 0;
-    this.lastMeaningfulLine = 0;
+    // The first line is 0, when resetting, line number must be -1 so the first
+    // line will have number 0
+    this.lastLine = -1;
+    this.lastMeaningfulLine = -1;
 };
 
 /******************************************************************************/
@@ -113,6 +116,8 @@ nano.FilterLinter.prototype.saveResult = function() {
     vAPI.cacheStorage.set(entry);
 };
 nano.FilterLinter.prototype.restoreResult = function() {
+    var that = this;
+    
     var onResultLoaded = function(result) {
         // A resonable human is probably not able to add a rule through a wizard
         // within the few milliseconds it takes for this function to resolve
@@ -121,11 +126,11 @@ nano.FilterLinter.prototype.restoreResult = function() {
         // function is resolved is real, this can happen when compiledMagic
         // changed or the user recompiled all filters though advanced settings
         // page
-        if ( this.changed ) {
+        if ( that.changed ) {
             return;
         }
         
-        var payload = result[this.cachedResultKey];
+        var payload = result[that.cachedResultKey];
         if ( !payload ) {
             return;
         }
@@ -141,20 +146,25 @@ nano.FilterLinter.prototype.restoreResult = function() {
         }
         
         if ( Array.isArray(result.warnings) ) {
-            this.warnings = result.warnings;
+            that.warnings = result.warnings;
         }
         if ( Array.isArray(result.errors) ) {
-            this.errors = result.errors;
+            that.errors = result.errors;
         }
         if ( typeof result.lastLine === 'number' ) {
-            this.lastLine = result.lastLine;
+            that.lastLine = result.lastLine;
         }
         if ( typeof result.lastMeaningfulLine === 'number' ) {
-            this.lastMeaningfulLine = result.lastMeaningfulLine;
+            that.lastMeaningfulLine = result.lastMeaningfulLine;
         }
     };
     
     vAPI.cacheStorage.get(this.cachedResultKey, onResultLoaded);
+};
+// TODO 2017-12-27: When the user filters is set to nothing, this should be
+// called along with reset, as the empty filter may not be recompiled
+nano.FilterLinter.prototype.clearResult = function() {
+    vAPI.cacheStorage.remove(this.cachedResultKey);
 };
 
 /******************************************************************************/
@@ -201,10 +211,6 @@ nano.FilterLinter.prototype.dispatchWarning = function(message) {
 /******************************************************************************/
 
 nano.FilterLinter.prototype.lint = function(/* TODO */) {
-    if ( this.warnings.length > 100 ) {
-        return;
-    }
-    
     // TODO
 };
 
