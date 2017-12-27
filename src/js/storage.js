@@ -737,7 +737,6 @@
     console.assert(typeof assetKey === 'string' && assetKey.length);
     
     // Patch 2017-12-25: Add compile flags, all flags are computed here
-    // Notes 2017-12-25: The linter is a global singleton
     var nanoCompileFlags = {
         firstParty: assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey,
         isPartial: assetKey === nano.nanoPartialUserFiltersKey,
@@ -754,6 +753,7 @@
         nanoCompileFlags.isPrivileged = true;
     }
     
+    // Notes 2017-12-25: The linter is a global singleton
     // TODO 2017-12-26: Initialize linter
     
     // For debugging only

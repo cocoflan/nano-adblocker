@@ -42,6 +42,7 @@ var µBlock = (function() { // jshint ignore:line
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset',
         
+        // Patch 2017-12-25: Add more advanced settings
         _nanoIgnoreThirdPartyWhitelist: false,
         _nanoIgnorePerformanceAuditing: false,
         _nanoMakeUserFiltersPrivileged: false
