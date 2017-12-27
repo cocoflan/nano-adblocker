@@ -33,6 +33,7 @@
 // Patch 2017-12-13: Add linter for whitelist
 nano.WhitelistLinter = function() {
     this.reSuspeciousRegExp = /^\/[0-9a-zA-Z-_.]+\/$/;
+    
     this.reset();
 };
 
@@ -74,12 +75,20 @@ nano.whitelistLinter = new nano.WhitelistLinter();
 
 // Patch 2017-12-27: Add linter for user filters
 nano.FilterLinter = function() {
+    this.cachedResultKey = 'nano/cache/user-filters-linting-result';
+    
     this.reset();
 };
 
 /******************************************************************************/
 
 nano.FilterLinter.prototype.reset = function() {
+    // This flag will be set to true when a full user filters recompilation is
+    // initiated
+    this.changed = false;
+
+    // Any change in this function must be reflected in saveResult and
+    // restoreResult
     this.warnings = [];
     this.errors = [];
     
@@ -91,32 +100,118 @@ nano.FilterLinter.prototype.reset = function() {
 
 // Save and restore linting result to cache storage
 nano.FilterLinter.prototype.saveResult = function() {
+    var payload = {
+        warnings: this.warnings,
+        errors: this.errors,
+        
+        lastLine: this.lastLine,
+        lastMeaningfulLine: this.lastMeaningfulLine
+    };
+    var entry = {};
+    entry[this.cachedResultKey] = JSON.stringify(payload);
     
+    vAPI.cacheStorage.set(entry);
 };
 nano.FilterLinter.prototype.restoreResult = function() {
+    var onResultLoaded = function(result) {
+        // A resonable human is probably not able to add a rule through a wizard
+        // within the few milliseconds it takes for this function to resolve
+        //
+        // However, the chance for a full user filter recompilation before this
+        // function is resolved is real, this can happen when compiledMagic
+        // changed or the user recompiled all filters though advanced settings
+        // page
+        if ( this.changed ) {
+            return;
+        }
+        
+        var payload = result[this.cachedResultKey];
+        if ( !payload ) {
+            return;
+        }
+        
+        var result;
+        try {
+            result = JSON.parse(payload);
+        } catch ( err ) {
+            return;
+        }
+        if ( !result instanceof Object ) {
+            return;
+        }
+        
+        if ( Array.isArray(result.warnings) ) {
+            this.warnings = result.warnings;
+        }
+        if ( Array.isArray(result.errors) ) {
+            this.errors = result.errors;
+        }
+        if ( typeof result.lastLine === 'number' ) {
+            this.lastLine = result.lastLine;
+        }
+        if ( typeof result.lastMeaningfulLine === 'number' ) {
+            this.lastMeaningfulLine = result.lastMeaningfulLine;
+        }
+    };
     
+    vAPI.cacheStorage.get(this.cachedResultKey, onResultLoaded);
 };
 
 /******************************************************************************/
 
 // Add an error or warning, up to first 50 errors and 100 warnings can be stored
 // An extra error or warning will be dispatched when the limit is hit
-nano.FilterLinter.prototype.dispatchError = function() {
-    
+nano.FilterLinter.prototype.dispatchError = function(message) {
+    if ( this.errors.length > 50 ) {
+        return;
+    } else if ( this.errors.length === 50 ) {
+        this.errors.push({
+            row: this.lastLine,
+            type: 'error',
+            text: '(TODO) Too many errors'
+        });
+        return;
+    }
+
+    this.errors.push({
+        row: this.lastLine,
+        type: 'error',
+        text: message
+    });
 };
-nano.FilterLinter.prototype.dispatchWarning = function() {
-    
+nano.FilterLinter.prototype.dispatchWarning = function(message) {
+    if ( this.warnings.length > 100 ) {
+        return;
+    } else if ( this.warnings.length === 100 ) {
+        this.warnings.push({
+            row: this.lastLine,
+            type: 'warning',
+            text: '(TODO) Too many warnings'
+        });
+        return;
+    }
+
+    this.warnings.push({
+        row: this.lastLine,
+        type: 'warning',
+        text: message
+    });
 };
 
 /******************************************************************************/
 
-nano.FilterLinter.prototype.lint = function() {
+nano.FilterLinter.prototype.lint = function(/* TODO */) {
+    if ( this.warnings.length > 100 ) {
+        return;
+    }
     
+    // TODO
 };
 
 /******************************************************************************/
 
 nano.filterLinter = new nano.FilterLinter();
+nano.filterLinter.restoreResult();
 
 /******************************************************************************/
 /******************************************************************************/
