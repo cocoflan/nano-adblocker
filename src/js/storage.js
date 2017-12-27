@@ -340,7 +340,19 @@
     var µb = this;
 
     var onSaved = function() {
-        var compiledFilters = µb.compileFilters(filters),
+        // Notes 2017-12-25: When filters are added though a wizard, those lines
+        // are the only lines that are compiled
+        //
+        // The last meaningful line of already compiled user filters plus 2 will
+        // be the first meaningful line of incoming filters fragment, which
+        // means 1 empty line in between, this will allow us to lint only the
+        // fragment and still keep line numbers in sync
+        //
+        // The old compiled data is removed when nano.saveUserFilters is called
+        // which will cause the user filters to be recompiled on next start
+        //
+        // Patch 2017-12-25: Pass in a special flag as asset key
+        var compiledFilters = µb.compileFilters(filters, nano.nanoPartialUserFiltersKey),
             snfe = µb.staticNetFilteringEngine,
             cfe = µb.cosmeticFilteringEngine,
             acceptedCount = snfe.acceptedCount + cfe.acceptedCount,
@@ -632,7 +644,8 @@
 
     var onCompiledListLoaded2 = function(details) {
         if ( details.content === '' ) {
-            details.content = µb.compileFilters(rawContent);
+            // Patch 2017-12-25: Pass asset key over
+            details.content = µb.compileFilters(rawContent, assetKey);
             µb.assets.put(compiledPath, details.content);
         }
         rawContent = undefined;
@@ -710,7 +723,42 @@
 
 /******************************************************************************/
 
-µBlock.compileFilters = function(rawText) {
+// Patch 2017-12-25: Accept asset key for processing compile flags and linting
+µBlock.compileFilters = function(rawText, assetKey) {
+    // Notes 2017-12-25: Some assertion really will not slow things down, maybe
+    // 50 checks per day, I will be really surprised if it even takes a
+    // cumulative 1 ms per week
+    //
+    // However, this will alert me right away when gorhill changed stuff that
+    // will break Nano
+    //
+    // The asset key is either the key of assets.json entry, the update URL
+    // of the filter, or special keys for user filters
+    console.assert(typeof assetKey === 'string' && assetKey.length);
+    
+    // Patch 2017-12-25: Add compile flags, all flags are computed here
+    var nanoCompileFlags = {
+        firstParty: assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey,
+        isPartial: assetKey === nano.nanoPartialUserFiltersKey,
+        
+        isPrivileged: nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1,
+        
+        keepSlowFilters: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing,
+        strip3pWhitelist: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist
+    };
+    if (
+        nanoCompileFlags.firstParty &&
+        nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoMakeUserFiltersPrivileged
+    ) {
+        nanoCompileFlags.isPrivileged = true;
+    }
+    
+    // Notes 2017-12-25: The linter is a global singleton
+    // TODO 2017-12-26: Initialize linter
+    
+    // For debugging only
+    //console.log('[Nano] Compile ::', assetKey, nanoCompileFlags);
+    
     var networkFilters = new this.CompiledLineWriter(),
         cosmeticFilters = new this.CompiledLineWriter();
 
@@ -741,7 +789,8 @@
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
-        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters) ) {
+        // Patch 2017-12-25: Pass compile flags over
+        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters, nanoCompileFlags) ) {
             continue;
         }
 
@@ -757,6 +806,8 @@
         // Don't remove:
         //   ...#blah blah blah
         // because some ABP filters uses the `#` character (URL fragment)
+        // Notes 2017-12-25: This is common in hosts files, however, it is bad
+        // style for other filters, a warning will be dispatched from linter
         pos = line.indexOf('#');
         if ( pos !== -1 && reIsWhitespaceChar.test(line.charAt(pos - 1)) ) {
             line = line.slice(0, pos).trim();
@@ -775,7 +826,8 @@
 
         if ( line.length === 0 ) { continue; }
 
-        staticNetFilteringEngine.compile(line, networkFilters);
+        // Patch 2017-12-25: Pass compile flags over
+        staticNetFilteringEngine.compile(line, networkFilters, nanoCompileFlags);
     }
 
     return networkFilters.toString() +
@@ -1111,9 +1163,10 @@
                         details.assetKey,
                         details.content
                     );
+                    // Patch 2017-12-25: Pass asset key over
                     this.assets.put(
                         'compiled/' + details.assetKey,
-                        this.compileFilters(details.content)
+                        this.compileFilters(details.content, details.assetKey)
                     );
                 }
             } else {

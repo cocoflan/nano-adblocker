@@ -42,8 +42,10 @@ var µBlock = (function() { // jshint ignore:line
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset',
         
+        // Patch 2017-12-25: Add more advanced settings
         _nanoIgnoreThirdPartyWhitelist: false,
-        _nanoIgnorePerformanceAuditing: false
+        _nanoIgnorePerformanceAuditing: false,
+        _nanoMakeUserFiltersPrivileged: false
     };
 
     return {
@@ -145,6 +147,8 @@ var µBlock = (function() { // jshint ignore:line
         assetsBootstrapLocation: 'assets/assets.json',
 
         userFiltersPath: 'user-filters',
+        // Patch 2017-12-25: Add a special asset key for partial user filters
+        nanoPartialUserFiltersKey: 'nano-partial-user-filters',
         pslAssetKey: 'public_suffix_list.dat',
 
         selectedFilterLists: [],

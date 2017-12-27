@@ -1500,7 +1500,8 @@ FilterParser.prototype.parseDomainOption = function(s) {
 
 /******************************************************************************/
 
-FilterParser.prototype.parseOptions = function(s) {
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterParser.prototype.parseOptions = function(s, nanoCF) {
     this.fopts = s;
     var opts = s.split(',');
     var opt, not;
@@ -1577,6 +1578,17 @@ FilterParser.prototype.parseOptions = function(s) {
         }
         // https://github.com/uBlockOrigin/uAssets/issues/192
         if ( opt === 'badfilter' ) {
+            // Patch 2017-12-26: Process discard third party whitelist compile
+            // flag
+            // Although badfilter option can be used to disable whitelists,
+            // all of them are already disabled with this flag
+            // Things will break really badly anyway, no reason to keep
+            // badfilter rules
+            if ( !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
+                this.unsupported = true;
+                return this;
+            }
+            
             this.badFilter = BadFilter;
             continue;
         }
@@ -1685,7 +1697,8 @@ FilterParser.prototype.translate = function() {
 
 **/
 
-FilterParser.prototype.parse = function(raw) {
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterParser.prototype.parse = function(raw, nanoCF) {
     // important!
     this.reset();
 
@@ -1713,6 +1726,12 @@ FilterParser.prototype.parse = function(raw) {
     // block or allow filter?
     // Important: this must be executed before parsing options
     if ( s.startsWith('@@') ) {
+        // Patch 2017-12-26: Process discard third party whitelist compile flag
+        if ( !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
+            this.unsupported = true;
+            return this;
+        }
+        
         this.action = AllowAction;
         s = s.slice(2);
     }
@@ -1730,7 +1749,8 @@ FilterParser.prototype.parse = function(raw) {
                 this.unsupported = true;
                 return this;
             }
-            this.parseOptions(s.slice(pos + 1));
+            // Patch 2017-12-23: Pass compile flags over
+            this.parseOptions(s.slice(pos + 1), nanoCF);
             // https://github.com/gorhill/uBlock/issues/2283
             //   Abort if type is only for unsupported types, otherwise
             //   toggle off `unsupported` bit.
@@ -2094,7 +2114,8 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 
 /******************************************************************************/
 
-FilterContainer.prototype.compile = function(raw, writer) {
+// Patch 2017-12-26: Accept compile flags for altering compiler behavior
+FilterContainer.prototype.compile = function(raw, writer, nanoCF) {
     // ORDER OF TESTS IS IMPORTANT!
 
     // Ignore empty lines
@@ -2103,7 +2124,8 @@ FilterContainer.prototype.compile = function(raw, writer) {
         return false;
     }
 
-    var parsed = this.filterParser.parse(s);
+    // Patch 2017-12-26: Pass compile flags over
+    var parsed = this.filterParser.parse(s, nanoCF);
 
     // Ignore element-hiding filters
     if ( parsed.elemHiding ) {
