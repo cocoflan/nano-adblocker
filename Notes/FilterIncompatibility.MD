@@ -17,4 +17,4 @@ Nano Adblocker will expand the option `mp4` to `media,redirect=nano-noopmp4-1s`,
 Nano Adblocker will discard the filter when it has the option `empty`, uBlock Origin will instead ignore the option. 
 
 This option is from Adguard and means redirect to an appropriate blank file instead of blocking the request, ignoring the option 
-is likely to make things worse. 
+will likely make things worse. 
