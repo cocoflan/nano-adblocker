@@ -38,7 +38,7 @@ var cachedUserFilters = '';
 
 /******************************************************************************/
 
-// Patch 2017-12-27: Show linter result in the editor
+// Patch 2017-12-27: Show linting result in the editor
 function renderLinterAnnotation() {
     var renderAnnotation = function(data) {
         editor.session.setAnnotations(data.errors.concat(data.warnings));

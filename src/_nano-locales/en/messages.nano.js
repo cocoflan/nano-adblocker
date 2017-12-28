@@ -166,11 +166,6 @@
             "message": "Inline comments are deprecated, put the comment on its own line instead.",
             "description": "Warning message to show when inline comment is used"
         },
-        // Filter linter generic message, probably not going to be used
-        "filterLinterErrorGeneric": {
-            "message": "Nano discarded this rule because it is not valid. (Generic fallback error message)",
-            "description": "A generic error message when a rule is discarded"
-        },
         // Cosmetic filtering error messages
         "filterLinterRejectedAdguardJSInjection": {
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
@@ -181,32 +176,32 @@
             "description": "Error message to show when a CSS injection rule has syntax errors"
         },
         "filterLinterRejectedCosmeticTooExpensive": {
-            "message": "This rule is too expensive to be applied generically, it must be limited to specific domains.",
-            "description": "Error message to show when a cosmetic filter must have domains limitation"
+            "message": "This cosmetic or script snippet rule is too expensive to be applied generically, it must be limited to specific domains.",
+            "description": "Error message to show when a cosmetic or script snippet rule must have domains limitation"
         },
         "filterLinterRejectedCosmeticBadIdSelector": {
-            "message": "This rule contains an invalid id selector.",
-            "description": "Error message to show when a cosmetic filter has a bad id selector"
+            "message": "This cosmetic rule contains an invalid id selector.",
+            "description": "Error message to show when a cosmetic rule has a bad id selector"
         },
         "filterLinterRejectedCosmeticBadClassSelector": {
-            "message": "This rule contains an invalid class selector.",
-            "description": "Error message to show when a cosmetic filter has a bad class selector"
+            "message": "This cosmetic rule contains an invalid class selector.",
+            "description": "Error message to show when a cosmetic rule has a bad class selector"
         },
         "filterLinterRejectedBadCSSSyntax": {
-            "message": "This rule contains CSS syntax errors.",
-            "description": "Error message to show when a cosmetic filter has syntax errors"
+            "message": "This cosmetic rule has CSS syntax errors.",
+            "description": "Error message to show when a cosmetic rule has syntax errors"
         },
         "filterLinterRejectedUnrecognizedExtendedSyntaxOperator": {
-            "message": "This rule contains an unrecognized extended syntax operator.",
-            "description": "Error message to show when a cosmetic filter has a bad extended syntax operator"
+            "message": "This cosmetic rule contains an unrecognized extended syntax operator.",
+            "description": "Error message to show when a cosmetic rule has a bad extended syntax operator"
         },
         "filterLinterRejectedBadProceduralSelector": {
-            "message": "This rule contains .",
-            "description": "Error message to show when a cosmetic filter has a bad extended syntax operator"
+            "message": "This procedural cosmetic rule has syntax errors.",
+            "description": "Error message to show when a procedural cosmetic rule has syntax errors"
         },
         // Network filtering error messages
         "filterLinterDiscardedLocalhostHostEntry": {
-            "message": "This host file entry is not valid because it is localhost declaration.",
+            "message": "This host file entry is discarded because it is localhost declaration.",
             "description": "Error message to show when localhost declaration of a host file is discarded"
         },
 

@@ -935,7 +935,7 @@ FilterContainer.prototype.compileSelector = (function() {
         // TODO 2017-12-27: Maybe lint deeper into compileProceduralSelector?
         // Patch 2017-12-27: Show an appropriate error message
         if ( nano.compileFlags.firstParty ) {
-            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterErrorCosmetic'));
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadProceduralSelector'));
         }
 
         µb.logger.writeOne('', 'error', 'Cosmetic filtering – invalid filter: ' + raw);
@@ -1261,12 +1261,17 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
         }
         return;
     }
-    
-    // TODO 2017-12-27: Todo tree return point
 
     if ( type === 0x2E /* '.' */ ) {
         key = this.keyFromSelector(selector);
-        if ( key === undefined ) { return; }
+        if ( key === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedCosmeticBadClassSelector'));
+            }
+            
+            return;
+        }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
         // selector falls into that category.
