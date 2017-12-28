@@ -58,7 +58,7 @@ const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commi
             ]);
         } else {
             original = await fs.readFile("src/_locales/" + lang + "/messages.json", "utf8");
-            extra = "{}";
+            extra = "(() => { 'use strict'; return { }; })();";
         }
         original = JSON.parse(original);
         extra = eval(extra);

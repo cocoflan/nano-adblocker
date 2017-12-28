@@ -161,9 +161,10 @@ nano.FilterLinter.prototype.restoreResult = function() {
     
     vAPI.cacheStorage.get(this.cachedResultKey, onResultLoaded);
 };
-// TODO 2017-12-27: When the user filters is set to nothing, this should be
-// called along with reset, as the empty filter may not be recompiled
+// TODO 2017-12-27: When the user filters is set to nothing is the filter
+// recompiled? This function may or may not be needed
 nano.FilterLinter.prototype.clearResult = function() {
+    this.reset();
     vAPI.cacheStorage.remove(this.cachedResultKey);
 };
 
@@ -210,7 +211,10 @@ nano.FilterLinter.prototype.dispatchWarning = function(message) {
 
 /******************************************************************************/
 
-nano.FilterLinter.prototype.lint = function(/* TODO */) {
+nano.FilterLinter.prototype.lintCosmetic = function(/* TODO */) {
+    // TODO
+};
+nano.FilterLinter.prototype.lintNetwork = function(/* TODO */) {
     // TODO
 };
 
