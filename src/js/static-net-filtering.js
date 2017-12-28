@@ -1715,6 +1715,13 @@ FilterParser.prototype.parse = function(raw) {
     if ( pos !== -1 ) {
         var c = s.charAt(pos + 1);
         if ( c === '#' || c === '@' ) {
+            // Notes 2017-12-27: Unless something went really wrong, I do not
+            // think this will ever happen
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterInternalErrorCosmeticFilterPassedThrough'));
+            }
+            
             console.error('static-net-filtering.js > unexpected cosmetic filters');
             this.elemHiding = true;
             return this;
@@ -1726,6 +1733,8 @@ FilterParser.prototype.parse = function(raw) {
     if ( s.startsWith('@@') ) {
         // Patch 2017-12-26: Process discard third party whitelist compile flag
         if ( !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+            // No need to dispatch error to linter as this does not apply to
+            // first party rules
             this.unsupported = true;
             return this;
         }
@@ -1744,10 +1753,18 @@ FilterParser.prototype.parse = function(raw) {
             // https://github.com/gorhill/uBlock/issues/952
             //   Discard Adguard-specific `$$` filters.
             if ( s.indexOf('$$') !== -1 ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardElementRemove'));
+                }
+                
                 this.unsupported = true;
                 return this;
             }
             this.parseOptions(s.slice(pos + 1));
+            
+            // TODO 2017-12-23: TODO TREE RETURN POINT
+            
             // https://github.com/gorhill/uBlock/issues/2283
             //   Abort if type is only for unsupported types, otherwise
             //   toggle off `unsupported` bit.
@@ -2114,6 +2131,8 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 FilterContainer.prototype.compile = function(raw, writer) {
     // ORDER OF TESTS IS IMPORTANT!
 
+    // TODO 2017-12-27: Unless I missed something real hard, I cannot think of
+    // a single situation where this test is meaningful
     // Ignore empty lines
     var s = raw.trim();
     if ( s.length === 0 ) {
@@ -2122,6 +2141,8 @@ FilterContainer.prototype.compile = function(raw, writer) {
 
     var parsed = this.filterParser.parse(s);
 
+    // TODO 2017-12-27: TODO TREE RETURN POINT
+    
     // Ignore element-hiding filters
     if ( parsed.elemHiding ) {
         return false;

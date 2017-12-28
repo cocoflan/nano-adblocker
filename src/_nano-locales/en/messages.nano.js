@@ -166,7 +166,12 @@
             "message": "Inline comments are deprecated, put the comment on its own line instead.",
             "description": "Warning message to show when inline comment is used"
         },
-        // Cosmetic filtering error messages
+        // Filter linter special errors
+        "filterLinterInternalErrorCosmeticFilterPassedThrough": {
+            "message": "A cosmetic filter was not catched by cosmetic filter compiler, please file a bug report.",
+            "description": "Error message to show when a cosmetic filter was not catched by cosmetic filter compiler"
+        },
+        // Cosmetic filtering errors
         "filterLinterRejectedAdguardJSInjection": {
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
             "description": "Error message to show when raw JavaScript injection rule is discarded"
@@ -199,10 +204,14 @@
             "message": "This procedural cosmetic rule has syntax errors.",
             "description": "Error message to show when a procedural cosmetic rule has syntax errors"
         },
-        // Network filtering error messages
+        // Network filtering errors
         "filterLinterDiscardedLocalhostHostEntry": {
             "message": "This host file entry is discarded because it is localhost declaration.",
             "description": "Error message to show when localhost declaration of a host file is discarded"
+        },
+        "filterLinterRejectedAdguardElementRemove": {
+            "message": "Element remove rules are not yet supported.",
+            "description": "Error message to show when an element remove rule is discarded because it is not yet implemented"
         },
 
         // Tab name of hosts matrix

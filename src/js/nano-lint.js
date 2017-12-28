@@ -170,12 +170,13 @@ nano.FilterLinter.prototype.clearResult = function() {
 
 /******************************************************************************/
 
-// Add an error or warning, up to first 50 errors and 100 warnings can be stored
+// Add an error or warning, up to first 100 errors and 100 warnings can be
+// stored
 // An extra error or warning will be dispatched when the limit is hit
 nano.FilterLinter.prototype.dispatchError = function(message) {
-    if ( this.errors.length > 50 ) {
+    if ( this.errors.length > 100 ) {
         return;
-    } else if ( this.errors.length === 50 ) {
+    } else if ( this.errors.length === 100 ) {
         this.errors.push({
             row: this.lastLine,
             type: 'error',
