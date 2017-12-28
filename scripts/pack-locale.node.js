@@ -20,10 +20,10 @@ const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commi
     let allKeys = [];
     let [enOriginal, enExtra] = await Promise.all([
         fs.readFile("src/_locales/en/messages.json", "utf8"),
-        fs.readFile("src/_nano-locales/en/messages.json", "utf8"),
+        fs.readFile("src/_nano-locales/en/messages.nano.js", "utf8"),
     ]);
     enOriginal = JSON.parse(enOriginal);
-    enExtra = JSON.parse(enExtra);
+    enExtra = eval(enExtra); // Trust me, it will be fine
 
     assert(enOriginal && typeof enOriginal === "object");
     assert(enExtra && typeof enExtra === "object");
@@ -54,14 +54,14 @@ const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commi
         if (hasExtra) {
             [original, extra] = await Promise.all([
                 fs.readFile("src/_locales/" + lang + "/messages.json", "utf8"),
-                fs.readFile("src/_nano-locales/" + lang + "/messages.json", "utf8"),
+                fs.readFile("src/_nano-locales/" + lang + "/messages.nano.js", "utf8"),
             ]);
         } else {
             original = await fs.readFile("src/_locales/" + lang + "/messages.json", "utf8");
             extra = "{}";
         }
         original = JSON.parse(original);
-        extra = JSON.parse(extra);
+        extra = eval(extra);
 
         let result = {};
         for (let key of allKeys) {
@@ -107,7 +107,7 @@ const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commi
         if (langsExtra.includes(lang)) {
             tasks.push(smartBuildFile([
                 "src/_locales/" + lang + "/messages.json",
-                "src/_nano-locales/" + lang + "/messages.json",
+                "src/_nano-locales/" + lang + "/messages.nano.js",
             ], localePath + "/" + lang + "/messages.json", processOne, lang, true));
         } else {
             tasks.push(smartBuildFile([

@@ -78,7 +78,7 @@ function renderUserFilters(first) {
         }
         userFiltersChanged(false);
         
-        // Patch 2017-12-27: Also render annotations
+        // Patch 2017-12-27: Render annotations
         renderLinterAnnotation();
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);

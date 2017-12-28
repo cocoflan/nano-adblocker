@@ -833,7 +833,7 @@ FilterContainer.prototype.compileSelector = (function() {
             return raw;
         }
 
-        // We  rarely reach this point -- majority of selectors are plain
+        // We rarely reach this point -- majority of selectors are plain
         // CSS selectors.
 
         var matches, operator;
@@ -851,7 +851,7 @@ FilterContainer.prototype.compileSelector = (function() {
                 if ( operator === undefined ) { 
                     // Patch 2017-12-27: Show an appropriate error message
                     if ( nano.compileFlags.firstParty ) {
-                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardJSInjection'));
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedUnrecognizedExtendedSyntaxOperator'));
                     }
                 
                     return;
@@ -881,13 +881,25 @@ FilterContainer.prototype.compileSelector = (function() {
 
         if ( style !== undefined || pseudoclass !== undefined ) {
             if ( isValidCSSSelector(selector) === false ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadCSSSyntax'));
+                }
+                
                 return;
             }
             if ( pseudoclass !== undefined ) {
                 selector += pseudoclass;
             }
             if ( style !== undefined ) {
-                if ( isValidStyleProperty(style) === false ) { return; }
+                if ( isValidStyleProperty(style) === false ) {
+                    // Patch 2017-12-27: Show an appropriate error message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedStyleInjection'));
+                    }
+
+                    return;
+                }
                 return JSON.stringify({
                     raw: raw,
                     style: [ selector, style ]
@@ -918,6 +930,12 @@ FilterContainer.prototype.compileSelector = (function() {
         var compiled;
         if ( (compiled = this.compileProceduralSelector(raw)) ) {
             return compiled;
+        }
+        
+        // TODO 2017-12-27: Maybe lint deeper into compileProceduralSelector?
+        // Patch 2017-12-27: Show an appropriate error message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterErrorCosmetic'));
         }
 
         µb.logger.writeOne('', 'error', 'Cosmetic filtering – invalid filter: ' + raw);
@@ -1243,6 +1261,8 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
         }
         return;
     }
+    
+    // TODO 2017-12-27: Todo tree return point
 
     if ( type === 0x2E /* '.' */ ) {
         key = this.keyFromSelector(selector);
