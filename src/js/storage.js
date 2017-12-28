@@ -736,7 +736,8 @@
     // of the filter, or special keys for user filters
     console.assert(typeof assetKey === 'string' && assetKey.length);
     
-    // Patch 2017-12-27: Update compile flags, the flags is a global object
+    // Patch 2017-12-27: Update compile flags, the flags is a global object,
+    // filter compilation is synchronous, so this is safe
     nano.compileFlags.firstParty = assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey;
     nano.compileFlags.isPartial = assetKey === nano.nanoPartialUserFiltersKey;
     nano.compileFlags.isPrivileged = nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1;
@@ -859,15 +860,7 @@
             continue;
         }
 
-        // Patch 2017-12-27: Log invalid filters with filter linter
-        if ( staticNetFilteringEngine.compile(line, networkFilters) ) {
-            continue;
-        }
-        
-        // Notes 2017-12-27: The filter is invalid if reached this point
-        if ( nano.compileFlags.firstParty ) {
-            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterErrorGeneric'));
-        }
+        staticNetFilteringEngine.compile(line, networkFilters);
     }
 
     // Patch 2017-12-27: Store linting result

@@ -111,7 +111,6 @@ nano.privilegedFiltersAssetKeys = [
 /******************************************************************************/
 
 // Patch 2017-12-25: Add compile flags
-
 nano.compileFlags = {
     firstParty: false,
     isPartial: false,
