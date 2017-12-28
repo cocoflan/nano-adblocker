@@ -11,12 +11,20 @@ Nano Adblocker has [extra resources](https://github.com/NanoAdblocker/NanoFilter
 when a filter references one of those resources, it will not work as intended in uBlock Origin out of the box. You can load those 
 extra resources to uBlock Origin in advanced settings. 
 
-## The Option `xhr`
+## Convenience Options
 
-Nano Adblocker will map the option `xhr` to `xmlhttprequest`, uBlock Origin will instead discard the filter. 
+Nano Adblocker will map options as follows: 
+```
+    3p -> third-party
+    1p -> first-party
 
-This option is mostly for convenience, if you want your filter to work on uBlock Origin, you should write the long form out, 
-no warnings will be dispatched when the shortcut is used in Nano Adblocker. 
+ ghide -> generichide
+   css -> stylesheet
+iframe -> subdocument
+   xhr -> xmlhttprequest
+```
+
+When any of these convenience options are used, uBlock Origin will discard the filter. 
 
 ## The Option `mp4`
 
