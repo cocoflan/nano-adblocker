@@ -1624,6 +1624,11 @@ FilterParser.prototype.parseOptions = function(s) {
             }
             
             opts.push('media', 'redirect=nano-noopmp4-1s');
+            // Reflect changes
+            this.fopts = opts.join(',');
+            var pos = this.raw.lastIndexOf('$');
+            this.raw = this.raw.slice(0, pos + 1) + this.fopts;
+            
             continue;
         }
         // https://github.com/uBlockOrigin/uAssets/issues/192
@@ -1638,7 +1643,7 @@ FilterParser.prototype.parseOptions = function(s) {
                 // No need to dispatch error to linter as this does not apply to
                 // first party rules
                 this.unsupported = true;
-                return this;
+                break;
             }
             
             this.badFilter = BadFilter;
@@ -2217,8 +2222,6 @@ FilterContainer.prototype.compile = function(raw, writer) {
     }
 
     var parsed = this.filterParser.parse(s);
-
-    // TODO 2017-12-27: TODO TREE RETURN POINT
     
     // Ignore element-hiding filters
     if ( parsed.elemHiding ) {
@@ -2340,6 +2343,15 @@ FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, writer
         type = parsed.types;
     if ( type === 0 ) {
         writer.push([ descBits, parsed.tokenHash, fdata ]);
+        
+        // Patch 2017-12-28: Since only filters with explicit type can be
+        // redirected, need to check it here
+        if ( parsed.redirect ) {
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedRedirectionHasNoExplicitType'));
+            }
+        }
+        
         return;
     }
     var bitOffset = 1;

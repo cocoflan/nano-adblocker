@@ -259,6 +259,10 @@
             "message": "'||' may not be immediately followed by '^'.",
             "description": "Error message to show when the bad filter from SMed79 is discarded"
         },
+        "filterLinterRejectedRedirectionExplicitType": {
+            "message": "The option 'redirect=' requires one and only one explicit type declaration.",
+            "description": "Error message to show when the option 'redirect=' is accompanied with bad number of explicit types"
+        },
 
         // Tab name of hosts matrix
         "matrixPageName": {
