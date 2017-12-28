@@ -16,7 +16,7 @@ extra resources to uBlock Origin in advanced settings.
 Nano Adblocker will map the option `xhr` to `xmlhttprequest`, uBlock Origin will instead discard the filter. 
 
 This option is mostly for convenience, if you want your filter to work on uBlock Origin, you should write the long form out, 
-no warnings will be dispatched when the shortcut is used. 
+no warnings will be dispatched when the shortcut is used in Nano Adblocker. 
 
 ## The Option `mp4`
 
