@@ -141,8 +141,8 @@
     "description": "Error message to show when a hostname whitelist is not valid"
   },
   "whitelistLinterInvalidRegExp": {
-    "message": "这个正则表达式无效。",
-    "description": "Error message to show when a regular expression whitelist is not valid"
+    "message": "这个正则表达式有语法错误。",
+    "description": "Error message to show when a regular expression whitelist has syntax error"
   },
   "whitelistLinterInvalidURL": {
     "message": "这个路径无效。",

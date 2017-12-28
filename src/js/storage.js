@@ -848,8 +848,7 @@
             // 127.0.0.1 localhost
             // 255.255.255.255 broadcasthost
             if ( reIsLocalhostRedirect.test(line) ) {
-                // Patch 2017-12-27: Show error message when localhost entry of
-                // a host file is discarded
+                // Patch 2017-12-27: Show an appropriate error message
                 if ( nanoCompileFlags.firstParty ) {
                     nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
                 }
@@ -860,8 +859,7 @@
         }
 
         if ( line.length === 0 ) {
-            // Patch 2017-12-27: Show error message when localhost entry of a
-            // host file is discarded
+            // Patch 2017-12-27: Show an appropriate error message
             if ( nanoCompileFlags.firstParty ) {
                 nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
             }

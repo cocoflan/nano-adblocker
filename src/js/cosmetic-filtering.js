@@ -297,6 +297,11 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
         }
         // Adguard's scriptlet injection: not supported.
         if ( cCode === 0x25 /* '%' */ ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nanoCF.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardJSInjection'));
+            }
+            
             this.invalid = true;
             return this;
         }
@@ -304,6 +309,11 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
         if ( cCode === 0x24 /* '$' */ ) {
             raw = this.translateAdguardCSSInjectionFilter(raw);
             if ( raw === '' ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nanoCF.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedStyleInjection'));
+                }
+                
                 this.invalid = true;
                 return this;
             }
