@@ -28,12 +28,11 @@ When any of these convenience options are used, uBlock Origin will discard the f
 
 ## The Option `mp4`
 
-Nano Adblocker will replace the option `mp4` with `media,xmlhttprequest,redirect=nano-noopmp4-1s`, uBlock Origin will instead 
-discard the filter. 
+Nano Adblocker will replace the option `mp4` with `media,redirect=nano-noopmp4-1s`, uBlock Origin will instead discard the filter. 
 
-This option is from Adguard and means redirect MP4 requests to a blank MP4 file, Nano Adblocker will instead redirect all media 
-requests and XMLHttpRequest to a blank MP4 file regardless of the request headers. 
-A deprecation warning will be dispatched when this option is used in Nano Adblocker. 
+This option is from Adguard and means redirect MP4 requests to a blank MP4 file, Nano Adblocker will instead redirect media requests 
+to a blank MP4 file. Keep in mind that not all media requests are MP4 requests and not all MP4 requests are media requests. A 
+deprecation warning will be dispatched when this option is used in Nano Adblocker. 
 
 ## The Option `empty`
 
