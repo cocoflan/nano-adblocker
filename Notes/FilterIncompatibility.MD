@@ -1,4 +1,6 @@
-# Filter Incompatibility
+# \[Work In Progress Documentation\] Filter Incompatibility
+
+**This documentation is a draft, and may not be accurate.**
 
 A lot of filters work in both Nano Adblocker and uBlock Origin, however, there are some differences in how filters are handled 
 when it comes to edge cases. 
