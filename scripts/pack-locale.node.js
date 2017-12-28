@@ -90,6 +90,10 @@ const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commi
 
             result[key].message = result[key].message.replace(/uBlock Origin|uBlock\u2080|uBlock(?!\/)|uBO/g, "Nano").replace(/ublock/g, "nano");
 
+            // Special cases
+            if (key === "1pResourcesOriginal") {
+                result[key].message = result[key].message.replace("Nano", "uBlock Origin");
+            }
             if (key === "aboutBasedOn") {
                 result[key].message = result[key].message.replace("Nano", "uBlock Origin").replace("{{@version}}", uBOVersion);
             }

@@ -157,7 +157,7 @@
             "description": "Warning message to show when a whitelist is parsed as a regular expression whitelist but it is unlikely to be the intention"
         },
 
-        // Filter linter deprecation warnings
+        // Filter linter special deprecation warnings
         "filterLinterDeprecatedCommentBracket": {
             "message": "Using '[' to denote comment is deprecated, use '!' instead.",
             "description": "Warning message to show when '[' is used to denote comment instead of '!'"
@@ -204,6 +204,19 @@
             "message": "This procedural cosmetic rule has syntax errors.",
             "description": "Error message to show when a procedural cosmetic rule has syntax errors"
         },
+        // Network filtering warnings
+        "filterLinterWarningDiscardedNonNegatableType": {
+            "message": "Nano discarded the type option '{{type}}' because it cannot be negated.",
+            "description": "English: Nano discarded the type option '{{type}}' because it cannot be negated."
+        },
+        "filterLinterWarningDeprecatedMp4Option": {
+            "message": "The option 'mp4' is replaced with 'media,redirect=nano-noopmp4-1s'.\nThe use of the option 'mp4' is deprecated, write out the full options instead.",
+            "description": "Warning message to show when the option 'mp4' is used"
+        },
+        "filterLinterWarningGenericblockIgnored": {
+            "message": "The option 'genericblock' is ignored because it is not yet supported.",
+            "description": "Warning message to show when the option 'genericblock' is ignored"
+        },
         // Network filtering errors
         "filterLinterDiscardedLocalhostHostEntry": {
             "message": "This host file entry is discarded because it is localhost declaration.",
@@ -212,6 +225,39 @@
         "filterLinterRejectedAdguardElementRemove": {
             "message": "Element remove rules are not yet supported.",
             "description": "Error message to show when an element remove rule is discarded because it is not yet implemented"
+        },
+        "filterLinterRejectedNegatedGenerichide": {
+            "message": "The option 'generichide' cannot be negated.",
+            "description": "Error message to show when the option 'generichide' is negated"
+        },
+        "filterLinterRejectedRedirectInException": {
+            "message": "The option 'redirect=' cannot be used in exception rules.",
+            "description": "Error message to show when the option 'redirect=' is used in exception rule"
+        },
+        "filterLinterRejectedBadDomainOptionArguments": {
+            "message": "The option 'domain=' is given invalid arguments.",
+            "description": "Error message to show when the option 'domain=' is given invalid arguments"
+        },
+        "filterLinterRejectedBadCspOptionArguments": {
+            "message": "The option 'csp=' is given invalid arguments.",
+            "description": "Error message to show when the option 'csp=' is given invalid arguments"
+        },
+        "filterLinterRejectedUnknownOption": {
+            "message": "The option '{{option}}' is not recognized.",
+            "description": "English: The option '{{option}}' is not recognized."
+        },
+        "filterLinterRejectedOnlyGenericblock": {
+            "message": "The option 'genericblock' is not yet supported.",
+            "description": "Error message to show when the option 'genericblock' is the only option"
+        },
+        "filterLinterRejectedNetworkBadRegExp": {
+            "message": "This network rule has regular expression syntax errors.",
+            "description": "Error message to show when a regular expression based network rule has syntax errors"
+        },
+        "filterLinterRejectedInterventionForSMed79": {
+            // https://github.com/chrisaljoudi/uBlock/issues/1096
+            "message": "'||' may not be immediately followed by '^'.",
+            "description": "Error message to show when the bad filter from SMed79 is discarded"
         },
 
         // Tab name of hosts matrix
