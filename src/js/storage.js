@@ -736,21 +736,17 @@
     // of the filter, or special keys for user filters
     console.assert(typeof assetKey === 'string' && assetKey.length);
     
-    // Patch 2017-12-25: Add compile flags, all flags are computed here
-    var nanoCompileFlags = {
-        firstParty: assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey,
-        isPartial: assetKey === nano.nanoPartialUserFiltersKey,
-        
-        isPrivileged: nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1,
-        
-        keepSlowFilters: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing,
-        strip3pWhitelist: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist
-    };
+    // Patch 2017-12-27: Update compile flags, the flags is a global object
+    nano.compileFlags.firstParty = assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey;
+    nano.compileFlags.isPartial = assetKey === nano.nanoPartialUserFiltersKey;
+    nano.compileFlags.isPrivileged = nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1;
+    nano.compileFlags.keepSlowFilters = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing;
+    nano.compileFlags.strip3pWhitelist = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist;
     if (
-        nanoCompileFlags.firstParty &&
+        nano.compileFlags.firstParty &&
         nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoMakeUserFiltersPrivileged
     ) {
-        nanoCompileFlags.isPrivileged = true;
+        nano.compileFlags.isPrivileged = true;
     }
     
     // Notes 2017-12-25: The linter is a global singleton, filter compilation
@@ -762,9 +758,6 @@
     }
     // TODO 2017-12-27: See what need to be done to synchronized filter fragment
     // line number
-    
-    // For debugging only
-    //console.log('[Nano] Compile ::', assetKey, nanoCompileFlags);
     
     var networkFilters = new this.CompiledLineWriter(),
         cosmeticFilters = new this.CompiledLineWriter();
@@ -802,7 +795,7 @@
         // Patch 2017-12-27: Deprecate '[' for comment unless it is header
         if ( c === '!' ) { continue; }
         if ( c === '[' ) {
-            if ( nanoCompileFlags.firstParty && nano.filterLinter.lastLine !== 0 ) {
+            if ( nano.compileFlags.firstParty && nano.filterLinter.lastLine !== 0 ) {
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedCommentBracket'));
             }
             
@@ -811,8 +804,7 @@
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
-        // Patch 2017-12-25: Pass compile flags over
-        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters, nanoCompileFlags) ) {
+        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters) ) {
             continue;
         }
 
@@ -833,7 +825,7 @@
         pos = line.indexOf('#');
         if ( pos !== -1 && reIsWhitespaceChar.test(line.charAt(pos - 1)) ) {
             // Patch 2017-12-27: Deprecate inline comments for user filters
-            if ( nanoCompileFlags.firstParty ) {
+            if ( nano.compileFlags.firstParty ) {
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedInlineComment'));
             }
             
@@ -849,7 +841,7 @@
             // 255.255.255.255 broadcasthost
             if ( reIsLocalhostRedirect.test(line) ) {
                 // Patch 2017-12-27: Show an appropriate error message
-                if ( nanoCompileFlags.firstParty ) {
+                if ( nano.compileFlags.firstParty ) {
                     nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
                 }
                 
@@ -860,27 +852,26 @@
 
         if ( line.length === 0 ) {
             // Patch 2017-12-27: Show an appropriate error message
-            if ( nanoCompileFlags.firstParty ) {
+            if ( nano.compileFlags.firstParty ) {
                 nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
             }
         
             continue;
         }
 
-        // Patch 2017-12-25: Pass compile flags over
         // Patch 2017-12-27: Log invalid filters with filter linter
-        if ( staticNetFilteringEngine.compile(line, networkFilters, nanoCompileFlags) ) {
+        if ( staticNetFilteringEngine.compile(line, networkFilters) ) {
             continue;
         }
         
         // Notes 2017-12-27: The filter is invalid if reached this point
-        if ( nanoCompileFlags.firstParty ) {
-            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterGenericError'));
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterErrorGeneric'));
         }
     }
 
     // Patch 2017-12-27: Store linting result
-    if ( nanoCompileFlags.firstParty ) {
+    if ( nano.compileFlags.firstParty ) {
         nano.filterLinter.saveResult();
     }
     

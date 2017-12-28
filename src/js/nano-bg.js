@@ -110,6 +110,20 @@ nano.privilegedFiltersAssetKeys = [
 
 /******************************************************************************/
 
+// Patch 2017-12-25: Add compile flags
+
+nano.compileFlags = {
+    firstParty: false,
+    isPartial: false,
+    
+    isPrivileged: false,
+    
+    keepSlowFilters: false,
+    strip3pWhitelist: false
+};
+
+/******************************************************************************/
+
 // Patch 2017-12-26: Add force recompile to advanced settings dashboard
 nano.nanoForceRecompile = function() {
     vAPI.storage.set({

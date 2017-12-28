@@ -245,8 +245,7 @@ FilterParser.prototype.reset = function() {
 
 /******************************************************************************/
 
-// Patch 2017-12-26: Accept compile flags for altering compiler behavior
-FilterParser.prototype.parse = function(raw, nanoCF) {
+FilterParser.prototype.parse = function(raw) {
     // important!
     this.reset();
 
@@ -298,7 +297,7 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
         // Adguard's scriptlet injection: not supported.
         if ( cCode === 0x25 /* '%' */ ) {
             // Patch 2017-12-27: Show an appropriate error message
-            if ( nanoCF.firstParty ) {
+            if ( nano.compileFlags.firstParty ) {
                 nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardJSInjection'));
             }
             
@@ -310,7 +309,7 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
             raw = this.translateAdguardCSSInjectionFilter(raw);
             if ( raw === '' ) {
                 // Patch 2017-12-27: Show an appropriate error message
-                if ( nanoCF.firstParty ) {
+                if ( nano.compileFlags.firstParty ) {
                     nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedStyleInjection'));
                 }
                 
@@ -375,12 +374,19 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
         this.unhide === 0 &&
         this.reNeedHostname.test(this.suffix)
     ) {
+        // Patch 2017-12-27: Show an appropriate error message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedCosmeticTooExpensive'));
+        }
+
         this.invalid = true;
         return this;
     }
     
     // Patch 2017-12-26: Process discard third party whitelist compile flag
-    if ( this.unhide === 1 && !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
+    if ( this.unhide === 1 && !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+        // No need to dispatch error to linter as this does not apply to first
+        // party rules
         this.invalid = true;
         return this;
     }
@@ -842,7 +848,14 @@ FilterContainer.prototype.compileSelector = (function() {
         if ( extendedSyntax ) {
             while ( (matches = reExtendedSyntaxParser.exec(raw)) !== null ) {
                 operator = normalizedExtendedSyntaxOperators.get(matches[1]);
-                if ( operator === undefined ) { return; }
+                if ( operator === undefined ) { 
+                    // Patch 2017-12-27: Show an appropriate error message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardJSInjection'));
+                    }
+                
+                    return;
+                }
                 raw = raw.slice(0, matches.index) +
                       operator + '(' + matches[3] + ')' +
                       raw.slice(matches.index + matches[0].length);
@@ -1155,10 +1168,8 @@ FilterContainer.prototype.keyFromSelector = function(selector) {
 
 /******************************************************************************/
 
-// Patch 2017-12-26: Accept compile flags for altering compiler behavior
-FilterContainer.prototype.compile = function(s, writer, nanoCF) {
-    // Patch 2017-12-26: Pass compile flags over
-    var parsed = this.parser.parse(s, nanoCF);
+FilterContainer.prototype.compile = function(s, writer) {
+    var parsed = this.parser.parse(s);
     if ( parsed.cosmetic === false ) {
         return false;
     }
@@ -1211,7 +1222,14 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
 
     if ( type === 0x23 /* '#' */ ) {
         key = this.keyFromSelector(selector);
-        if ( key === undefined ) { return; }
+        if ( key === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedCosmeticBadIdSelector'));
+            }
+            
+            return;
+        }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
         // selector falls into that category.

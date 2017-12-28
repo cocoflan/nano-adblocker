@@ -164,7 +164,7 @@
     "description": "Warning message to show when inline comment is used"
   },
 
-  "filterLinterGenericError": {
+  "filterLinterErrorGeneric": {
     "message": "Nano discarded this rule because it is not valid. (Generic fallback error message)",
     "description": "A generic error message when a rule is discarded"
   },
@@ -176,6 +176,10 @@
   "filterLinterRejectedStyleInjection": {
     "message": "This CSS injection rule has syntax error.",
     "description": "Error message to show when a CSS injection rule has syntax error"
+  },
+  "filterLinterRejectedCosmeticTooExpensive": {
+    "message": "This filter is too expensive to be applied generically, it must be limited to specific domains.",
+    "description": "Error message to show when a cosmetic filter must have domains limitation"
   },
 
   "filterLinterDiscardedLocalhostHostEntry": {
