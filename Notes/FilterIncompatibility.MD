@@ -13,7 +13,7 @@ extra resources to uBlock Origin in advanced settings.
 
 ## Convenience Options
 
-Nano Adblocker will map options as follows: 
+Nano Adblocker will map options as follows for convenience: 
 ```
     3p -> third-party
     1p -> first-party
