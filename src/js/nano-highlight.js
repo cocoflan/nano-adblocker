@@ -52,10 +52,12 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     next: 'header'
                 },
                 {
-                    // TODO 2017-12-06: Inline comments are only allowed for
-                    // network filter
                     token: 'comment.line',
                     regex: /^(?:!|# |\[).*/
+                },
+                {
+                    token: 'comment.line',
+                    regex: / #.*/
                 },
                 // CSS
                 {

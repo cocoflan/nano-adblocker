@@ -1461,7 +1461,7 @@ FilterParser.prototype.parseTypeOption = function(raw, not) {
         if ( nano.compileFlags.firstParty ) {
             nano.filterLinter.dispatchWarning(
                 vAPI.i18n('filterLinterWarningDiscardedNonNegatableType')
-                    .replace('{{type}}', this.toNormalizedType[raw])
+                    .replace('{{type}}', raw)
             );
         }
         
