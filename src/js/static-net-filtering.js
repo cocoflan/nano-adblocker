@@ -1836,7 +1836,7 @@ FilterParser.prototype.parse = function(raw) {
                 if ( this.types === 0 ) {
                     // Patch 2017-12-27: Show an appropriate error message
                     if ( nano.compileFlags.firstParty ) {
-                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedOnlyGenericblock'));
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedOnlyUnsupportedType'));
                     }
                     
                     this.unsupported = true;
@@ -1844,7 +1844,7 @@ FilterParser.prototype.parse = function(raw) {
                 } else {
                     // Patch 2017-12-27: Show an appropriate warning message
                     if ( nano.compileFlags.firstParty ) {
-                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningGenericblockIgnored'));
+                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningUnsupportedTypeIgnored'));
                     }
                 }
             }

@@ -217,7 +217,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 {
                     // Special types
                     token: 'variable.parameter',
-                    regex: /beacon|data|other|ping|webrtc|websocket/
+                    regex: /beacon|data|other|ping|websocket/
                 },
                 // Redirect
                 {

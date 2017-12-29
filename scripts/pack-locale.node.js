@@ -1,12 +1,13 @@
 /**
  * Process and pack locale.
  * Expects the extension core to be already built.
+ * Need to manually clear build output if uBOVersion changed or
+ * /src/_nano-locales/en/messages.nano.js changed
  */
 "use strict";
 
 /**
  * The version of uBlock Origin that Nano Adblocker is based on.
- * Need to manually clear build output if this constant is changed.
  * @const {string}
  */
 const uBOVersion = "commit 3f335ad432d62c7570226b4a9025bdd5e1a4d2d3 or one commit after v1.14.23b2";

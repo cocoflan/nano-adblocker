@@ -226,9 +226,9 @@
             "message": "The use of the option 'mp4' is deprecated, write out the full options instead.",
             "description": "Deprecation when 'mp4'"
         },
-        "filterLinterWarningGenericblockIgnored": {
-            "message": "Nano discarded the option 'genericblock' because it is not yet supported.",
-            "description": "Warning when 'genericblock' discarded but not entire rule"
+        "filterLinterWarningUnsupportedTypeIgnored": {
+            "message": "Nano discarded type options that are not yet supported.",
+            "description": "Warning when unsupported type options discarded but not entire rule"
         },
         "filterLinterWarningRedirectNoType": {
             "message": "Nano discarded the option 'redirect=...' because it requires a type option.",
@@ -292,9 +292,9 @@
             "message": "The option '{{option}}' is not recognized.",
             "description": "English: The option '{{option}}' is not recognized."
         },
-        "filterLinterRejectedOnlyGenericblock": {
-            "message": "The option 'genericblock' is not yet supported.",
-            "description": "Error when 'genericblock' used and entire rule discarded"
+        "filterLinterRejectedOnlyUnsupportedType": {
+            "message": "A type option is not yet supported.",
+            "description": "Error when unsupported type option used and entire rule discarded"
         },
         "filterLinterRejectedNetworkBadRegExp": {
             "message": "This network rule has regular expression syntax errors.",
