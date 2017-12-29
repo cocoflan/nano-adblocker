@@ -62,7 +62,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // CSS
                 {
                     token: 'keyword.control',
-                    regex: /#@?(?:\?|\$)?#/,
+                    regex: /#@?(?:\?|\$)?#\^?/,
                     next: 'double_hash'
                 },
                 // Operators
@@ -206,7 +206,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Modifiers
                 {
                     token: 'keyword.control',
-                    regex: /document|~?(?:first-party|3p|third-party|1p)|important|badfilter/
+                    regex: /document|~?(?:third-party|3p|first-party|1p)|important|badfilter/
                 },
                 // Actions
                 {
