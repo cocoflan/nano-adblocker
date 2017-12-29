@@ -1,6 +1,4 @@
-# \[Work In Progress Documentation\] Filter Incompatibility
-
-**This documentation is a draft, and may not be accurate.**
+# Filter Incompatibility
 
 A lot of filters work in both Nano Adblocker and uBlock Origin, however, there are some differences in how filters are handled 
 when it comes to edge cases. 
@@ -30,7 +28,8 @@ When any of these convenience options are used, uBlock Origin will discard the f
 
 Nano Adblocker will replace the option `mp4` with `media,redirect=nano-noopmp4-1s`, uBlock Origin will instead discard the filter. 
 
-This option should not be negated, however, Nano Adblocker will treat `~mp4` to be the same as `mp4`. 
+This option should not be negated, however, Nano Adblocker will treat `~mp4` to be the same as `mp4`, **this may change in the future 
+without notice**. 
 
 This option is from Adguard and means redirect MP4 requests to a blank MP4 file, Nano Adblocker will instead redirect media requests 
 to a blank MP4 file. Keep in mind that not all media requests are MP4 requests and not all MP4 requests are media requests. Because 
