@@ -2244,6 +2244,11 @@ FilterContainer.prototype.compile = function(raw, writer) {
         parsed.dataType === undefined &&
         this.compileHostnameOnlyFilter(parsed, writer)
     ) {
+        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        if ( nano.compileFlags.firstParty && parsed.redirect ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectPureHostname'));
+        }
+        
         return true;
     }
 

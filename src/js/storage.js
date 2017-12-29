@@ -880,7 +880,14 @@
 //   applying 1st-party filters.
 
 µBlock.applyCompiledFilters = function(rawText, firstparty) {
-    if ( rawText === '' ) { return; }
+    if ( rawText === '' ) {
+        // Patch 2017-12-28: Reset linter when applying empty user filters
+        if ( firstparty ) {
+            nano.filterLinter.clearResult();
+        }
+    
+        return;
+    }
     var separator = '\n/* end of network - start of cosmetic */\n',
         pos = rawText.indexOf(separator),
         reader = new this.CompiledLineReader(rawText.slice(0, pos));

@@ -180,7 +180,7 @@ nano.FilterLinter.prototype.dispatchError = function(message) {
         this.errors.push({
             row: this.lastLine,
             type: 'error',
-            text: '(TODO) Too many errors'
+            text: vAPI.i18n('filterLinterTooManyErrors')
         });
         return;
     }
@@ -198,7 +198,7 @@ nano.FilterLinter.prototype.dispatchWarning = function(message) {
         this.warnings.push({
             row: this.lastLine,
             type: 'warning',
-            text: '(TODO) Too many warnings'
+            text: vAPI.i18n('filterLinterTooManyWarnings')
         });
         return;
     }

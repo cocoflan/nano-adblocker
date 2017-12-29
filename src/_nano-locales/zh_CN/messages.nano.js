@@ -129,7 +129,7 @@
             "description": "Explain the similarity between Nano Filter Editor and Ace in terms of shortcut keys"
         },
 
-        // Whitelist linter limit warning
+        // Whitelist linter limit warnings
         "whitelistLinterAborted": {
             "message": "Nano 没有验证剩下的白名单，因为已经有过多的错误。",
             "description": "Warning when too many errors"
@@ -138,7 +138,7 @@
             "message": "Nano 没有检查剩下的白名单，因为已经有过多的警告。",
             "description": "Warning when too many warnings"
         },
-        // Whitelist linter error messages
+        // Whitelist linter errors
         "whitelistLinterInvalidHostname": {
             "message": "这个主机名称无效。",
             "description": "Error when hostname not valid"
@@ -151,7 +151,7 @@
             "message": "这个路径无效。",
             "description": "Error when a URL not valid"
         },
-        // Whitelist linter warning messages
+        // Whitelist linter warnings
         "whitelistLinterSuspeciousRegExp": {
             "message": "这行被解析成了正则表达式，您确定这是正确的么？",
             "description": "Warning when parsed as regular expression but is unlikely the intention of user"

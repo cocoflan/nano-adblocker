@@ -129,7 +129,7 @@
             "description": "Explain the similarity between Nano Filter Editor and Ace in terms of shortcut keys"
         },
 
-        // Whitelist linter limit warning
+        // Whitelist linter limit warnings
         "whitelistLinterAborted": {
             "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
             "description": "Warning when too many errors"
@@ -138,7 +138,7 @@
             "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",
             "description": "Warning when too many warnings"
         },
-        // Whitelist linter error messages
+        // Whitelist linter errors
         "whitelistLinterInvalidHostname": {
             "message": "This host name is not valid.",
             "description": "Error when hostname not valid"
@@ -151,12 +151,21 @@
             "message": "This URL is not valid.",
             "description": "Error when a URL not valid"
         },
-        // Whitelist linter warning messages
+        // Whitelist linter warnings
         "whitelistLinterSuspeciousRegExp": {
             "message": "This line is treated as a regular expression, is that intended?",
             "description": "Warning when parsed as regular expression but is unlikely the intention of user"
         },
 
+        // Filter linter limit warnings
+        "filterLinterTooManyErrors": {
+            "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
+            "description": "Warning when too many errors"
+        },
+        "filterLinterTooManyWarnings": {
+            "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",
+            "description": "Warning when too many warnings"
+        },
         // Filter linter special deprecation warnings
         "filterLinterDeprecatedCommentBracket": {
             "message": "Using '[' to denote comment is deprecated, use '!' instead.",
@@ -244,6 +253,10 @@
         "filterLinterWarningRedirectNoValidDestinationDomain": {
             "message": "Nano discarded the option 'redirect=...' because it has no valid destination domain.",
             "description": "Warning when 'redirect=' has no destination"
+        },
+        "filterLinterWarningRedirectPureHostname": {
+            "message": "Nano discarded the option 'redirect=...' because it cannot be used with a pure host name rule.",
+            "description": "Warning when 'redirect=' pure host name"
         },
         "filterLinterWarningRedirectDoesNotMatchRegExp": {
             // TODO 2017-12-28: Think of a better warning message
