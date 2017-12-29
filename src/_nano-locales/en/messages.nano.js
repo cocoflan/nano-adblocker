@@ -261,7 +261,7 @@
         "filterLinterWarningRedirectDoesNotMatchRegExp": {
             // TODO 2017-12-28: Think of a better warning message
             "message": "Nano discarded the option 'redirect=...' because this network rule does not match this regular expression: {{regexp}}",
-            "description": "Warning when 'redirect=' failed initial test, use '{{regexp}}' to denote the tester if required"
+            "description": "Warning when 'redirect=' failed initial test, use '{{regexp}}' to denote the tester if needed"
         },
         // Network filtering errors
         "filterLinterDiscardedLocalhostHostEntry": {

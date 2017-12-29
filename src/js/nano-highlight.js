@@ -77,6 +77,11 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     next: 'options'
                 },
                 {
+                    // Unexpected end of line
+                    token: 'invalid.illegal',
+                    regex: /\$$/
+                },
+                {
                     token: 'keyword.control',
                     regex: /\$(?!.*?(?:\/|\$))/,
                     next: 'options'
