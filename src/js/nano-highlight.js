@@ -204,13 +204,15 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Actions
                 {
                     token: 'variable.other',
+                    // inline-font and inline-script must be before font and script
                     regex: /elemhide|generichide|inline-font|inline-script|popunder|popup|ghide/
                 },
                 // Types
                 {
                     // Resource type
                     token: 'variable.parameter',
-                    regex: /~?(?:font|image|media|object|object-subrequest|script|stylesheet|subdocument|xmlhttprequest|css|iframe|xhr|mp4)/
+                    // object-subrequest must be before object
+                    regex: /~?(?:font|image|media|object-subrequest|object|script|stylesheet|subdocument|xmlhttprequest|css|iframe|xhr|mp4)/
                 },
                 {
                     // Special types
