@@ -291,8 +291,9 @@ RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
 
     // Need one single type -- not negated.
     if ( type === undefined || type.startsWith('~') ) {
-        // Patch 2017-12-27: Because all types in this.supportedTypes are not
-        // negated, I think type will never start with ~
+        // Patch 2017-12-27: Show an appropriate warning message, because all
+        // types in supportedTypes are not negated, I think type will never
+        // be negated, this message is thus appropriate
         if ( nano.compileFlags.firstParty ) {
             nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoSupportedType'));
         }
@@ -326,7 +327,8 @@ RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
         out.push(src + '\t' + des + '\t' + type + '\t' + pattern + '\t' + redirect);
     }
     
-    // Patch 2017-12-27: Check if there are any valid domains left
+    // Patch 2017-12-27: Check if there are any valid domains left, and show an
+    // appropriate warning message if needed
     if ( nano.compileFlags.firstParty && out.length === 0 ) {
         nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoValidDestinationDomain'));
     }
