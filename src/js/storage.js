@@ -863,6 +863,8 @@
     if ( nano.compileFlags.firstParty ) {
         nano.filterLinter.saveResult();
     }
+    // Patch 2017-12-28: Must reset compile flags when finishing
+    nano.clearCompileFlags();
     
     return networkFilters.toString() +
            '\n/* end of network - start of cosmetic */\n' +

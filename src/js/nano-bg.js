@@ -111,15 +111,19 @@ nano.privilegedFiltersAssetKeys = [
 /******************************************************************************/
 
 // Patch 2017-12-25: Add compile flags
-nano.compileFlags = {
-    firstParty: false,
-    isPartial: false,
+nano.compileFlags = {};
+// Must reset flags when finished as the compiler may be used for side tasks
+// like validating epicker entry
+nano.clearCompileFlags = function() {
+    nano.compileFlags.firstParty = false;
+    nano.compileFlags.isPartial = false;
     
-    isPrivileged: false,
+    nano.compileFlags.isPrivileged = false;
     
-    keepSlowFilters: false,
-    strip3pWhitelist: false
+    nano.compileFlags.keepSlowFilters = false;
+    nano.compileFlags.strip3pWhitelist = false;
 };
+nano.clearCompileFlags();
 
 /******************************************************************************/
 
