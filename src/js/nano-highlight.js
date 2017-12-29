@@ -59,11 +59,22 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     token: 'comment.line',
                     regex: / #.*/
                 },
-                // CSS
+                // Cosmetic
                 {
                     token: 'keyword.control',
                     regex: /#@?(?:\?|\$)?#\^?/,
                     next: 'double_hash'
+                },
+                {
+                    // Operator @ is at the wrong place
+                    token: 'invalid.illegal',
+                    regex: /#@?(?:\?|\$)?@#\^?/,
+                    next: 'double_hash'
+                },
+                {
+                    // Raw JS injection is not yet supported
+                    token: 'invalid.illegal',
+                    regex: /#@?%@?#/
                 },
                 // Operators
                 {
