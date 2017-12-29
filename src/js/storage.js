@@ -863,7 +863,8 @@
     if ( nano.compileFlags.firstParty ) {
         nano.filterLinter.saveResult();
     }
-    // Patch 2017-12-28: Must reset compile flags when finishing
+    // Patch 2017-12-28: Must reset flags when finished as the compiler may be
+    // used for side tasks like validating epicker entry
     nano.clearCompileFlags();
     
     return networkFilters.toString() +

@@ -112,8 +112,6 @@ nano.privilegedFiltersAssetKeys = [
 
 // Patch 2017-12-25: Add compile flags
 nano.compileFlags = {};
-// Must reset flags when finished as the compiler may be used for side tasks
-// like validating epicker entry
 nano.clearCompileFlags = function() {
     nano.compileFlags.firstParty = false;
     nano.compileFlags.isPartial = false;
