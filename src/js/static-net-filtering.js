@@ -1620,6 +1620,7 @@ FilterParser.prototype.parseOptions = function(s) {
         if ( opt === 'mp4' ) {
             // Patch 2017-12-28: Show an appropriate warning message
             if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningExpandedMp4Option'));
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningDeprecatedMp4Option'));
             }
             
@@ -2344,12 +2345,9 @@ FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, writer
     if ( type === 0 ) {
         writer.push([ descBits, parsed.tokenHash, fdata ]);
         
-        // Patch 2017-12-28: Since only filters with explicit type can be
-        // redirected, need to check it here
-        if ( parsed.redirect ) {
-            if ( nano.compileFlags.firstParty ) {
-                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedRedirectionHasNoExplicitType'));
-            }
+        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        if ( nano.compileFlags.firstParty && parsed.redirect ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoType'));
         }
         
         return;

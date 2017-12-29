@@ -5,32 +5,32 @@
         // Dialog buttons
         "genericYes": {
             "message": "Yes",
-            "description": "The word yes, used in dialogs"
+            "description": "Button 'Yes' for dialogs"
         },
         "genericNo": {
             "message": "No",
-            "description": "The word no, used in dialogs"
+            "description": "Button 'No' for dialogs"
         },
         "genericOK": {
             "message": "OK",
-            "description": "The word OK, used in dialogs"
+            "description": "Button 'OK' for dialogs"
         },
         // Generic ialog messages
         "genericUnsavedChange": {
             "message": "Do you want to leave this tab? Changes you made will not be saved.",
-            "description": "A warning when the user is about to leave a tab without saving"
+            "description": "Unsaved change warning"
         },
         "genericFilterReadError": {
             "message": "# Could not load data, please refresh.",
-            "description": "Message to show when filter data could not be loaded"
+            "description": "Placeholder when filter data could not be loaded"
         },
         "genericDataSaveError": {
             "message": "Could not save data, please try again.",
-            "description": "Message to show when changes could not be saved"
+            "description": "Error when changes could not be saved"
         },
         "genericNothingToExport": {
             "message": "Nothing to export.",
-            "description": "Message to show when the user clicked export to file button but there is nothing to export"
+            "description": "Error when nothing to export"
         },
 
         // New cloud UI
@@ -50,21 +50,21 @@
         // Dashboard dialog messages
         "dashboardMutexError": {
             "message": "Could not obtain mutex lock, do you have another dashboard open?",
-            "description": "Message to show when mutex lock is held by another instance of the dashboard"
+            "description": "Error when mutex locked by another dashboard"
         },
 
         // Settings groups
         "settingGeneralGroup": {
             "message": "General",
-            "description": "Settings tab general group name"
+            "description": "Group 'General' of settings tab"
         },
         "settingUserInterfaceGroup": {
             "message": "User interface",
-            "description": "Settings tab user interface group name"
+            "description": "Group 'User interface' of settings tab"
         },
         "settingOtherGroup": {
             "message": "Other",
-            "description": "Settings tab other group name"
+            "description": "Group 'Other' of settings tab"
         },
         // Settings prompts
         "settingsDashboardAllowSelectionPrompt": {
@@ -82,19 +82,19 @@
         // Extra strings for new dashboard
         "settingDiskUsage": {
             "message": "Disk usage: ",
-            "description": "Disk usage prompt"
+            "description": "English: Disk usage: "
         },
         "settingMebibyte": {
             "message": " MiB",
-            "description": "Symbol for mebibyte"
+            "description": "English: MiB"
         },
         "settingsLastBackedupFilePrompt": {
             "message": "Last backed up file: ",
-            "description": "Last backed up file name prompt"
+            "description": "English: Last backed up file: "
         },
         "settingsLastRestoredFilePrompt": {
             "message": "Last restored file: ",
-            "description": "Last restored file name prompt"
+            "description": "English: Last restored file: "
         },
 
         // The tab name of advanced settings
@@ -122,7 +122,7 @@
         },
         "1pResourcesPeriod": {
             "message": ".",
-            "description": "Period symbol"
+            "description": "English: ."
         },
         "1pFilterEditorHelp": {
             "message": "Nano Filter Editor is powered by Ace and most shortcut keys works the same.",
@@ -132,115 +132,148 @@
         // Whitelist linter limit warning
         "whitelistLinterAborted": {
             "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
-            "description": "Warning message to show when the whitelist validator aborted because there are too many errors"
+            "description": "Warning when too many errors"
         },
         "whitelistLinterTooManyWarnings": {
             "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",
-            "description": "Warning message to show when Nano Whitelist Linter aborted because there are too many warnings"
+            "description": "Warning when too many warnings"
         },
         // Whitelist linter error messages
         "whitelistLinterInvalidHostname": {
             "message": "This host name is not valid.",
-            "description": "Error message to show when a hostname whitelist is not valid"
+            "description": "Error when hostname not valid"
         },
         "whitelistLinterInvalidRegExp": {
             "message": "This regular expression has syntax errors.",
-            "description": "Error message to show when a regular expression whitelist has syntax errors"
+            "description": "Error when regular expression has syntax errors"
         },
         "whitelistLinterInvalidURL": {
             "message": "This URL is not valid.",
-            "description": "Error message to show when a URL whitelist is not valid"
+            "description": "Error when a URL not valid"
         },
         // Whitelist linter warning messages
         "whitelistLinterSuspeciousRegExp": {
             "message": "This line is treated as a regular expression, is that intended?",
-            "description": "Warning message to show when a whitelist is parsed as a regular expression whitelist but it is unlikely to be the intention"
+            "description": "Warning when parsed as regular expression but is unlikely the intention of user"
         },
 
         // Filter linter special deprecation warnings
         "filterLinterDeprecatedCommentBracket": {
             "message": "Using '[' to denote comment is deprecated, use '!' instead.",
-            "description": "Warning message to show when '[' is used to denote comment instead of '!'"
+            "description": "Deprecation when '[' used for comments"
         },
         "filterLinterDeprecatedInlineComment": {
-            "message": "Inline comments are deprecated, put the comment on its own line instead.",
-            "description": "Warning message to show when inline comment is used"
+            "message": "Inline comments are deprecated.",
+            "description": "Deprecation when inline comments"
         },
         // Filter linter special errors
         "filterLinterInternalErrorCosmeticFilterPassedThrough": {
-            "message": "A cosmetic filter was not catched by cosmetic filter compiler, please file a bug report.",
-            "description": "Error message to show when a cosmetic filter was not catched by cosmetic filter compiler"
+            "message": "A cosmetic filter passed through the cosmetic filter compiler, please file a bug report.",
+            "description": "Internal error when cosmetic filter compiler is bugged"
         },
         // Cosmetic filtering errors
         "filterLinterRejectedAdguardJSInjection": {
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
-            "description": "Error message to show when raw JavaScript injection rule is discarded"
+            "description": "Error when raw JavaScript injection"
         },
         "filterLinterRejectedStyleInjection": {
             "message": "This CSS injection rule has syntax errors.",
-            "description": "Error message to show when a CSS injection rule has syntax errors"
+            "description": "Error when CSS injection has syntax errors"
         },
         "filterLinterRejectedCosmeticTooExpensive": {
             "message": "This cosmetic or script snippet rule is too expensive to be applied generically, it must be limited to specific domains.",
-            "description": "Error message to show when a cosmetic or script snippet rule must have domains limitation"
+            "description": "Error when cosmetic or script snippet has no domain"
         },
         "filterLinterRejectedCosmeticBadIdSelector": {
             "message": "This cosmetic rule contains an invalid id selector.",
-            "description": "Error message to show when a cosmetic rule has a bad id selector"
+            "description": "Error when cosmetic has bad id selector"
         },
         "filterLinterRejectedCosmeticBadClassSelector": {
             "message": "This cosmetic rule contains an invalid class selector.",
-            "description": "Error message to show when a cosmetic rule has a bad class selector"
+            "description": "Error when cosmetic has bad class selector"
         },
         "filterLinterRejectedBadCSSSyntax": {
             "message": "This cosmetic rule has CSS syntax errors.",
-            "description": "Error message to show when a cosmetic rule has syntax errors"
+            "description": "Error when cosmetic has CSS syntax errors"
         },
         "filterLinterRejectedUnrecognizedExtendedSyntaxOperator": {
-            "message": "This cosmetic rule contains an unrecognized extended syntax operator.",
-            "description": "Error message to show when a cosmetic rule has a bad extended syntax operator"
+            "message": "This procedural cosmetic rule contains an unrecognized operator.",
+            "description": "Error when procedural cosmetic has unknown operator"
         },
         "filterLinterRejectedBadProceduralSelector": {
             "message": "This procedural cosmetic rule has syntax errors.",
-            "description": "Error message to show when a procedural cosmetic rule has syntax errors"
+            "description": "Error when procedural cosmetic has syntax errors"
         },
         // Network filtering warnings
         "filterLinterWarningDiscardedNonNegatableType": {
             "message": "Nano discarded the type option '{{type}}' because it cannot be negated.",
             "description": "English: Nano discarded the type option '{{type}}' because it cannot be negated."
         },
+        "filterLinterWarningExpandedMp4Option": {
+            "message": "Nano replaced the option 'mp4' with 'media,redirect=nano-noopmp4-1s'.",
+            "description": "Warning when 'mp4' is replaced"
+        },
         "filterLinterWarningDeprecatedMp4Option": {
-            "message": "The option 'mp4' is replaced with 'media,redirect=nano-noopmp4-1s'.\nThe use of the option 'mp4' is deprecated, write out the full options instead.",
-            "description": "Warning message to show when the option 'mp4' is used"
+            "message": "The use of the option 'mp4' is deprecated, write out the full options instead.",
+            "description": "Deprecation when 'mp4'"
         },
         "filterLinterWarningGenericblockIgnored": {
-            "message": "The option 'genericblock' is ignored because it is not yet supported.",
-            "description": "Warning message to show when the option 'genericblock' is ignored"
+            "message": "Nano discarded the option 'genericblock' because it is not yet supported.",
+            "description": "Warning when 'genericblock' discarded but not entire rule"
+        },
+        "filterLinterWarningRedirectNoType": {
+            "message": "Nano discarded the option 'redirect=...' because it requires a type option.",
+            "description": "Warning when 'redirect=' has no type"
+        },
+        "filterLinterWarningRedirectTooManyTypes": {
+            "message": "Nano discarded the option 'redirect=...' because it has too many type options.",
+            "description": "Warning when 'redirect=' has too many types"
+        },
+        "filterLinterWarningRedirectNoResourceToken": {
+            "message": "Nano discarded the option 'redirect=...' because it has no arguments.",
+            "description": "Warning when 'redirect=' has no arguments"
+        },
+        "filterLinterWarningRedirectNoSupportedType": {
+            "message": "Nano discarded the option 'redirect=...' because it has no supported type option.",
+            "description": "Warning when 'redirect=' has no supported type"
+        },
+        "filterLinterWarningRedirectNegatedDomain": {
+            "message": "Nano discarded an argument from the option 'domain=...' because negated domains cannot be used with the option 'redirect=...'.",
+            "description": "Warning when negated domain used with 'redirect='"
+        },
+        "filterLinterWarningRedirectNoValidDestinationDomain": {
+            "message": "Nano discarded the option 'redirect=...' because it has no valid destination domain.",
+            "description": "Warning when 'redirect=' has no destination"
+        },
+        "filterLinterWarningRedirectDoesNotMatchRegExp": {
+            // TODO 2017-12-28: Think of a better warning message
+            "message": "Nano discarded the option 'redirect=...' because this network rule does not match this regular expression: {{regexp}}",
+            "description": "Warning when 'redirect=' failed initial test"
         },
         // Network filtering errors
         "filterLinterDiscardedLocalhostHostEntry": {
             "message": "This host file entry is discarded because it is localhost declaration.",
-            "description": "Error message to show when localhost declaration of a host file is discarded"
+            "description": "Error when localhost declaration"
         },
         "filterLinterRejectedAdguardElementRemove": {
-            "message": "Element remove rules are not yet supported.",
-            "description": "Error message to show when an element remove rule is discarded because it is not yet implemented"
+            "message": "Element remove rules with Adguard syntax are not yet supported.",
+            "description": "Error when Adguard style element remove rule"
         },
         "filterLinterRejectedNegatedGenerichide": {
             "message": "The option 'generichide' cannot be negated.",
-            "description": "Error message to show when the option 'generichide' is negated"
+            "description": "Error when 'generichide' is negated"
         },
         "filterLinterRejectedRedirectInException": {
-            "message": "The option 'redirect=' cannot be used in exception rules.",
-            "description": "Error message to show when the option 'redirect=' is used in exception rule"
+            "message": "The option 'redirect=...' cannot be used in exception rules.",
+            "description": "Error when 'redirect=' used in exception"
         },
         "filterLinterRejectedBadDomainOptionArguments": {
-            "message": "The option 'domain=' is given invalid arguments.",
-            "description": "Error message to show when the option 'domain=' is given invalid arguments"
+            "message": "The option 'domain=...' has invalid arguments.",
+            "description": "Error when 'domain=' has invalid arguments"
         },
         "filterLinterRejectedBadCspOptionArguments": {
-            "message": "The option 'csp=' is given invalid arguments.",
-            "description": "Error message to show when the option 'csp=' is given invalid arguments"
+            "message": "The option 'csp=...' has invalid arguments.",
+            "description": "Error when 'csp=' has invalid arguments"
         },
         "filterLinterRejectedUnknownOption": {
             "message": "The option '{{option}}' is not recognized.",
@@ -248,20 +281,16 @@
         },
         "filterLinterRejectedOnlyGenericblock": {
             "message": "The option 'genericblock' is not yet supported.",
-            "description": "Error message to show when the option 'genericblock' is the only option"
+            "description": "Error when 'genericblock' used and entire rule discarded"
         },
         "filterLinterRejectedNetworkBadRegExp": {
             "message": "This network rule has regular expression syntax errors.",
-            "description": "Error message to show when a regular expression based network rule has syntax errors"
+            "description": "Error when network has regular expression syntax errors"
         },
         "filterLinterRejectedInterventionForSMed79": {
             // https://github.com/chrisaljoudi/uBlock/issues/1096
-            "message": "'||' may not be immediately followed by '^'.",
-            "description": "Error message to show when the bad filter from SMed79 is discarded"
-        },
-        "filterLinterRejectedRedirectionExplicitType": {
-            "message": "The option 'redirect=' requires one and only one explicit type declaration.",
-            "description": "Error message to show when the option 'redirect=' is accompanied with bad number of explicit types"
+            "message": "The domain anchor may not be immediately followed by '^'.",
+            "description": "Error when the bad filter from SMed79 is discarded"
         },
 
         // Tab name of hosts matrix

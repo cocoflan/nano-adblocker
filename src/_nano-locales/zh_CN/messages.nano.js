@@ -5,32 +5,32 @@
         // Dialog buttons
         "genericYes": {
             "message": "是",
-            "description": "The word yes, used in dialogs"
+            "description": "Button 'Yes' for dialogs"
         },
         "genericNo": {
             "message": "否",
-            "description": "The word no, used in dialogs"
+            "description": "Button 'No' for dialogs"
         },
         "genericOK": {
             "message": "确定",
-            "description": "The word OK, used in dialogs"
+            "description": "Button 'OK' for dialogs"
         },
         // Generic ialog messages
         "genericUnsavedChange": {
             "message": "您确定要离开这个标签么？未保存的更改将会丢失。",
-            "description": "A warning when the user is about to leave a tab without saving"
+            "description": "Unsaved change warning"
         },
         "genericFilterReadError": {
             "message": "# 未能读取数据，请刷新。",
-            "description": "Message to show when filter data could not be loaded"
+            "description": "Placeholder when filter data could not be loaded"
         },
         "genericDataSaveError": {
             "message": "未能保存数据，请重试。",
-            "description": "Message to show when changes could not be saved"
+            "description": "Error when changes could not be saved"
         },
         "genericNothingToExport": {
             "message": "没有任何数据需要导出。",
-            "description": "Message to show when the user clicked export to file button but there is nothing to export"
+            "description": "Error when nothing to export"
         },
 
         // New cloud UI
@@ -50,21 +50,21 @@
         // Dashboard dialog messages
         "dashboardMutexError": {
             "message": "未能获取互斥锁，您是否已经打开一个控制面板了？",
-            "description": "Message to show when mutex lock is held by another instance of the dashboard"
+            "description": "Error when mutex locked by another dashboard"
         },
 
         // Settings groups
         "settingGeneralGroup": {
             "message": "基本",
-            "description": "Settings tab general group name"
+            "description": "Group 'General' of settings tab"
         },
         "settingUserInterfaceGroup": {
             "message": "界面",
-            "description": "Settings tab user interface group name"
+            "description": "Group 'User interface' of settings tab"
         },
         "settingOtherGroup": {
             "message": "其他",
-            "description": "Settings tab other group name"
+            "description": "Group 'Other' of settings tab"
         },
         // Settings prompts
         "settingsDashboardAllowSelectionPrompt": {
@@ -82,19 +82,19 @@
         // Extra strings for new dashboard
         "settingDiskUsage": {
             "message": "占用空间： ",
-            "description": "Disk usage prompt"
+            "description": "English: Disk usage: "
         },
         "settingMebibyte": {
             "message": " MiB",
-            "description": "Symbol for mebibyte"
+            "description": "English: MiB"
         },
         "settingsLastBackedupFilePrompt": {
             "message": "上次备份文件名： ",
-            "description": "Last backed up file name prompt"
+            "description": "English: Last backed up file: "
         },
         "settingsLastRestoredFilePrompt": {
             "message": "上次恢复文件名： ",
-            "description": "Last restored file name prompt"
+            "description": "English: Last restored file: "
         },
 
         // The tab name of advanced settings
@@ -122,39 +122,39 @@
         },
         "1pResourcesPeriod": {
             "message": "。",
-            "description": "Period symbol"
+            "description": "English: ."
         },
         "1pFilterEditorHelp": {
-            "message": "Nano 规则编辑器是由 Ace 驱动的，大部分快捷键都一样。",
+            "message": "Nano 规则编辑器是由 Ace 驱动，大部分快捷键都一样。",
             "description": "Explain the similarity between Nano Filter Editor and Ace in terms of shortcut keys"
         },
 
         // Whitelist linter limit warning
         "whitelistLinterAborted": {
-            "message": "Nano 没有验证剩下的规则，因为已经有过多的错误。",
-            "description": "Warning message to show when the whitelist validator aborted because there are too many errors"
+            "message": "Nano 没有验证剩下的白名单，因为已经有过多的错误。",
+            "description": "Warning when too many errors"
         },
         "whitelistLinterTooManyWarnings": {
-            "message": "Nano 没有检查剩下的规则，因为已经有过多的警告。",
-            "description": "Warning message to show when Nano Whitelist Linter aborted because there are too many warnings"
+            "message": "Nano 没有检查剩下的白名单，因为已经有过多的警告。",
+            "description": "Warning when too many warnings"
         },
         // Whitelist linter error messages
         "whitelistLinterInvalidHostname": {
             "message": "这个主机名称无效。",
-            "description": "Error message to show when a hostname whitelist is not valid"
+            "description": "Error when hostname not valid"
         },
         "whitelistLinterInvalidRegExp": {
             "message": "这个正则表达式有语法错误。",
-            "description": "Error message to show when a regular expression whitelist has syntax errors"
+            "description": "Error when regular expression has syntax errors"
         },
         "whitelistLinterInvalidURL": {
             "message": "这个路径无效。",
-            "description": "Error message to show when a URL whitelist is not valid"
+            "description": "Error when a URL not valid"
         },
         // Whitelist linter warning messages
         "whitelistLinterSuspeciousRegExp": {
             "message": "这行被解析成了正则表达式，您确定这是正确的么？",
-            "description": "Warning message to show when a whitelist is parsed as a regular expression whitelist but it is unlikely to be the intention"
+            "description": "Warning when parsed as regular expression but is unlikely the intention of user"
         },
 
         // Tab name of hosts matrix
