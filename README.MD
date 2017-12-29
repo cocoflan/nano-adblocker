@@ -31,6 +31,10 @@ Not yet available
 
 ### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/1)\] Nano Filter Linter, neat and saves frustration
 
+Know exactly why your rule is misbehaving
+![Screenshot](https://i.imgur.com/zboYYEr.png)
+
+Get notified for common mistakes
 ![Screenshot](https://i.imgur.com/IkTaEQ3.png)
 
 Partially available since 1.0.0.11
