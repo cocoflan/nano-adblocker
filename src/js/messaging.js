@@ -980,8 +980,17 @@ var onMessage = function(request, sender, callback) {
         nano.nanoForceRecompile();
         break;
     
+    // Patch 2017-12-08: Add mutex lock for dashboard
     case 'obtainDashboardMutex':
         response = nano.getDashboardMutex(sender);
+        break;
+        
+    // Patch 2017-12-08: Show linter result in the editor
+    case 'fetchUserFilterLintingResult':
+        response = {
+            errors: nano.filterLinter.errors,
+            warnings: nano.filterLinter.warnings
+        };
         break;
 
     default:

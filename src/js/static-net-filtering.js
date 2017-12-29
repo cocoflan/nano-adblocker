@@ -1399,7 +1399,13 @@ FilterParser.prototype.toNormalizedType = {
        'subdocument': 'sub_frame',
     'xmlhttprequest': 'xmlhttprequest',
             'webrtc': 'unsupported',
-         'websocket': 'websocket'
+         'websocket': 'websocket',
+
+    // Patch 2017-12-28: Add convenience options mapping
+             'ghide': 'generichide',
+               'css': 'stylesheet',
+            'iframe': 'subdocument',
+               'xhr': 'xmlhttprequest'
 };
 
 /******************************************************************************/
@@ -1451,6 +1457,14 @@ FilterParser.prototype.parseTypeOption = function(raw, not) {
 
     // Non-discrete network types can't be negated.
     if ( (typeBit & this.allNetRequestTypeBits) === 0 ) {
+        // Patch 2017-12-27: Show an appropriate warning message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchWarning(
+                vAPI.i18n('filterLinterWarningDiscardedNonNegatableType')
+                    .replace('{{type}}', this.toNormalizedType[raw])
+            );
+        }
+        
         return;
     }
 
@@ -1500,8 +1514,7 @@ FilterParser.prototype.parseDomainOption = function(s) {
 
 /******************************************************************************/
 
-// Patch 2017-12-26: Accept compile flags for altering compiler behavior
-FilterParser.prototype.parseOptions = function(s, nanoCF) {
+FilterParser.prototype.parseOptions = function(s) {
     this.fopts = s;
     var opts = s.split(',');
     var opt, not;
@@ -1511,18 +1524,26 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
         if ( not ) {
             opt = opt.slice(1);
         }
-        if ( opt === 'third-party' ) {
+        // Patch 2017-12-28: Add convenience options mapping
+        if ( opt === 'third-party' || opt === '3p' ) {
             this.parsePartyOption(false, not);
             continue;
         }
         // https://issues.adblockplus.org/ticket/616
         // `generichide` concept already supported, just a matter of
         // adding support for the new keyword.
-        if ( opt === 'elemhide' || opt === 'generichide' ) {
+        // Patch 2017-12-28: Add convenience options mapping
+        if ( opt === 'elemhide' || opt === 'generichide' || opt === 'ghide' ) {
             if ( not === false ) {
                 this.parseTypeOption('generichide', false);
                 continue;
             }
+            
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedNegatedGenerichide'));
+            }
+            
             this.unsupported = true;
             break;
         }
@@ -1532,6 +1553,12 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
                 this.redirect = true;
                 continue;
             }
+            
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedRedirectInException'));
+            }
+            
             this.unsupported = true;
             break;
         }
@@ -1545,6 +1572,11 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
         if ( opt.startsWith('domain=') ) {
             this.domainOpt = this.parseDomainOption(opt.slice(7));
             if ( this.domainOpt === '' ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadDomainOptionArguments'));
+                }
+                
                 this.unsupported = true;
                 break;
             }
@@ -1554,7 +1586,8 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
             this.important = Important;
             continue;
         }
-        if ( opt === 'first-party' ) {
+        // Patch 2017-12-28: Add convenience options mapping
+        if ( opt === 'first-party' || opt === '1p' ) {
             this.parsePartyOption(true, not);
             continue;
         }
@@ -1563,6 +1596,11 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
                 this.parseTypeOption('data', not);
                 this.dataType = 'csp';
                 this.dataStr = opt.slice(4).trim();
+            } else {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadCspOptionArguments'));
+                }
             }
             continue;
         }
@@ -1573,7 +1611,25 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
             continue;
         }
         // Used by Adguard, purpose is unclear -- just ignore for now.
-        if ( opt === 'empty' ) {
+        // Patch 2017-12-28: This option in Adguard means a noop-redirect,
+        // not yet supported, discard the filter.
+        //if ( opt === 'empty' ) {
+        //    continue;
+        //}
+        // Patch 2017-12-28: Expand the option mp4 to media,redirect=nano-noopmp4-1s
+        if ( opt === 'mp4' ) {
+            // Patch 2017-12-28: Show an appropriate warning message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningExpandedMp4Option'));
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningDeprecatedMp4Option'));
+            }
+            
+            opts.push('media', 'redirect=nano-noopmp4-1s');
+            // Reflect changes
+            this.fopts = opts.join(',');
+            var pos = this.raw.lastIndexOf('$');
+            this.raw = this.raw.slice(0, pos + 1) + this.fopts;
+            
             continue;
         }
         // https://github.com/uBlockOrigin/uAssets/issues/192
@@ -1584,15 +1640,24 @@ FilterParser.prototype.parseOptions = function(s, nanoCF) {
             // all of them are already disabled with this flag
             // Things will break really badly anyway, no reason to keep
             // badfilter rules
-            if ( !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
+            if ( !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+                // No need to dispatch error to linter as this does not apply to
+                // first party rules
                 this.unsupported = true;
-                return this;
+                break;
             }
             
             this.badFilter = BadFilter;
             continue;
         }
         // Unrecognized filter option: ignore whole filter.
+        // Patch 2017-12-28: Show an appropriate warning message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(
+                vAPI.i18n('filterLinterRejectedUnknownOption')
+                    .replace('{{option}}', opt)
+            );
+        }
         this.unsupported = true;
         break;
     }
@@ -1697,8 +1762,7 @@ FilterParser.prototype.translate = function() {
 
 **/
 
-// Patch 2017-12-26: Accept compile flags for altering compiler behavior
-FilterParser.prototype.parse = function(raw, nanoCF) {
+FilterParser.prototype.parse = function(raw) {
     // important!
     this.reset();
 
@@ -1717,6 +1781,13 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
     if ( pos !== -1 ) {
         var c = s.charAt(pos + 1);
         if ( c === '#' || c === '@' ) {
+            // Notes 2017-12-27: Unless something went really wrong, I do not
+            // think this will ever happen
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterInternalErrorCosmeticFilterPassedThrough'));
+            }
+            
             console.error('static-net-filtering.js > unexpected cosmetic filters');
             this.elemHiding = true;
             return this;
@@ -1727,7 +1798,9 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
     // Important: this must be executed before parsing options
     if ( s.startsWith('@@') ) {
         // Patch 2017-12-26: Process discard third party whitelist compile flag
-        if ( !nanoCF.firstParty && nanoCF.strip3pWhitelist ) {
+        if ( !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+            // No need to dispatch error to linter as this does not apply to
+            // first party rules
             this.unsupported = true;
             return this;
         }
@@ -1746,19 +1819,33 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
             // https://github.com/gorhill/uBlock/issues/952
             //   Discard Adguard-specific `$$` filters.
             if ( s.indexOf('$$') !== -1 ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardElementRemove'));
+                }
+                
                 this.unsupported = true;
                 return this;
             }
-            // Patch 2017-12-23: Pass compile flags over
-            this.parseOptions(s.slice(pos + 1), nanoCF);
+            this.parseOptions(s.slice(pos + 1));
             // https://github.com/gorhill/uBlock/issues/2283
             //   Abort if type is only for unsupported types, otherwise
             //   toggle off `unsupported` bit.
             if ( this.types & this.unsupportedTypeBit ) {
                 this.types &= ~(this.unsupportedTypeBit | this.allNetRequestTypeBits);
                 if ( this.types === 0 ) {
+                    // Patch 2017-12-27: Show an appropriate error message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedOnlyGenericblock'));
+                    }
+                    
                     this.unsupported = true;
                     return this;
+                } else {
+                    // Patch 2017-12-27: Show an appropriate warning message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningGenericblockIgnored'));
+                    }
                 }
             }
             s = s.slice(0, pos);
@@ -1774,6 +1861,11 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
         // string -- this ensure reverse-lookup will work fine.
         this.f = normalizeRegexSource(this.f);
         if ( this.f === '' ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedNetworkBadRegExp'));
+            }
+            
             console.error(
                 "uBlock Origin> discarding bad regular expression-based network filter '%s': '%s'",
                 raw,
@@ -1803,6 +1895,11 @@ FilterParser.prototype.parse = function(raw, nanoCF) {
 
         // https://github.com/chrisaljoudi/uBlock/issues/1096
         if ( s.startsWith('^') ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedInterventionForSMed79'));
+            }
+            
             this.unsupported = true;
             return this;
         }
@@ -2114,19 +2211,19 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 
 /******************************************************************************/
 
-// Patch 2017-12-26: Accept compile flags for altering compiler behavior
-FilterContainer.prototype.compile = function(raw, writer, nanoCF) {
+FilterContainer.prototype.compile = function(raw, writer) {
     // ORDER OF TESTS IS IMPORTANT!
 
+    // TODO 2017-12-27: Unless I missed something real hard, I cannot think of
+    // a single situation where this test is meaningful
     // Ignore empty lines
     var s = raw.trim();
     if ( s.length === 0 ) {
         return false;
     }
 
-    // Patch 2017-12-26: Pass compile flags over
-    var parsed = this.filterParser.parse(s, nanoCF);
-
+    var parsed = this.filterParser.parse(s);
+    
     // Ignore element-hiding filters
     if ( parsed.elemHiding ) {
         return false;
@@ -2147,6 +2244,11 @@ FilterContainer.prototype.compile = function(raw, writer, nanoCF) {
         parsed.dataType === undefined &&
         this.compileHostnameOnlyFilter(parsed, writer)
     ) {
+        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        if ( nano.compileFlags.firstParty && parsed.redirect ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectPureHostname'));
+        }
+        
         return true;
     }
 
@@ -2247,6 +2349,12 @@ FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, writer
         type = parsed.types;
     if ( type === 0 ) {
         writer.push([ descBits, parsed.tokenHash, fdata ]);
+        
+        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        if ( nano.compileFlags.firstParty && parsed.redirect ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoType'));
+        }
+        
         return;
     }
     var bitOffset = 1;

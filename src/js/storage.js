@@ -736,28 +736,29 @@
     // of the filter, or special keys for user filters
     console.assert(typeof assetKey === 'string' && assetKey.length);
     
-    // Patch 2017-12-25: Add compile flags, all flags are computed here
-    var nanoCompileFlags = {
-        firstParty: assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey,
-        isPartial: assetKey === nano.nanoPartialUserFiltersKey,
-        
-        isPrivileged: nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1,
-        
-        keepSlowFilters: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing,
-        strip3pWhitelist: nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist
-    };
+    // Patch 2017-12-27: Update compile flags, the flags is a global object,
+    // filter compilation is synchronous, so this is safe
+    nano.compileFlags.firstParty = assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey;
+    nano.compileFlags.isPartial = assetKey === nano.nanoPartialUserFiltersKey;
+    nano.compileFlags.isPrivileged = nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1;
+    nano.compileFlags.keepSlowFilters = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing;
+    nano.compileFlags.strip3pWhitelist = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist;
     if (
-        nanoCompileFlags.firstParty &&
+        nano.compileFlags.firstParty &&
         nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoMakeUserFiltersPrivileged
     ) {
-        nanoCompileFlags.isPrivileged = true;
+        nano.compileFlags.isPrivileged = true;
     }
     
-    // Notes 2017-12-25: The linter is a global singleton
-    // TODO 2017-12-26: Initialize linter
-    
-    // For debugging only
-    //console.log('[Nano] Compile ::', assetKey, nanoCompileFlags);
+    // Notes 2017-12-25: The linter is a global singleton, filter compilation
+    // is synchronous, so this is safe
+    // Patch 2017-12-27: Initialize linter and synchronize line number
+    if ( assetKey === nano.userFiltersPath ) {
+        nano.filterLinter.reset();
+        nano.filterLinter.changed = true;
+    } else if (assetKey === nano.nanoPartialUserFiltersKey ) {
+        nano.filterLinter.lastLine++;
+    }
     
     var networkFilters = new this.CompiledLineWriter(),
         cosmeticFilters = new this.CompiledLineWriter();
@@ -780,17 +781,27 @@
         // rhill 2014-04-18: The trim is important here, as without it there
         // could be a lingering `\r` which would cause problems in the
         // following parsing code.
+        
+        // Patch 2017-12-27: Update linter line number
+        nano.filterLinter.lastLine++;
 
         if ( line.length === 0 ) { continue; }
 
         // Strip comments
         c = line.charAt(0);
-        if ( c === '!' || c === '[' ) { continue; }
+        // Patch 2017-12-27: Deprecate '[' for comment unless it is header
+        if ( c === '!' ) { continue; }
+        if ( c === '[' ) {
+            if ( nano.compileFlags.firstParty && nano.filterLinter.lastLine !== 0 ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedCommentBracket'));
+            }
+            
+            continue;
+        }
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
-        // Patch 2017-12-25: Pass compile flags over
-        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters, nanoCompileFlags) ) {
+        if ( cosmeticFilteringEngine.compile(line, cosmeticFilters) ) {
             continue;
         }
 
@@ -807,9 +818,14 @@
         //   ...#blah blah blah
         // because some ABP filters uses the `#` character (URL fragment)
         // Notes 2017-12-25: This is common in hosts files, however, it is bad
-        // style for other filters, a warning will be dispatched from linter
+        // style for other filters
         pos = line.indexOf('#');
         if ( pos !== -1 && reIsWhitespaceChar.test(line.charAt(pos - 1)) ) {
+            // Patch 2017-12-27: Deprecate inline comments for user filters
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedInlineComment'));
+            }
+            
             line = line.slice(0, pos).trim();
         }
 
@@ -820,16 +836,37 @@
             // Ignore hosts file redirect configuration
             // 127.0.0.1 localhost
             // 255.255.255.255 broadcasthost
-            if ( reIsLocalhostRedirect.test(line) ) { continue; }
+            if ( reIsLocalhostRedirect.test(line) ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
+                }
+                
+                continue;
+            }
             line = line.replace(reLocalIp, '').trim();
         }
 
-        if ( line.length === 0 ) { continue; }
+        if ( line.length === 0 ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
+            }
+        
+            continue;
+        }
 
-        // Patch 2017-12-25: Pass compile flags over
-        staticNetFilteringEngine.compile(line, networkFilters, nanoCompileFlags);
+        staticNetFilteringEngine.compile(line, networkFilters);
     }
 
+    // Patch 2017-12-27: Store linting result
+    if ( nano.compileFlags.firstParty ) {
+        nano.filterLinter.saveResult();
+    }
+    // Patch 2017-12-28: Must reset flags when finished as the compiler may be
+    // used for side tasks like validating epicker entry
+    nano.clearCompileFlags();
+    
     return networkFilters.toString() +
            '\n/* end of network - start of cosmetic */\n' +
            cosmeticFilters.toString();
@@ -842,7 +879,14 @@
 //   applying 1st-party filters.
 
 µBlock.applyCompiledFilters = function(rawText, firstparty) {
-    if ( rawText === '' ) { return; }
+    if ( rawText === '' ) {
+        // Patch 2017-12-28: Reset linter when applying empty user filters
+        if ( firstparty ) {
+            nano.filterLinter.clearResult();
+        }
+    
+        return;
+    }
     var separator = '\n/* end of network - start of cosmetic */\n',
         pos = rawText.indexOf(separator),
         reader = new this.CompiledLineReader(rawText.slice(0, pos));
