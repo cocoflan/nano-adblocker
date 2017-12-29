@@ -71,12 +71,12 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Options
                 {
                     token: 'invalid.illegal',
-                    regex: /\$(?!.+?\$),/,
+                    regex: /\$(?!.*?(?:\/|\$)),/,
                     next: 'options'
                 },
                 {
                     token: 'keyword.control',
-                    regex: /\$(?!.+?\$)/,
+                    regex: /\$(?!.*?(?:\/|\$))/,
                     next: 'options'
                 },
                 // Domains (default)
@@ -199,28 +199,23 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Modifiers
                 {
                     token: 'keyword.control',
-                    regex: /document|~?first-party|~?third-party|important|badfilter/
+                    regex: /document|~?(?:first-party|3p|third-party|1p)|important|badfilter/
                 },
                 // Actions
                 {
                     token: 'variable.other',
-                    regex: /popup|popunder|generichide|inline-script/
+                    regex: /elemhide|generichide|inline-font|inline-script|popunder|popup|ghide/
                 },
                 // Types
                 {
-                    // Compatibility layer
-                    token: 'variable.parameter',
-                    regex: /beacon|ping|elemhide|~?object-subrequest/
-                },
-                {
                     // Resource type
                     token: 'variable.parameter',
-                    regex: /~?(?:font|image|media|object|script|stylesheet|subdocument|xmlhttprequest)/
+                    regex: /~?(?:font|image|media|object|object-subrequest|script|stylesheet|subdocument|xmlhttprequest|css|iframe|xhr|mp4)/
                 },
                 {
                     // Special types
                     token: 'variable.parameter',
-                    regex: /websocket|webrtc|data|other/
+                    regex: /beacon|data|other|ping|webrtc|websocket/
                 },
                 // Redirect
                 {
