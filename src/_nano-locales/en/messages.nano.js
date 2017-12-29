@@ -160,7 +160,7 @@
         // Filter linter limit warnings
         "filterLinterTooManyErrors": {
             "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
-            "description": "Warning when too many errors"
+            "description": "Error when too many errors"
         },
         "filterLinterTooManyWarnings": {
             "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",
@@ -261,7 +261,7 @@
         "filterLinterWarningRedirectDoesNotMatchRegExp": {
             // TODO 2017-12-28: Think of a better warning message
             "message": "Nano discarded the option 'redirect=...' because this network rule does not match this regular expression: {{regexp}}",
-            "description": "Warning when 'redirect=' failed initial test"
+            "description": "Warning when 'redirect=' failed initial test, use '{{regexp}}' to denote the tester if required"
         },
         // Network filtering errors
         "filterLinterDiscardedLocalhostHostEntry": {
@@ -273,7 +273,7 @@
             "description": "Error when Adguard style element remove rule"
         },
         "filterLinterRejectedNegatedGenerichide": {
-            "message": "The option 'generichide' cannot be negated.",
+            "message": "The options 'generichide', 'ghide', and 'elemhide' cannot be negated.",
             "description": "Error when 'generichide' is negated"
         },
         "filterLinterRejectedRedirectInException": {
