@@ -752,13 +752,13 @@
     
     // Notes 2017-12-25: The linter is a global singleton, filter compilation
     // is synchronous, so this is safe
-    // Patch 2017-12-27: Initialize linter
+    // Patch 2017-12-27: Initialize linter and synchronize line number
     if ( assetKey === nano.userFiltersPath ) {
         nano.filterLinter.reset();
         nano.filterLinter.changed = true;
+    } else if (assetKey === nano.nanoPartialUserFiltersKey ) {
+        nano.filterLinter.lastLine++;
     }
-    // TODO 2017-12-27: See what need to be done to synchronized filter fragment
-    // line number
     
     var networkFilters = new this.CompiledLineWriter(),
         cosmeticFilters = new this.CompiledLineWriter();
@@ -786,11 +786,7 @@
         nano.filterLinter.lastLine++;
 
         if ( line.length === 0 ) { continue; }
-        
-        // Patch 2017-12-27: Save last meaningful line for linting filter
-        // fragment in the future
-        nano.filterLinter.lastMeaningfulLine = nano.filterLinter.lastLine;
-        
+
         // Strip comments
         c = line.charAt(0);
         // Patch 2017-12-27: Deprecate '[' for comment unless it is header

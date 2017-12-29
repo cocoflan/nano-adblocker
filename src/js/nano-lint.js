@@ -96,7 +96,6 @@ nano.FilterLinter.prototype.reset = function() {
     // The first line is 0, when resetting, line number must be -1 so the first
     // line will have number 0
     this.lastLine = -1;
-    this.lastMeaningfulLine = -1;
 };
 
 /******************************************************************************/
@@ -107,8 +106,7 @@ nano.FilterLinter.prototype.saveResult = function() {
         warnings: this.warnings,
         errors: this.errors,
         
-        lastLine: this.lastLine,
-        lastMeaningfulLine: this.lastMeaningfulLine
+        lastLine: this.lastLine
     };
     var entry = {};
     entry[this.cachedResultKey] = JSON.stringify(payload);
@@ -154,15 +152,10 @@ nano.FilterLinter.prototype.restoreResult = function() {
         if ( typeof result.lastLine === 'number' ) {
             that.lastLine = result.lastLine;
         }
-        if ( typeof result.lastMeaningfulLine === 'number' ) {
-            that.lastMeaningfulLine = result.lastMeaningfulLine;
-        }
     };
     
     vAPI.cacheStorage.get(this.cachedResultKey, onResultLoaded);
 };
-// TODO 2017-12-27: When the user filters is set to nothing is the filter
-// recompiled? This function may or may not be needed
 nano.FilterLinter.prototype.clearResult = function() {
     this.reset();
     vAPI.cacheStorage.remove(this.cachedResultKey);
