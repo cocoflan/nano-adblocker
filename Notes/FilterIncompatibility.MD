@@ -33,7 +33,8 @@ Nano Adblocker will replace the option `mp4` with `media,redirect=nano-noopmp4-1
 This option should not be negated, however, Nano Adblocker will treat `~mp4` to be the same as `mp4`. 
 
 This option is from Adguard and means redirect MP4 requests to a blank MP4 file, Nano Adblocker will instead redirect media requests 
-to a blank MP4 file. Keep in mind that not all media requests are MP4 requests and not all MP4 requests are media requests. 
+to a blank MP4 file. Keep in mind that not all media requests are MP4 requests and not all MP4 requests are media requests. Because 
+of this difference, **this option may change in the future without notice**. 
 
 A deprecation warning will be dispatched when this option is used in Nano Adblocker. 
 
