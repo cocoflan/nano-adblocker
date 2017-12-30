@@ -350,6 +350,12 @@ RedirectEngine.prototype.supportedTypes = (function() {
     types.stylesheet = 'stylesheet';
     types.subdocument = 'sub_frame';
     types.xmlhttprequest = 'xmlhttprequest';
+    
+    // Patch 2017-12-30: Add mapping for convenience options
+    types.css = 'stylesheet';
+    types.iframe = 'sub_frame';
+    types.xhr = 'xmlhttprequest';
+
     return types;
 })();
 
