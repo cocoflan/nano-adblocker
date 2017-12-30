@@ -24,6 +24,8 @@ iframe -> subdocument
 
 When any of these convenience options are used, uBlock Origin will discard the filter. 
 
+If any of the mapped option gets another meaning in uBlock Origin, **this mapping will change without notice**. 
+
 ## The Option `mp4`
 
 Nano Adblocker will replace the option `mp4` with `media,redirect=nano-noopmp4-1s`, uBlock Origin will instead discard the filter. 
