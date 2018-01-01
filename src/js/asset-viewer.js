@@ -54,7 +54,7 @@ var onLineWrapSettingsReceived = function(lineWrap) {
     vAPI.messaging.send(
         'default',
         {
-            what : 'getAssetContent',
+            what: 'getAssetContent',
             url: decodeURIComponent(matches[1])
         },
         onAssetContentReceived
