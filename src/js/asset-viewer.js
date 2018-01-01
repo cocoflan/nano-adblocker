@@ -30,7 +30,6 @@
 /******************************************************************************/
 
 var onAssetContentReceived = function(details) {
-    nanoIDE.init('content', true, true);
     if ( details && details.content ) {
         nanoIDE.setValueFocus(details.content, -1);
     } else {
@@ -42,19 +41,37 @@ var onAssetContentReceived = function(details) {
 
 /******************************************************************************/
 
-var q = window.location.search;
-var matches = q.match(/^\?url=([^&]+)/);
-if ( !matches || matches.length !== 2 ) {
-    return;
-}
+// Patch 2018-01-01: Read line wrap settings
+var onLineWrapSettingsReceived = function(lineWrap) {
+    nanoIDE.setLineWrap(lineWrap === true);
+    
+    var q = window.location.search;
+    var matches = q.match(/^\?url=([^&]+)/);
+    if ( !matches || matches.length !== 2 ) {
+        return;
+    }
 
+    vAPI.messaging.send(
+        'default',
+        {
+            what : 'getAssetContent',
+            url: decodeURIComponent(matches[1])
+        },
+        onAssetContentReceived
+    );
+};
+
+/******************************************************************************/
+
+// Patch 2018-01-01: Read line wrap settings
+nanoIDE.init('content', true, true);
 vAPI.messaging.send(
-    'default',
+    'dashboard',
     {
-        what : 'getAssetContent',
-        url: decodeURIComponent(matches[1])
+        what: 'userSettings',
+        name: 'nanoViewerWordSoftWrap'
     },
-    onAssetContentReceived
+    onLineWrapSettingsReceived
 );
 
 /******************************************************************************/

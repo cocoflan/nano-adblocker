@@ -83,6 +83,21 @@ function renderUserFilters(first) {
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);
 }
+// Patch 2018-01-01: Read line wrap settings
+function loadLineWrapSettings() {
+    var onLoad = function(lineWrap) {
+        nanoIDE.setLineWrap(lineWrap === true);
+        renderUserFilters(true);
+    };
+    vAPI.messaging.send(
+        'dashboard',
+        {
+            what: 'userSettings',
+            name: 'nanoEditorWordSoftWrap'
+        },
+        onLoad
+    );
+}
 
 /******************************************************************************/
 
@@ -226,7 +241,8 @@ uDom('#userFiltersApply').on('click', applyChanges);
 uDom('#userFiltersRevert').on('click', revertChanges);
 editor.session.on('change', userFiltersChanged);
 
-renderUserFilters(true);
+// Patch 2018-01-01: Read line wrap settings
+loadLineWrapSettings();
 
 /******************************************************************************/
 
