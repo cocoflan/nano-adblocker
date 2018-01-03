@@ -651,6 +651,8 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 vAPI.setIcon = (function() {
     var browserAction = chrome.browserAction,
         titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
+
+    // Patch 2017-12-08: Replace icons
     var iconPaths = [
         {
             '128': 'img/128_off.png'
