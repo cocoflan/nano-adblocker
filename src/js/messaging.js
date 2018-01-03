@@ -791,7 +791,8 @@ var restoreUserData = function(request) {
 var resetUserData = function() {
     vAPI.cacheStorage.clear();
     vAPI.storage.clear();
-    vAPI.localStorage.removeItem('hiddenSettings');
+    // Patch 2017-12-12: Completely clear local storage as well
+    vAPI.localStorage.clear();
 
     // Keep global counts, people can become quite attached to numbers
     µb.saveLocalSettings();
@@ -937,8 +938,12 @@ var onMessage = function(request, sender, callback) {
         µb.assets.purge(request.assetKey);
         µb.assets.remove('compiled/' + request.assetKey);
         // https://github.com/gorhill/uBlock/pull/2314#issuecomment-278716960
-        if ( request.assetKey === 'ublock-filters' ) {
+        if ( request.assetKey.startsWith('ublock-') ) {
             µb.assets.purge('ublock-resources');
+        }
+        // Patch 2017-12-09: Do the same thing for Nano filters
+        if ( request.assetKey.startsWith('nano-') ) {
+            nano.assets.purge('nano-resources');
         }
         break;
 
@@ -982,6 +987,24 @@ var onMessage = function(request, sender, callback) {
 
     case 'writeHiddenSettings':
         µb.hiddenSettingsFromString(request.content);
+        break;
+    
+    // Patch 2017-12-26: Add force recompile to advanced settings dashboard
+    case 'hiddenInvoke_nanoForceRecompile':
+        nano.nanoForceRecompile();
+        break;
+    
+    // Patch 2017-12-08: Add mutex lock for dashboard
+    case 'obtainDashboardMutex':
+        response = nano.getDashboardMutex(sender);
+        break;
+        
+    // Patch 2017-12-08: Show linter result in the editor
+    case 'fetchUserFilterLintingResult':
+        response = {
+            errors: nano.filterLinter.errors,
+            warnings: nano.filterLinter.warnings
+        };
         break;
 
     default:

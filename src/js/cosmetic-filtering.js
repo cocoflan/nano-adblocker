@@ -544,7 +544,6 @@ FilterContainer.prototype.freeze = function() {
     this.frozen = true;
 };
 
-
 /******************************************************************************/
 
 // https://github.com/gorhill/uBlock/issues/1668
@@ -643,7 +642,14 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
 
     if ( type === 0x23 /* '#' */ ) {
         key = this.keyFromSelector(selector);
-        if ( key === undefined ) { return; }
+        if ( key === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedCosmeticBadIdSelector'));
+            }
+            
+            return;
+        }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
         // selector falls into that category.
@@ -660,7 +666,14 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
 
     if ( type === 0x2E /* '.' */ ) {
         key = this.keyFromSelector(selector);
-        if ( key === undefined ) { return; }
+        if ( key === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedCosmeticBadClassSelector'));
+            }
+            
+            return;
+        }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
         // selector falls into that category.

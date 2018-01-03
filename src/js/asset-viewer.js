@@ -30,24 +30,54 @@
 /******************************************************************************/
 
 var onAssetContentReceived = function(details) {
-    uDom('#content').text(details && (details.content || ''));
+    if ( details && details.content ) {
+        if ( !details.content.endsWith('\n') ) {
+            details.content += '\n';
+        }
+        nanoIDE.setValueFocus(details.content, -1);
+    } else {
+        nanoIDE.setValueFocus('', -1);
+        nanoIDE.editor.session.setAnnotations([{
+            row: 0,
+            type: 'error',
+            text: vAPI.i18n('genericFilterReadError')
+        }]);
+    }
 };
 
 /******************************************************************************/
 
-var q = window.location.search;
-var matches = q.match(/^\?url=([^&]+)/);
-if ( !matches || matches.length !== 2 ) {
-    return;
-}
+// Patch 2018-01-01: Read line wrap settings
+var onLineWrapSettingsReceived = function(lineWrap) {
+    nanoIDE.setLineWrap(lineWrap === true);
+    
+    var q = window.location.search;
+    var matches = q.match(/^\?url=([^&]+)/);
+    if ( !matches || matches.length !== 2 ) {
+        return;
+    }
 
+    vAPI.messaging.send(
+        'default',
+        {
+            what: 'getAssetContent',
+            url: decodeURIComponent(matches[1])
+        },
+        onAssetContentReceived
+    );
+};
+
+/******************************************************************************/
+
+// Patch 2018-01-01: Read line wrap settings
+nanoIDE.init('content', true, true);
 vAPI.messaging.send(
-    'default',
+    'dashboard',
     {
-        what : 'getAssetContent',
-        url: decodeURIComponent(matches[1])
+        what: 'userSettings',
+        name: 'nanoViewerWordSoftWrap'
     },
-    onAssetContentReceived
+    onLineWrapSettingsReceived
 );
 
 /******************************************************************************/

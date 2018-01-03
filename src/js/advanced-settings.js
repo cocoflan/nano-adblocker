@@ -103,9 +103,22 @@ var applyChanges = function() {
 
 /******************************************************************************/
 
+// Patch 2017-12-26: Add force recompile to advanced settings dashboard
+var nanoForceRecompile = function() {
+    messaging.send(
+        'dashboard',
+        {
+            what: 'hiddenInvoke_nanoForceRecompile'
+        }
+    );
+};
+
+/******************************************************************************/
+
 // Handle user interaction
 uDom('#advancedSettings').on('input', advancedSettingsChanged);
 uDom('#advancedSettingsApply').on('click', applyChanges);
+uDom('#Invokable_nanoForceRecompile').on('click', nanoForceRecompile);
 
 renderAdvancedSettings();
 
