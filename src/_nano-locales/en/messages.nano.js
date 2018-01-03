@@ -15,7 +15,7 @@
             "message": "OK",
             "description": "Button 'OK' for dialogs"
         },
-        // Generic ialog messages
+        // Generic messages
         "genericUnsavedChange": {
             "message": "Do you want to leave this tab? Changes you made will not be saved.",
             "description": "Unsaved change warning"

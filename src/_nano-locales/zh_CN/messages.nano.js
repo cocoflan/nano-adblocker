@@ -15,7 +15,7 @@
             "message": "确定",
             "description": "Button 'OK' for dialogs"
         },
-        // Generic ialog messages
+        // Generic messages
         "genericUnsavedChange": {
             "message": "您确定要离开这个标签么？未保存的更改将会丢失。",
             "description": "Unsaved change warning"
