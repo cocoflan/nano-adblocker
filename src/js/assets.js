@@ -53,11 +53,10 @@ api.removeObserver = function(observer) {
 };
 
 var fireNotification = function(topic, details) {
-    var result;
+    var result, r;
     for ( var i = 0; i < observers.length; i++ ) {
-        if ( observers[i](topic, details) === false ) {
-            result = false;
-        }
+        r = observers[i](topic, details);
+        if ( r !== undefined ) { result = r; }
     }
     return result;
 };
@@ -191,22 +190,22 @@ api.fetchFilterList = function(mainlistURL, onLoad, onError) {
         if ( isSublist ) { content.push('\n! ' + '>>>>>>>> ' + details.url); }
         content.push(details.content.trim());
         if ( isSublist ) { content.push('! <<<<<<<< ' + details.url); }
-
-        if ( parsedMainURL !== undefined ) {
+        if (
+            parsedMainURL !== undefined &&
+            parsedMainURL.pathname.length > 0
+        ) {
             var reInclude = /^!#include +(\S+)/gm,
+                match, subURL;
+            for (;;) {
                 match = reInclude.exec(details.content);
-            while ( match !== null ) {
-                var parsedSubURL = toParsedURL(match[1]);
-                if ( parsedSubURL === undefined ) {
-                    parsedSubURL = toParsedURL(
-                        parsedMainURL.href.replace(/[^/?]+(?:\?.*)?$/, match[1])
-                    );
-                    if ( parsedSubURL === undefined ) { continue; }
-                }
-                if ( parsedSubURL.origin !== parsedMainURL.origin ) { continue; }
-                if ( loadedSublistURLs.has(parsedSubURL.href) ) { continue; }
-                pendingSublistURLs.add(parsedSubURL.href);
-                match = reInclude.exec(details.content);
+                if ( match === null ) { break; }
+                if ( toParsedURL(match[1]) !== undefined ) { continue; }
+                if ( match[1].indexOf('..') !== -1 ) { continue; }
+                subURL =
+                    parsedMainURL.origin +
+                    parsedMainURL.pathname.replace(/[^/]+$/, match[1]);
+                if ( loadedSublistURLs.has(subURL) ) { continue; }
+                pendingSublistURLs.add(subURL);
             }
         }
 
@@ -957,7 +956,7 @@ var updateNext = function() {
                 fireNotification(
                     'before-asset-updated',
                     { assetKey: assetKey,  type: assetEntry.content }
-                ) !== false
+                ) === true
             ) {
                 return assetKey;
             }
@@ -1014,7 +1013,9 @@ var updateDone = function() {
 
 api.updateStart = function(details) {
     var oldUpdateDelay = updaterAssetDelay,
-        newUpdateDelay = details.delay || updaterAssetDelayDefault;
+        newUpdateDelay = typeof details.delay === 'number' ?
+            details.delay :
+            updaterAssetDelayDefault;
     updaterAssetDelay = Math.min(oldUpdateDelay, newUpdateDelay);
     if ( updaterStatus !== undefined ) {
         if ( newUpdateDelay < oldUpdateDelay ) {
