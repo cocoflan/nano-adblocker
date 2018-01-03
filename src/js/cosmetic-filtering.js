@@ -634,6 +634,9 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
     //   ##.foo:matches-css-after(...)
     //   ##.foo:matches-css-before(...)
     //   ##:xpath(...)
+    // Notes 2017-12-26: If we are to keep slow filters, we cannot simply mark		
+    // the filter as valid here, as assumptions made by following code will no		
+    // longer be valid
     if ( this.reNeedHostname.test(selector) ) { return; }
 
     var selector = parsed.suffix,

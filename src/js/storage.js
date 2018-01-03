@@ -179,6 +179,7 @@
                 // Patch 2017-12-16: Fix potential race condition on slow devices
                 //console.log(nano.selectedFilterLists);
                 nano.selectedFilterListsLoaded = true;
+                
                 callback();
             });
             return;
@@ -188,8 +189,10 @@
         vAPI.storage.remove('remoteBlacklists');
         µb.selectedFilterLists = bin.selectedFilterLists;
         
+        // Patch 2017-12-16: Fix potential race condition on slow devices
         //console.log(nano.selectedFilterLists);
         nano.selectedFilterListsLoaded = true;
+        
         callback();
     });
 };
