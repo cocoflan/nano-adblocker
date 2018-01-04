@@ -2,8 +2,7 @@
 
 Just another adblocker
 
-Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock) and will stay in sync with latest features of uBlock 
-Origin. 
+Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock). 
 
 Please open an issue if there is something you want us to know. 
 
