@@ -185,6 +185,10 @@
             "message": "'##script:contains(...)' is deprecated, use '##^script:has-text(...)' instead.",
             "description": "Deprecation when 'script:contains' is used"
         },
+        "filterLinterDiscardedScriptSnippetDoubleException": {
+            "message": "Nano discarded an argument from the option 'domain=...' because negated domains cannot be used in a script snippet exception rule.",
+            "description": "Warning when negated domain used with script snippet exception"
+        },
         // Extended filtering errors
         "filterLinterRejectedAdguardJSInjection": {
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
@@ -194,9 +198,13 @@
             "message": "This CSS injection rule has syntax errors.",
             "description": "Error when CSS injection has syntax errors"
         },
+        "filterLinterRejectedScriptSnippetGeneric": {
+            "message": "Script snippet injection rules cannot be generic.",
+            "description": "Error when script snippet is generic"
+        },
         "filterLinterRejectedCosmeticTooExpensive": {
             "message": "This cosmetic or script snippet rule is too expensive to be applied generically, it must be limited to specific domains.",
-            "description": "Error when cosmetic or script snippet has no domain"
+            "description": "Error when expensive cosmetic is generic"
         },
         "filterLinterRejectedCosmeticBadIdSelector": {
             "message": "This cosmetic rule contains an invalid id selector.",

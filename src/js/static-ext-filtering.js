@@ -625,6 +625,8 @@
             // Not a known extended filter.
             // Notes 2018-01-03: This is passed over to network filter parser,
             // no linting needed here
+            // TODO 2018-01-03: This can cause unintended behavior
+            // https://github.com/NanoAdblocker/NanoCore/issues/77
             if ( cCode !== 0x24 /* '$' */ && cCode !== 0x3F /* '?' */ ) {
                 return false;
             }
