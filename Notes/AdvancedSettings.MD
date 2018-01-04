@@ -63,8 +63,11 @@ Setting this toggle to `true` **will definitely** break *many* websites and you 
 
 ---
 
-### `_nanoMakeUserFiltersPrivileged` toggleable `[unavailable]`
+### `_nanoMakeUserFiltersPrivileged` toggleable
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will treat user filters as a privileged filter. What privileged filters can do is not yet decided. 
+When set to `true`, Nano Adblocker will treat user filters as a privileged filter. 
+
+Privileged filters have access to experimental syntax features **if there are any**. Nano Adblocker's own filters are always 
+privileged. 
