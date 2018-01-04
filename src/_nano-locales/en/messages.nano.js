@@ -177,30 +177,44 @@
         },
         // Filter linter special errors
         "filterLinterInternalErrorCosmeticFilterPassedThrough": {
-            "message": "A cosmetic filter passed through the cosmetic filter compiler, please file a bug report.",
-            "description": "Internal error when cosmetic filter compiler is bugged"
+            "message": "This rule is rejected for now. More information: https://github.com/NanoAdblocker/NanoCore/issues/77",
+            "description": "https://github.com/NanoAdblocker/NanoCore/issues/77"
         },
         // Extended filtering warnings
         "filterLinterDeprecatedScriptContains": {
             "message": "'##script:contains(...)' is deprecated, use '##^script:has-text(...)' instead.",
             "description": "Deprecation when 'script:contains' is used"
         },
-        "filterLinterDiscardedScriptSnippetDoubleException": {
-            "message": "Nano discarded an argument from the option 'domain=...' because negated domains cannot be used in a script snippet exception rule.",
+        "filterLinterWarningScriptSnippetDoubleException": {
+            "message": "Nano discarded a negated domain because it cannot be used in a script snippet exception rule.",
             "description": "Warning when negated domain used with script snippet exception"
+        },
+        "filterLinterWarningConvertedToException": {
+            "message": "Nano converted this rule to an exception rule because it only contain negated domains.",
+            "description": "Warning when a rule is convered to exception because all negated domains"
+        },
+        "filterLinterWarningNegatedHTMLFiltering": {
+            "message": "Negated domain is not yet supported for HTML filtering.",
+            "description": "Warning when negated domain used with HTML filtering"
         },
         // Extended filtering errors
         "filterLinterRejectedAdguardJSInjection": {
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
             "description": "Error when raw JavaScript injection"
         },
-        "filterLinterRejectedStyleInjection": {
-            "message": "This CSS injection rule has syntax errors.",
-            "description": "Error when CSS injection has syntax errors"
-        },
         "filterLinterRejectedScriptSnippetGeneric": {
             "message": "Script snippet injection rules cannot be generic.",
             "description": "Error when script snippet is generic"
+        },
+        "filterLinterRejectedBadSelector": {
+            "message": "The selector in this rule has syntax errors.",
+            "description": "Error when selector has syntax errors"
+        },
+
+
+        "filterLinterRejectedStyleInjection": {
+            "message": "This CSS injection rule has syntax errors.",
+            "description": "Error when CSS injection has syntax errors"
         },
         "filterLinterRejectedCosmeticTooExpensive": {
             "message": "This cosmetic or script snippet rule is too expensive to be applied generically, it must be limited to specific domains.",
@@ -226,6 +240,9 @@
             "message": "This procedural cosmetic rule has syntax errors.",
             "description": "Error when procedural cosmetic has syntax errors"
         },
+
+
+
         // Network filtering warnings
         "filterLinterWarningDiscardedNonNegatableType": {
             "message": "Nano discarded the type option '{{type}}' because it cannot be negated.",
@@ -260,7 +277,7 @@
             "description": "Warning when 'redirect=' has no supported type"
         },
         "filterLinterWarningRedirectNegatedDomain": {
-            "message": "Nano discarded an argument from the option 'domain=...' because negated domains cannot be used with the option 'redirect=...'.",
+            "message": "Nano discarded a negated domain because it cannot be used with the option 'redirect=...'.",
             "description": "Warning when negated domain used with 'redirect='"
         },
         "filterLinterWarningRedirectNoValidDestinationDomain": {
@@ -316,7 +333,7 @@
         "filterLinterRejectedInterventionForSMed79": {
             // https://github.com/chrisaljoudi/uBlock/issues/1096
             "message": "The domain anchor may not be immediately followed by '^'.",
-            "description": "Error when the bad filter from SMed79 is discarded"
+            "description": "Error when the bad rule from SMed79 is discarded"
         },
 
         // Tab name of hosts matrix

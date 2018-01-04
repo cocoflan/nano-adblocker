@@ -149,7 +149,7 @@
                 if ( negated ) {
                     // Patch 2018-01-03: Show an appropriate warning message
                     if ( nano.compileFlags.firstParty ) {
-                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDiscardedScriptSnippetDoubleException'));
+                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningScriptSnippetDoubleException'));
                     }
                     
                     continue;
