@@ -180,7 +180,12 @@
             "message": "A cosmetic filter passed through the cosmetic filter compiler, please file a bug report.",
             "description": "Internal error when cosmetic filter compiler is bugged"
         },
-        // Cosmetic filtering errors
+        // Extended filtering warnings
+        "filterLinterDeprecatedScriptContains": {
+            "message": "'##script:contains(...)' is deprecated, use '##^script:has-text(...)' instead.",
+            "description": "Deprecation when 'script:contains' is used"
+        },
+        // Extended filtering errors
         "filterLinterRejectedAdguardJSInjection": {
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
             "description": "Error when raw JavaScript injection"

@@ -597,6 +597,9 @@
         if ( (rpos - lpos) > 3 ) { return false; }
 
         // Extract the selector.
+        // TODO 2018-01-03: When suffix has length 0, it should not be passed
+        // though
+        // https://github.com/NanoAdblocker/NanoCore/issues/77
         var suffix = raw.slice(rpos + 1).trim();
         if ( suffix.length === 0 ) { return false; }
         parsed.suffix = suffix;
@@ -611,21 +614,44 @@
         var cCode = raw.charCodeAt(rpos - 1);
         if ( cCode !== 0x23 /* '#' */ && cCode !== 0x40 /* '@' */ ) {
             // Adguard's scriptlet injection: not supported.
-            if ( cCode === 0x25 /* '%' */ ) { return true; }
+            if ( cCode === 0x25 /* '%' */ ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardJSInjection'));
+                }
+
+                return true;
+            }
             // Not a known extended filter.
+            // Notes 2018-01-03: This is passed over to network filter parser,
+            // no linting needed here
             if ( cCode !== 0x24 /* '$' */ && cCode !== 0x3F /* '?' */ ) {
                 return false;
             }
             // Adguard's style injection: translate to uBO's format.
             if ( cCode === 0x24 /* '$' */ ) {
                 suffix = translateAdguardCSSInjectionFilter(suffix);
-                if ( suffix === '' ) { return true; }
+                if ( suffix === '' ) {
+                    // Patch 2017-12-27: Show an appropriate error message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedStyleInjection'));
+                    }
+                    
+                    return true;
+                }
                 parsed.suffix = suffix;
             }
         }
 
         // Exception filter?
         parsed.exception = raw.charCodeAt(lpos + 1) === 0x40 /* '@' */;
+        
+        // Patch 2017-12-26: Process discard third party whitelist compile flag
+        if ( parsed.exception && !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+            // No need to dispatch error to linter as this does not apply to
+            // first party rules
+            return true;
+        }
 
         // Extract the hostname(s), punycode if required.
         if ( lpos === 0 ) {
@@ -646,6 +672,11 @@
             }
             // Script tag filtering: courtesy-conversion to HTML filtering.
             if ( suffix.startsWith('script:contains') ) {
+                // Patch 2018-01-03: Deprecate the use of '##script:contains'
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedScriptContains'));
+                }
+                
                 console.info(
                     'uBO: ##script:contains(...) is deprecated, ' +
                     'converting to ##^script:has-text(...)'
