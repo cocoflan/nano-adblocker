@@ -641,6 +641,8 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
     if ( this.reNeedHostname.test(selector) ) {
         // Patch 2018-01-03: show an appropriate error or warning message
         if ( nano.compileFlags.firstParty ) {
+            // IMPORTANT! Must change this if arguments signature changed by
+            // gorhill
             if ( arguments.length === 3 ) {
                 // Applying generically, part of the filter is already accepted
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningConvertedToException'));

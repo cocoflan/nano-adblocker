@@ -1781,9 +1781,8 @@ FilterParser.prototype.parse = function(raw) {
     if ( pos !== -1 ) {
         var c = s.charAt(pos + 1);
         if ( c === '#' || c === '@' ) {
-            // Notes 2017-12-27: Unless something went really wrong, I do not
-            // think this will ever happen
-            // Patch 2017-12-27: Show an appropriate error message
+            // TODO 2018-01-03: Fix this
+            // https://github.com/NanoAdblocker/NanoCore/issues/77
             if ( nano.compileFlags.firstParty ) {
                 nano.filterLinter.dispatchError(vAPI.i18n('filterLinterInternalErrorCosmeticFilterPassedThrough'));
             }
