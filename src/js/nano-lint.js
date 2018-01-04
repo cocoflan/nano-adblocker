@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     Nano Adblocker - Just another adblocker
-    Copyright (C) 2017 Nano Adblocker contributors
+    Copyright (C) 2017-2018 Nano Adblocker contributors
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -201,15 +201,6 @@ nano.FilterLinter.prototype.dispatchWarning = function(message) {
         type: 'warning',
         text: message
     });
-};
-
-/******************************************************************************/
-
-nano.FilterLinter.prototype.lintCosmetic = function(/* TODO */) {
-    // TODO
-};
-nano.FilterLinter.prototype.lintNetwork = function(/* TODO */) {
-    // TODO
 };
 
 /******************************************************************************/
