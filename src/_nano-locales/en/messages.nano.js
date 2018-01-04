@@ -210,39 +210,14 @@
             "message": "The selector in this rule has syntax errors.",
             "description": "Error when selector has syntax errors"
         },
-
-
+        "filterLinterRejectedCosmeticTooExpensive": {
+            "message": "This rule cannot be generic.",
+            "description": "Error when expensive cosmetic is generic"
+        },
         "filterLinterRejectedStyleInjection": {
             "message": "This CSS injection rule has syntax errors.",
             "description": "Error when CSS injection has syntax errors"
         },
-        "filterLinterRejectedCosmeticTooExpensive": {
-            "message": "This cosmetic or script snippet rule is too expensive to be applied generically, it must be limited to specific domains.",
-            "description": "Error when expensive cosmetic is generic"
-        },
-        "filterLinterRejectedCosmeticBadIdSelector": {
-            "message": "This cosmetic rule contains an invalid id selector.",
-            "description": "Error when cosmetic has bad id selector"
-        },
-        "filterLinterRejectedCosmeticBadClassSelector": {
-            "message": "This cosmetic rule contains an invalid class selector.",
-            "description": "Error when cosmetic has bad class selector"
-        },
-        "filterLinterRejectedBadCSSSyntax": {
-            "message": "This cosmetic rule has CSS syntax errors.",
-            "description": "Error when cosmetic has CSS syntax errors"
-        },
-        "filterLinterRejectedUnrecognizedExtendedSyntaxOperator": {
-            "message": "This procedural cosmetic rule contains an unrecognized operator.",
-            "description": "Error when procedural cosmetic has unknown operator"
-        },
-        "filterLinterRejectedBadProceduralSelector": {
-            "message": "This procedural cosmetic rule has syntax errors.",
-            "description": "Error when procedural cosmetic has syntax errors"
-        },
-
-
-
         // Network filtering warnings
         "filterLinterWarningDiscardedNonNegatableType": {
             "message": "Nano discarded the type option '{{type}}' because it cannot be negated.",
