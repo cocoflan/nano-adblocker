@@ -6,6 +6,9 @@ Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock).
 
 Please open an issue if there is something you want us to know. 
 
+*Note: If you see different version available to different browsers then chances are the new release is stuck in review queue 
+again.*
+
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
 ### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
