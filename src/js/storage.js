@@ -815,6 +815,7 @@
         // Whatever else is next can be assumed to not be a cosmetic filter
 
         // Most comments start in first column
+        // Notes 2018-01-03: Ambiguous comments will not reach this point
         if ( c === '#' ) { continue; }
 
         // Catch comments somewhere on the line
