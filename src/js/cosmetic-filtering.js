@@ -645,7 +645,7 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
                 // Applying generically, part of the filter is already accepted
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningConvertedToException'));
             } else {
-                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedCosmeticTooExpensive'));
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedTooExpensive'));
             }
         }
         

@@ -202,15 +202,11 @@
             "message": "Raw JavaSript injection is not accepted due to security concerns.",
             "description": "Error when raw JavaScript injection"
         },
-        "filterLinterRejectedScriptSnippetGeneric": {
-            "message": "Script snippet injection rules cannot be generic.",
-            "description": "Error when script snippet is generic"
-        },
         "filterLinterRejectedBadSelector": {
             "message": "The selector in this rule has syntax errors.",
             "description": "Error when selector has syntax errors"
         },
-        "filterLinterRejectedCosmeticTooExpensive": {
+        "filterLinterRejectedTooExpensive": {
             "message": "This rule cannot be generic.",
             "description": "Error when expensive cosmetic is generic"
         },

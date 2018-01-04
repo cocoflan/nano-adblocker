@@ -125,7 +125,7 @@
             } else {
                 // Patch 2017-12-27: Show an appropriate error message
                 if ( nano.compileFlags.firstParty ) {
-                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedScriptSnippetGeneric'));
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedTooExpensive'));
                 }
             }
             return;
