@@ -4,8 +4,8 @@
 
 1. Download a build from the [release page](https://github.com/NanoAdblocker/NanoCore/releases) and extract it. 
 
-2. Open `Settings` pannel, scroll all the way down, you should see a version number that is at least `40.15063.674.0`. If not, you 
-need to first update Windows. 
+2. Open Edge, open `Settings` pannel, scroll all the way down, you should see a version number that is at least `40.15063.674.0`. 
+If not, you need to first update Windows. 
 
 ![Screenshot](https://i.imgur.com/GZritjm.png)
 
