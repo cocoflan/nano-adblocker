@@ -792,7 +792,9 @@
         // following parsing code.
         
         // Patch 2017-12-27: Update linter line number
-        nano.filterLinter.lastLine++;
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.lastLine++;
+        }
 
         if ( line.length === 0 ) { continue; }
 
