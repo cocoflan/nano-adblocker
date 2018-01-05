@@ -58,7 +58,6 @@ if (
 // Patch 2018-01-05: Add compatibility shims
 window.edge = chrome || {};
 window.chrome = browser;
-delete window.browser;
 
 (function() {
     var _toLocaleString = Date.prototype.toLocaleString;
