@@ -63,9 +63,7 @@ You need to run the platform specific build script when changing vAPI scripts or
 
 ### Packaging
 
-Packaging on other platform involve simply zipping the build folder, however, it is a bit more complex for Edge. After packaging 
-the structure of build directory will become corrupted as seen by build scripts, you need to manually clean up build files after 
-packaging, you only need to package if you are publishing to Microsoft Store. 
+Packaging on other platform involve simply zipping the build folder, however, it is a bit more complex for Edge. 
 
 First, you need to install the latest current branch of [Node.js](https://nodejs.org/en/), then open an elevated PowerShell prompt 
 and run the following command: 
