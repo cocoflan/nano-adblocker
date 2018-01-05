@@ -661,14 +661,16 @@ vAPI.setIcon = (function() {
     var onTabReady = function(tab, status, badge) {
         if ( vAPI.lastError() || !tab ) { return; }
 
-        // Patch 2018-01-05: Edge mutates the object that is passed in
-        var iconPaths = status === 'on' ?
+        // Patch 2018-01-05: Edge mutates the object that is passed in,
+        // Object.freeze causes other problems (as expected)
+        var iconPath = status === 'on' ?
             { '38': 'img/128_on.png' } : { '38': 'img/128_off.png' } ;
         
         if ( browserAction.setIcon !== undefined ) {
             browserAction.setIcon({
                 tabId: tab.id,
-                path: iconPaths
+                // Patch 2018-01-05: Edge mutates the object that is passed in
+                path: iconPath
             });
             browserAction.setBadgeText({
                 tabId: tab.id,
