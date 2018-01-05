@@ -592,7 +592,13 @@ vAPI.tabs.reload = function(tabId /*, flags*/) {
         }
     };
 
-    chrome.tabs.reload(tabId, onReloaded);
+    // Patch 2018-01-05: This throws in Edge
+    try {
+        chrome.tabs.reload(tabId, onReloaded);
+    } catch ( err ) {
+        console.warn('Edge does not support reloading tabs');
+        console.log(err);
+    }
 };
 
 /******************************************************************************/
@@ -652,23 +658,17 @@ vAPI.setIcon = (function() {
     var browserAction = chrome.browserAction,
         titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
 
-    // Patch 2017-12-08: Replace icons
-    var iconPaths = [
-        {
-            '128': 'img/128_off.png'
-        },
-        {
-            '128': 'img/128_on.png'
-        }
-    ];
-
     var onTabReady = function(tab, status, badge) {
         if ( vAPI.lastError() || !tab ) { return; }
 
+        // Patch 2018-01-05: Edge mutates the object that is passed in
+        var iconPaths = status === 'on' ?
+            { '38': 'img/128_on.png' } : { '38': 'img/128_off.png' } ;
+        
         if ( browserAction.setIcon !== undefined ) {
             browserAction.setIcon({
                 tabId: tab.id,
-                path: iconPaths[status === 'on' ? 1 : 0]
+                path: iconPaths
             });
             browserAction.setBadgeText({
                 tabId: tab.id,

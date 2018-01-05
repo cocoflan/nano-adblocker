@@ -321,6 +321,7 @@ vAPI.net.registerListeners = function() {
                 [ 'blocking', 'requestHeaders' ]
             );
         } catch ( err ) {
+            console.warn('Edge does not support listening to ping requests');
             console.log(err);
         }
     }
