@@ -46,3 +46,15 @@ You need to run the platform specific build script when changing vAPI scripts or
 The Firefox version of Nano Defender can be built with `node build-defender.node.js --firefox`. The Chromium version uses different 
 build scripts which can be found in the `/Continuous Integration` directory of NanoDefender repository. You need to put NanoCore 
 and NanoDefender in the same parent directory. 
+
+## Edge
+
+Run the following commands: 
+```bash
+node build.node.js --edge
+node pack-filters.node.js --edge
+node pack-locale.node.js --edge
+node build-edge.node.js --edge
+```
+
+You need to run the platform specific build script when changing vAPI scripts or the manifest. 
