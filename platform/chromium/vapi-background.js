@@ -661,6 +661,21 @@ vAPI.setIcon = (function() {
             '128': 'img/128_on.png'
         }
     ];
+    
+    // Patch 2018-01-05: Special case for Edge, copying the whole file makes
+    // things harder to maintain down the road, and this script is only executed
+    // once per browser start so there is no performance issue
+    if ( typeof window.edge !== 'undefined' ) {
+        // TODO 2018-01-05: The size is wrong, but Edge does not seem to care
+        iconPaths = [
+            {
+                '38': 'img/128_off.png'
+            },
+            {
+                '38': 'img/128_on.png'
+            }
+        ];
+    }
 
     var onTabReady = function(tab, status, badge) {
         if ( vAPI.lastError() || !tab ) { return; }

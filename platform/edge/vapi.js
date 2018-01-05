@@ -55,8 +55,20 @@ if (
 
 /******************************************************************************/
 
-// Patch 2017-12-14: See how compatible Edge is
+// Patch 2018-01-05: Add compatibility shims
 window.edge = chrome || {};
 window.chrome = browser;
+delete window.browser;
+
+(function() {
+    var _toLocaleString = Date.prototype.toLocaleString;
+    Date.prototype.toLocaleString = function () {
+        var args = Array.prototype.slice.call(arguments);
+        if (args[0] === 'fullwide') {
+            args.shift();
+        }
+        _toLocaleString.apply(this, args);
+    };
+})();
 
 /******************************************************************************/
