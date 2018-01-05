@@ -596,8 +596,10 @@ vAPI.tabs.reload = function(tabId /*, flags*/) {
     try {
         chrome.tabs.reload(tabId, onReloaded);
     } catch ( err ) {
-        console.warn('Edge does not support reloading tabs');
-        console.log(err);
+        // Apply fallback solution
+        vAPI.tabs.injectScript(tabId, {
+            code: ';window.location.href = window.location.href;'
+        });
     }
 };
 
