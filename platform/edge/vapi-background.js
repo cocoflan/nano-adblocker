@@ -592,7 +592,7 @@ vAPI.tabs.reload = function(tabId /*, flags*/) {
         }
     };
 
-    // Patch 2018-01-05: This throws in Edge
+    // Patch 2018-01-05: 'reload' does not (yet) exist in Edge
     try {
         chrome.tabs.reload(tabId, onReloaded);
     } catch ( err ) {

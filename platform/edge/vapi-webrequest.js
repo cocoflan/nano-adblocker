@@ -310,7 +310,7 @@ vAPI.net.registerListeners = function() {
     // Chromium 48 and lower does not support `ping` type.
     // Chromium 56 and higher does support `csp_report` stype.
     if ( onBeforeSendHeaders ) {
-        // Patch 2018-01-05: This throws in Edge
+        // Patch 2018-01-05: Edge does not accept type 'ping' (yet)
         try {
             wrApi.onBeforeSendHeaders.addListener(
                 onBeforeSendHeaders,

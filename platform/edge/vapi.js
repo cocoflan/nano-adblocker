@@ -56,9 +56,15 @@ if (
 /******************************************************************************/
 
 // Patch 2018-01-05: Add compatibility shims
-self.edge = self.chrome || {};
-self.chrome = browser;
 
+// Works fine so far, must not delete 'browser' as it craches Microsoft's code
+// Might have some problems with code that depends on the difference between
+// 'chrome' and 'browser'
+self.edge = self.chrome || {};
+self.chrome = self.browser;
+
+// Edge does not accept 'fullwide' and inserts weird Unicode character that
+// breaks the syntax highlighter
 (function() {
     var _toLocaleString = Date.prototype.toLocaleString;
     Date.prototype.toLocaleString = function () {
@@ -70,6 +76,7 @@ self.chrome = browser;
     };
 })();
 
+// Edge returns a weird DOM object instead of something iterable
 (function() {
     var _querySelectorAll = document.querySelectorAll;
     document.querySelectorAll = function () {
@@ -77,7 +84,6 @@ self.chrome = browser;
         return Array.prototype.slice.call(result);
     };
 })();
-
 (function() {
     var _querySelectorAll = Element.prototype.querySelectorAll;
     Element.prototype.querySelectorAll = function () {
