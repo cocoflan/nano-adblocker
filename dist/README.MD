@@ -75,5 +75,5 @@ npm install -g manifoldjs
 
 Navigate to the build directory of Edge, open a PowerShell prompt and run the following command: 
 ```
-manifoldjs -l debug -p edgeextension -f edgeextension -m manifest.json
+manifoldjs -l debug -p edgeextension -f edgeextension -m Nano_Edge/manifest.json
 ```
