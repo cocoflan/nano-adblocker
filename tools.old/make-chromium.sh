@@ -5,7 +5,7 @@
 echo "*** uBlock0.chromium: Creating web store package"
 echo "*** uBlock0.chromium: Copying files"
 
-DES=dist/build/uBlock0.chromium
+DES=dist/build/Nano.chromium
 rm -rf $DES
 mkdir -p $DES
 

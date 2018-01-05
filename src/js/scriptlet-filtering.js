@@ -122,6 +122,11 @@
         if ( parsed.hostnames.length === 0 ) {
             if ( parsed.exception ) {
                 writer.push([ 32, '!', '', parsed.suffix ]);
+            } else {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedTooExpensive'));
+                }
             }
             return;
         }
@@ -129,6 +134,8 @@
         // https://github.com/gorhill/uBlock/issues/3375
         //   Ignore instances of exception filter with negated hostnames,
         //   because there is no way to create an exception to an exception.
+        // Notes 2018-01-03: Script snippet rules with only negated domains is
+        // equivalent to an exception rule but without negated domains
 
         var µburi = µb.URI;
 
@@ -139,7 +146,14 @@
             }
             var hash = µburi.domainFromHostname(hostname);
             if ( parsed.exception ) {
-                if ( negated ) { continue; }
+                if ( negated ) {
+                    // Patch 2018-01-03: Show an appropriate warning message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningScriptSnippetDoubleException'));
+                    }
+                    
+                    continue;
+                }
                 hash = '!' + hash;
             } else if ( negated ) {
                 hash = '!' + hash;

@@ -175,6 +175,11 @@
                 µb.saveSelectedFilterLists(
                     µb.autoSelectRegionalFilterLists(availableLists)
                 );
+                
+                // Patch 2017-12-16: Fix potential race condition on slow devices
+                //console.log(nano.selectedFilterLists);
+                nano.selectedFilterListsLoaded = true;
+                
                 callback();
             });
             return;
@@ -183,6 +188,11 @@
         // https://github.com/gorhill/uBlock/issues/3383
         vAPI.storage.remove('remoteBlacklists');
         µb.selectedFilterLists = bin.selectedFilterLists;
+        
+        // Patch 2017-12-16: Fix potential race condition on slow devices
+        //console.log(nano.selectedFilterLists);
+        nano.selectedFilterListsLoaded = true;
+        
         callback();
     });
 };
@@ -338,7 +348,19 @@
     var µb = this;
 
     var onSaved = function() {
-        var compiledFilters = µb.compileFilters(filters),
+        // Notes 2017-12-25: When filters are added though a wizard, those lines
+        // are the only lines that are compiled
+        //
+        // The last meaningful line of already compiled user filters plus 2 will
+        // be the first meaningful line of incoming filters fragment, which
+        // means 1 empty line in between, this will allow us to lint only the
+        // fragment and still keep line numbers in sync
+        //
+        // The old compiled data is removed when nano.saveUserFilters is called
+        // which will cause the user filters to be recompiled on next start
+        //
+        // Patch 2017-12-25: Pass in a special flag as asset key
+        var compiledFilters = µb.compileFilters(filters, nano.nanoPartialUserFiltersKey),
             snfe = µb.staticNetFilteringEngine,
             cfe = µb.cosmeticFilteringEngine,
             acceptedCount = snfe.acceptedCount + cfe.acceptedCount,
@@ -600,7 +622,7 @@
 
         // We need to build a complete list of assets to pull first: this is
         // because it *may* happens that some load operations are synchronous:
-        // This happens for assets which do not exist, ot assets with no
+        // This happens for assets which do not exist, or assets with no
         // content.
         var toLoad = [];
         for ( var assetKey in lists ) {
@@ -632,7 +654,8 @@
 
     var onCompiledListLoaded2 = function(details) {
         if ( details.content === '' ) {
-            details.content = µb.compileFilters(rawContent);
+            // Patch 2017-12-25: Pass asset key over
+            details.content = µb.compileFilters(rawContent, assetKey);
             µb.assets.put(compiledPath, details.content);
         }
         rawContent = undefined;
@@ -689,7 +712,8 @@
     // Extract update frequency information
     matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*days?/i);
     if ( matches !== null ) {
-        v = Math.max(parseInt(matches[1], 10), 2);
+        // Patch 2017-12-19: Lower minimum update frequency to 1 day, down from 2
+        v = Math.max(parseInt(matches[1], 10), 1);
         if ( v !== listEntry.updateAfter ) {
             this.assets.registerAssetSource(assetKey, { updateAfter: v });
         }
@@ -709,7 +733,43 @@
 
 /******************************************************************************/
 
-µBlock.compileFilters = function(rawText) {
+// Patch 2017-12-25: Accept asset key for processing compile flags and linting
+µBlock.compileFilters = function(rawText, assetKey) {
+    // Notes 2017-12-25: Some assertion really will not slow things down, maybe
+    // 50 checks per day, I will be really surprised if it even takes a
+    // cumulative 1 ms per week
+    //
+    // However, this will alert me right away when gorhill changed stuff that
+    // will break Nano
+    //
+    // The asset key is either the key of assets.json entry, the update URL
+    // of the filter, or special keys for user filters
+    console.assert(typeof assetKey === 'string' && assetKey.length);
+    
+    // Patch 2017-12-27: Update compile flags, the flags is a global object,
+    // filter compilation is synchronous, so this is safe
+    nano.compileFlags.firstParty = assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey;
+    nano.compileFlags.isPartial = assetKey === nano.nanoPartialUserFiltersKey;
+    nano.compileFlags.isPrivileged = nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1;
+    nano.compileFlags.keepSlowFilters = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing;
+    nano.compileFlags.strip3pWhitelist = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist;
+    if (
+        nano.compileFlags.firstParty &&
+        nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoMakeUserFiltersPrivileged
+    ) {
+        nano.compileFlags.isPrivileged = true;
+    }
+    
+    // Notes 2017-12-25: The linter is a global singleton, filter compilation
+    // is synchronous, so this is safe
+    // Patch 2017-12-27: Initialize linter and synchronize line number
+    if ( assetKey === nano.userFiltersPath ) {
+        nano.filterLinter.reset();
+        nano.filterLinter.changed = true;
+    } else if (assetKey === nano.nanoPartialUserFiltersKey ) {
+        nano.filterLinter.lastLine++;
+    }
+    
     var writer = new this.CompiledLineWriter();
 
     // Useful references:
@@ -730,12 +790,23 @@
         // rhill 2014-04-18: The trim is important here, as without it there
         // could be a lingering `\r` which would cause problems in the
         // following parsing code.
+        
+        // Patch 2017-12-27: Update linter line number
+        nano.filterLinter.lastLine++;
 
         if ( line.length === 0 ) { continue; }
 
         // Strip comments
         c = line.charAt(0);
-        if ( c === '!' || c === '[' ) { continue; }
+        // Patch 2017-12-27: Deprecate '[' for comment unless it is header
+        if ( c === '!' ) { continue; }
+        if ( c === '[' ) {
+            if ( nano.compileFlags.firstParty && nano.filterLinter.lastLine !== 0 ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedCommentBracket'));
+            }
+            
+            continue;
+        }
 
         // Parse or skip cosmetic filters
         // All cosmetic filters are caught here
@@ -744,6 +815,7 @@
         // Whatever else is next can be assumed to not be a cosmetic filter
 
         // Most comments start in first column
+        // Notes 2018-01-03: Ambiguous comments will not reach this point
         if ( c === '#' ) { continue; }
 
         // Catch comments somewhere on the line
@@ -753,8 +825,15 @@
         // Don't remove:
         //   ...#blah blah blah
         // because some ABP filters uses the `#` character (URL fragment)
+        // Notes 2017-12-25: This is common in hosts files, however, it is bad
+        // style for other filters
         pos = line.indexOf('#');
         if ( pos !== -1 && reIsWhitespaceChar.test(line.charAt(pos - 1)) ) {
+            // Patch 2017-12-27: Deprecate inline comments for user filters
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterDeprecatedInlineComment'));
+            }
+            
             line = line.slice(0, pos).trim();
         }
 
@@ -765,15 +844,37 @@
             // Ignore hosts file redirect configuration
             // 127.0.0.1 localhost
             // 255.255.255.255 broadcasthost
-            if ( reIsLocalhostRedirect.test(line) ) { continue; }
+            if ( reIsLocalhostRedirect.test(line) ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
+                }
+                
+                continue;
+            }
             line = line.replace(reLocalIp, '').trim();
         }
 
-        if ( line.length === 0 ) { continue; }
+        if ( line.length === 0 ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterDiscardedLocalhostHostEntry'));
+            }
+        
+            continue;
+        }
 
         staticNetFilteringEngine.compile(line, writer);
     }
 
+    // Patch 2017-12-27: Store linting result
+    if ( nano.compileFlags.firstParty ) {
+        nano.filterLinter.saveResult();
+    }
+    // Patch 2017-12-28: Must reset flags when finished as the compiler may be
+    // used for side tasks like validating epicker entry
+    nano.clearCompileFlags();
+    
     return writer.toString();
 };
 
@@ -784,7 +885,14 @@
 //   applying 1st-party filters.
 
 µBlock.applyCompiledFilters = function(rawText, firstparty) {
-    if ( rawText === '' ) { return; }
+    if ( rawText === '' ) {
+        // Patch 2017-12-28: Reset linter when applying empty user filters
+        if ( firstparty ) {
+            nano.filterLinter.clearResult();
+        }
+    
+        return;
+    }
     var reader = new this.CompiledLineReader(rawText);
     this.staticNetFilteringEngine.fromCompiledContent(reader);
     this.staticExtFilteringEngine.fromCompiledContent(reader, {
@@ -814,15 +922,25 @@
         }
         onDone();
     };
-
-    var onResourcesLoaded = function(details) {
+    
+    // Patch 2017-12-09: Add nano-resources
+    // Must load after ublock-resources so we can override their resources if
+    // needed
+    var onNanoResourcesLoaded = function(details) {
         if ( details.content !== '' ) {
-            content = details.content;
+            content += '\n\n' + details.content;
         }
         if ( µb.hiddenSettings.userResourcesLocation === 'unset' ) {
             return onDone();
         }
         µb.assets.fetchText(µb.hiddenSettings.userResourcesLocation, onUserResourcesLoaded);
+    };
+
+    var onResourcesLoaded = function(details) {
+        if ( details.content !== '' ) {
+            content = details.content;
+        }
+        nano.assets.get('nano-resources', onNanoResourcesLoaded);
     };
 
     this.assets.get('ublock-resources', onResourcesLoaded);
@@ -1092,9 +1210,10 @@
                         details.assetKey,
                         details.content
                     );
+                    // Patch 2017-12-25: Pass asset key over
                     this.assets.put(
                         'compiled/' + details.assetKey,
-                        this.compileFilters(details.content)
+                        this.compileFilters(details.content, details.assetKey)
                     );
                 }
             } else {
