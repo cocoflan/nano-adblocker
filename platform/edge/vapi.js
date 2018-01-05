@@ -56,8 +56,8 @@ if (
 /******************************************************************************/
 
 // Patch 2018-01-05: Add compatibility shims
-window.edge = chrome || {};
-window.chrome = browser;
+self.edge = self.chrome || {};
+self.chrome = browser;
 
 (function() {
     var _toLocaleString = Date.prototype.toLocaleString;
@@ -67,6 +67,22 @@ window.chrome = browser;
             args.shift();
         }
         return _toLocaleString.apply(this, args);
+    };
+})();
+
+(function() {
+    var _querySelectorAll = document.querySelectorAll;
+    document.querySelectorAll = function () {
+        var result = _querySelectorAll.apply(this, arguments);
+        return Array.prototype.slice.call(result);
+    };
+})();
+
+(function() {
+    var _querySelectorAll = Element.prototype.querySelectorAll;
+    Element.prototype.querySelectorAll = function () {
+        var result = _querySelectorAll.apply(this, arguments);
+        return Array.prototype.slice.call(result);
     };
 })();
 
