@@ -66,7 +66,7 @@ self.chrome = browser;
         if (args[0] === 'fullwide') {
             args.shift();
         }
-        return _toLocaleString.apply(this, args);
+        return _toLocaleString.apply(this, args).replace(/\u200E|\u200F/g, '');
     };
 })();
 

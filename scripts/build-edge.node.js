@@ -19,9 +19,8 @@
     // TODO 2018-01-05: The size is wrong, but Edge does not seem to care
     manifest["icons"]["16"] = manifest["icons"]["128"];
     manifest["browser_action"]["default_icon"]["38"] = manifest["browser_action"]["default_icon"]["128"];
-    // Must set to undefined, otherwise delete will take ["38"] with it
+    // delete causes problems, must assign to undefined instead
     manifest["browser_action"]["default_icon"]["128"] = undefined;
-    delete manifest["browser_action"]["default_icon"]["128"];
 
     manifest["background"]["persistent"] = true;
 
