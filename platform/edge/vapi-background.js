@@ -663,6 +663,7 @@ vAPI.setIcon = (function() {
 
         // Patch 2018-01-05: Edge mutates the object that is passed in,
         // Object.freeze causes other problems (as expected)
+        // TODO 2018-01-05: The size is wrong, but Edge does not seem to care
         var iconPath = status === 'on' ?
             { '38': 'img/128_on.png' } : { '38': 'img/128_off.png' } ;
         

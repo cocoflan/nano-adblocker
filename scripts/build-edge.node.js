@@ -17,16 +17,16 @@
     manifest = JSON.parse(manifest);
 
     // TODO 2018-01-05: The size is wrong, but Edge does not seem to care
-    manifest["icons"]["38"] = manifest["icons"]["128"];
+    manifest["icons"]["16"] = manifest["icons"]["128"];
     manifest["browser_action"]["default_icon"]["38"] = manifest["browser_action"]["default_icon"]["128"];
+    // Must set to undefined, otherwise delete will take ["38"] with it
+    manifest["browser_action"]["default_icon"]["128"] = undefined;
     delete manifest["browser_action"]["default_icon"]["128"];
 
     manifest["background"]["persistent"] = true;
 
     delete manifest["minimum_chrome_version"];
     manifest["minimum_edge_version"] = "40.15063.674.0";
-
-    delete manifest["storage"];
 
     await fs.writeFile(basePath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
 
