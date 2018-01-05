@@ -43,6 +43,8 @@ node build-firefox.node.js --firefox
 
 You need to run the platform specific build script when changing vAPI scripts or the manifest. 
 
+### Nano Defender for Firefox
+
 The Firefox version of Nano Defender can be built with `node build-defender.node.js --firefox`. The Chromium version uses different 
 build scripts which can be found in the `/Continuous Integration` directory of NanoDefender repository. You need to put NanoCore 
 and NanoDefender in the same parent directory. 
@@ -58,3 +60,15 @@ node build-edge.node.js --edge
 ```
 
 You need to run the platform specific build script when changing vAPI scripts or the manifest. 
+
+### Packaging
+
+Packaging on other platform involve simply zipping the build folder, however, it is a bit more complex for Edge. After packaging 
+the structure of output directory will become corrupted as seen by build scripts, you need to manually clean up build files after 
+packaging, you only need to package if you are publishing to Microsoft Store. 
+
+First, you need to install the latest current branch of [Node.js](https://nodejs.org/en/), then open an elevated PowerShell prompt 
+and run the following command: 
+```
+npm install -g manifoldjs
+```
