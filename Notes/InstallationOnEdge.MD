@@ -13,7 +13,6 @@ If not, you need to first update Windows.
 
 4. Restart Edge, open `Extensions` pannel, click `Load extension` button to side load the extracted package from step 1. 
 
-Note that Edge will disable side loaded extensions on every start. Please **refrain from from submitting it to Microsoft Store**, 
-we will do that ourselves when we consider it to be stable enough. 
+Note that Edge will disable side loaded extensions on every start. 
 
 ![Screenshot](https://i.imgur.com/rkVyCX4.png)
