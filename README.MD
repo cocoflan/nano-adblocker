@@ -13,6 +13,8 @@ again.*
 
 ### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
 
+### [(Dev) Get it for Edge](/Notes/InstallForEdge.MD)
+
 ### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
 
 ## For Developers
