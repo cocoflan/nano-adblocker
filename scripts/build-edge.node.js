@@ -27,6 +27,12 @@
     delete manifest["minimum_chrome_version"];
     manifest["minimum_edge_version"] = "40.15063.674.0";
 
+    manifest["browser_specific_settings"] = {
+        "edge": {
+            "browser_action_next_to_addressbar": true
+        }
+    };
+
     await fs.writeFile(basePath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
 
     const files = await fs.readdir("platform/edge");
