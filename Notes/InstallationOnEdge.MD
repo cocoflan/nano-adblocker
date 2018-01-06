@@ -16,3 +16,5 @@ If not, you need to first update Windows.
 Note that Edge will disable side loaded extensions on every start. 
 
 ![Screenshot](https://i.imgur.com/rkVyCX4.png)
+
+### We have submitted it to Microsoft Store, although the review can take months. 
