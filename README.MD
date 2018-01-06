@@ -51,7 +51,7 @@ Partially available since 1.0.0.22
 
 Available since 1.0.0.10
 
-### [Nano Extra Resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFilters/NanoResources.txt), useful and configurable
+### [Nano Extra Resources](https://github.com/NanoAdblocker/NanoFilters/blob/master/NanoFiltersSource/NanoResources.txt), useful and configurable
 
 ![Screenshot](https://i.imgur.com/0HIYf4d.png)
 
