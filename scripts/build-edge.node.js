@@ -16,15 +16,13 @@
     let manifest = await fs.readFile(basePath + "/manifest.json", "utf8");
     manifest = JSON.parse(manifest);
 
+    // TODO 2018-01-05: The size is wrong, but Edge does not seem to care
     manifest["icons"] = {
-        "38": "img/icon_38.png",
-        "54": "img/icon_54.png",
-        "90": "img/icon_90.png",
-        "120": "img/icon_120.png",
+        "16": "img/128_on.png",
         "128": "img/128_on.png",
     };
-    manifest["browser_action"]["default_icon"]["38"] = {
-        "38": "img/icon_38.png",
+    manifest["browser_action"]["default_icon"] = {
+        "38": "img/128_on.png",
     };
 
     manifest["background"]["persistent"] = true;
@@ -48,8 +46,6 @@
         }
     }
     await Promise.all(tasks);
-
-    await smartCopyDirectory("platform/edge/img/", basePath + "/img/");
 
     console.log("[Nano] Apply Edge Patch :: Done");
 })();
