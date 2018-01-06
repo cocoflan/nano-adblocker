@@ -63,15 +63,10 @@ You need to run the platform specific build script when changing vAPI scripts or
 
 ### Packaging
 
-Packaging on other platform involve simply zipping the build folder, however, it is a bit more complex for Edge. 
+Unlike other platforms, Edge extension packaging is more complicated than simply zipping build files. However, packaging is only 
+needed if you want to submit the extension to Microsoft Store, you can side load the raw build result into Edge for testing. 
 
-First, you need to install the latest current branch of [Node.js](https://nodejs.org/en/), then open an elevated PowerShell prompt 
-and run the following command: 
-```PowerShell
-npm install -g manifoldjs
-```
+Although building the Edge extension can be done on any operating system, packaging must be done on a Windows device. 
 
-Navigate to the build directory, open a PowerShell prompt and run the following command: 
-```
-manifoldjs -l debug -p edgeextension -f edgeextension -m Nano_Edge/manifest.json
-```
+Nano Adblocker uses a proprietary tool for packaging, however, you can find everything you need to know from 
+[Microsoft Docs](https://docs.microsoft.com/en-us/microsoft-edge/extensions/guides/packaging/using-manifoldjs-to-package-extensions). 
