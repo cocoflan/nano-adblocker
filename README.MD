@@ -11,7 +11,7 @@ again.*
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
-### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
+### [Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
 
 ### [(Dev) Get it for Edge](/Notes/InstallationOnEdge.MD#installation-on-edge)
 
