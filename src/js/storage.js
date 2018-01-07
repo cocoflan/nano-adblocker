@@ -710,10 +710,23 @@
         }
     }
     // Extract update frequency information
+    // Patch 2017-12-19: Change lower cap to 1 day and upper cap to 30 days
+    // Patch 2018-01-07: Accept hours as unit, but rounded up to day
     matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*days?/i);
     if ( matches !== null ) {
-        // Patch 2017-12-19: Lower minimum update frequency to 1 day, down from 2
-        v = Math.max(parseInt(matches[1], 10), 1);
+        v = parseInt(matches[1], 10);
+    } else {
+        matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*hours?/i);
+        if ( matches !== null ) {
+            v = Math.ceil(parseInt(matches[1], 10) / 24);
+        }
+    }
+    if ( typeof v === 'number' ) {
+        if ( v < 1 ) {
+            v = 1;
+        } else if ( v > 30 ) {
+            v = 30;
+        }
         if ( v !== listEntry.updateAfter ) {
             this.assets.registerAssetSource(assetKey, { updateAfter: v });
         }
