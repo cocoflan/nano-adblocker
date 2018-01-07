@@ -1,8 +1,8 @@
 # Update Behavior
 
 Nano Adblocker will read `! Expire` header to extract update information, and defaults to 3 days if the header is missing. uBlock Origin 
-will instead defaults to 5 days. The default filters set in Nano Adblocker also have slightly shorter update period, view `assets.json` 
-for more details. 
+will instead defaults to 5 days. The default filters set in Nano Adblocker also have slightly shorter update period, please check 
+`assets.json` for more details. 
 
 The hosts files in the default filters set have 5 days update period, if you are the maintainer of the host file and are unhappy about 
 this, please open an issue and we will change it. For other filters, please use `! Expire` header to set update delay. 
