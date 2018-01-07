@@ -29,6 +29,11 @@
 
 /******************************************************************************/
 
+// Patch 2018-01-06: User filters can be an empty file, make it a special case
+var currentAsset = "";
+
+/******************************************************************************/
+
 var onAssetContentReceived = function(details) {
     if ( details && details.content ) {
         if ( !details.content.endsWith('\n') ) {
@@ -37,11 +42,13 @@ var onAssetContentReceived = function(details) {
         nanoIDE.setValueFocus(details.content, -1);
     } else {
         nanoIDE.setValueFocus('', -1);
-        nanoIDE.editor.session.setAnnotations([{
-            row: 0,
-            type: 'error',
-            text: vAPI.i18n('genericFilterReadError')
-        }]);
+        if ( currentAsset !== 'user-filters' ) {
+            nanoIDE.editor.session.setAnnotations([{
+                row: 0,
+                type: 'error',
+                text: vAPI.i18n('genericFilterReadError')
+            }]);
+        }
     }
 };
 
@@ -54,14 +61,17 @@ var onLineWrapSettingsReceived = function(lineWrap) {
     var q = window.location.search;
     var matches = q.match(/^\?url=([^&]+)/);
     if ( !matches || matches.length !== 2 ) {
+        // Patch 2018-01-06: Display an error
+        onAssetContentReceived();
         return;
     }
+    currentAsset = matches[1];
 
     vAPI.messaging.send(
         'default',
         {
             what: 'getAssetContent',
-            url: decodeURIComponent(matches[1])
+            url: decodeURIComponent(currentAsset)
         },
         onAssetContentReceived
     );
