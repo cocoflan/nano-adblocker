@@ -34,7 +34,8 @@ ace.define('ace/mode/nano_filters', function(require, exports, module) {
     var HighlightRules = ace.require('ace/mode/nano_filters_hr').HighlightRules;
     exports.Mode = function() {
         this.HighlightRules = HighlightRules;
-        this.lineCommentStart = "!";
+        this.lineCommentStart = '!';
+        this.tokenRe = /^[\w\d-_.]+/g;
     };
     oop.inherits(exports.Mode, TextMode);
 });
