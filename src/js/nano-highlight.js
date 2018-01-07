@@ -32,10 +32,19 @@ ace.define('ace/mode/nano_filters', function(require, exports, module) {
     var oop = ace.require('ace/lib/oop');
     var TextMode = ace.require('ace/mode/text').Mode;
     var HighlightRules = ace.require('ace/mode/nano_filters_hr').HighlightRules;
+
+    // Notes 2018-01-06: This seems to have changed
+    // https://github.com/ajaxorg/ace/pull/3454/files#diff-2a8db065be808cdb78daf80b97fcb4aa
+    var unicode = require('ace/unicode');
     exports.Mode = function() {
         this.HighlightRules = HighlightRules;
         this.lineCommentStart = '!';
-        this.tokenRe = /^[\w\d-_.]+/g;
+        this.tokenRe = new RegExp('^['
+            + unicode.packages.L
+            + unicode.packages.Mn + unicode.packages.Mc
+            + unicode.packages.Nd
+            + unicode.packages.Pc + '\\$\\-_.]+', 'g'
+        );
     };
     oop.inherits(exports.Mode, TextMode);
 });

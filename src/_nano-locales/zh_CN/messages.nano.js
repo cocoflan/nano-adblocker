@@ -21,8 +21,8 @@
             "description": "Unsaved change warning"
         },
         "genericFilterReadError": {
-            "message": "# 未能读取数据，请刷新。",
-            "description": "Placeholder when filter data could not be loaded"
+            "message": "未能读取数据，请刷新。",
+            "description": "Error when filter data could not be loaded"
         },
         "genericDataSaveError": {
             "message": "未能保存数据，请重试。",

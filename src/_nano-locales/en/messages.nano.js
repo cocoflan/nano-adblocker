@@ -21,8 +21,8 @@
             "description": "Unsaved change warning"
         },
         "genericFilterReadError": {
-            "message": "# Could not load data, please refresh.",
-            "description": "Placeholder when filter data could not be loaded"
+            "message": "Could not load data, please refresh.",
+            "description": "Error when filter data could not be loaded"
         },
         "genericDataSaveError": {
             "message": "Could not save data, please try again.",
