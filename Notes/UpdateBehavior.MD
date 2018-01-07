@@ -1,6 +1,6 @@
 # Update Behavior
 
-Nano Adblocker will read `! Expire` header to extract update information, and defaults to 3 days if the header is missing. uBlock Origin 
+Nano Adblocker will read `! Expires` header to extract update information, and defaults to 3 days if the header is missing. uBlock Origin 
 will instead defaults to 5 days. The default filters set in Nano Adblocker also have slightly shorter update period, please check 
 `assets.json` for more details. 
 
