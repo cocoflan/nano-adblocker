@@ -33,7 +33,8 @@ ace.define('ace/mode/nano_filters', function(require, exports, module) {
     var TextMode = ace.require('ace/mode/text').Mode;
     var HighlightRules = ace.require('ace/mode/nano_filters_hr').HighlightRules;
 
-    // Notes 2018-01-06: This seems to have changed
+    // Notes 2018-01-06: The way tokenRe works seems to have changed, must test
+    // if Ace is updated
     // https://github.com/ajaxorg/ace/pull/3454/files#diff-2a8db065be808cdb78daf80b97fcb4aa
     var unicode = require('ace/unicode');
     exports.Mode = function() {

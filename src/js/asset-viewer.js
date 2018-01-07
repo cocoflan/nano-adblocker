@@ -30,6 +30,7 @@
 /******************************************************************************/
 
 // Patch 2018-01-06: User filters can be an empty file, make it a special case
+// and do not show the error message
 var currentAsset = "";
 
 /******************************************************************************/
