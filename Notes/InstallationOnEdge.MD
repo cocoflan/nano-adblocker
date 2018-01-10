@@ -9,7 +9,7 @@ If not, you need to first update Windows.
 
 ![Screenshot](https://i.imgur.com/GZritjm.png)
 
-3. Enter the page `about:flags` and enable `Enable extension developer features`. 
+3. Enter the page `about:flags` and check `Enable extension developer features`. 
 
 4. Restart Edge, open `Extensions` pannel, click `Load extension` button to side load the extracted package from step 1. 
 
