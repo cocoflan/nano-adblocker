@@ -954,7 +954,7 @@ FilterOriginMixedSet.prototype = Object.create(FilterOrigin.prototype, {
                 i = hostnames.length,
                 hostname;
             while ( i-- ) {
-                hostname = hostnames[i].replace(/\./g, '\\.');
+                hostname = hostnames[i];
                 if ( hostname.charCodeAt(0) === 0x7E /* '~' */ ) {
                     noneOf.push(hostname.slice(1));
                 } else {
@@ -1831,7 +1831,7 @@ FilterParser.prototype.parse = function(raw) {
             //   Abort if type is only for unsupported types, otherwise
             //   toggle off `unsupported` bit.
             if ( this.types & this.unsupportedTypeBit ) {
-                this.types &= ~(this.unsupportedTypeBit | this.allNetRequestTypeBits);
+                this.types &= ~this.unsupportedTypeBit;
                 if ( this.types === 0 ) {
                     // Patch 2017-12-27: Show an appropriate error message
                     if ( nano.compileFlags.firstParty ) {

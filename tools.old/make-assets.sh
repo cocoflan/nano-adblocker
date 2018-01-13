@@ -12,7 +12,7 @@ printf "*** Packaging assets in $DES... "
 
 if [ -n "${TRAVIS_TAG}" ]; then
   pushd .. > /dev/null
-  git clone $REMOTE
+  git clone --depth 1 $REMOTE
   popd > /dev/null
 fi
 

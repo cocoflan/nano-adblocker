@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ var onMessage = function(request, sender, callback) {
 
     case 'reloadTab':
         if ( vAPI.isBehindTheSceneTabId(request.tabId) === false ) {
-            vAPI.tabs.reload(request.tabId);
+            vAPI.tabs.reload(request.tabId, request.bypassCache === true);
             if ( request.select && vAPI.tabs.select ) {
                 vAPI.tabs.select(request.tabId);
             }
@@ -517,6 +517,7 @@ var onMessage = function(request, sender, callback) {
         // already been injected.
         if (
             µb.canFilterResponseBody === false ||
+            µb.textEncode === undefined ||
             µb.textEncode.normalizeCharset(request.charset) === undefined
         ) {
             response.scriptlets = µb.scriptletFilteringEngine.retrieve(request);
@@ -1032,7 +1033,32 @@ vAPI.messaging.listen('dashboard', onMessage);
 
 /******************************************************************************/
 
-var µb = µBlock;
+var µb = µBlock,
+    extensionPageURL = vAPI.getURL('');
+
+/******************************************************************************/
+
+var getLoggerData = function(ownerId, activeTabId, callback) {
+    var tabIds = {};
+    for ( var tabId in µb.pageStores ) {
+        var pageStore = µb.pageStoreFromTabId(tabId);
+        if ( pageStore === null ) { continue; }
+        if ( pageStore.rawURL.startsWith(extensionPageURL) ) { continue; }
+        tabIds[tabId] = pageStore.title;
+    }
+    if ( activeTabId && tabIds.hasOwnProperty(activeTabId) === false ) {
+        activeTabId = undefined;
+    }
+    callback({
+        colorBlind: µb.userSettings.colorBlindFriendly,
+        entries: µb.logger.readAll(ownerId),
+        maxEntries: µb.userSettings.requestLogMaxEntries,
+        noTabId: vAPI.noTabId,
+        activeTabId: activeTabId,
+        tabIds: tabIds,
+        tabIdsToken: µb.pageStoresToken
+    });
+};
 
 /******************************************************************************/
 
@@ -1070,6 +1096,23 @@ var getURLFilteringData = function(details) {
 var onMessage = function(request, sender, callback) {
     // Async
     switch ( request.what ) {
+    case 'readAll':
+        if (
+            µb.logger.ownerId !== undefined &&
+            µb.logger.ownerId !== request.ownerId
+        ) {
+            callback({ unavailable: true });
+            return;
+        }
+        vAPI.tabs.get(null, function(tab) {
+            getLoggerData(
+                request.ownerId,
+                tab && tab.id.toString(),
+                callback
+            );
+        });
+        return;
+
     default:
         break;
     }
@@ -1078,27 +1121,10 @@ var onMessage = function(request, sender, callback) {
     var response;
 
     switch ( request.what ) {
-    case 'readAll':
-        var tabIds = {}, pageStore;
-        var loggerURL = vAPI.getURL('logger-ui.html');
-        for ( var tabId in µb.pageStores ) {
-            pageStore = µb.pageStoreFromTabId(tabId);
-            if ( pageStore === null ) {
-                continue;
-            }
-            if ( pageStore.rawURL.startsWith(loggerURL) ) {
-                continue;
-            }
-            tabIds[tabId] = pageStore.title;
+    case 'releaseView':
+        if ( request.ownerId === µb.logger.ownerId ) {
+            µb.logger.ownerId = undefined;
         }
-        response = {
-            colorBlind: µb.userSettings.colorBlindFriendly,
-            entries: µb.logger.readAll(),
-            maxEntries: µb.userSettings.requestLogMaxEntries,
-            noTabId: vAPI.noTabId,
-            tabIds: tabIds,
-            tabIdsToken: µb.pageStoresToken
-        };
         break;
 
     case 'saveURLFilteringRules':
@@ -1133,8 +1159,6 @@ vAPI.messaging.listen('loggerUI', onMessage);
 /******************************************************************************/
 
 })();
-
-// https://www.youtube.com/watch?v=3_WcygKJP1k
 
 /******************************************************************************/
 /******************************************************************************/
