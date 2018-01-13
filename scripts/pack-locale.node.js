@@ -10,7 +10,7 @@
  * The version of uBlock Origin that Nano Adblocker is based on.
  * @const {string}
  */
-const uBOVersion = "v1.14.25.100";
+const uBOVersion = "v1.14.25.100 (with sidebar disabled)";
 
 (async () => {
     console.log("[Nano] Pack Locale :: Started");
