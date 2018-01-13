@@ -30,7 +30,7 @@
         },
     };
     /*
-    // Notes 2018-01-13: The side bar feels really quirky, disable it until it
+    // TODO 2018-01-13: The side bar feels really quirky, disable it until it
     // gets better
     manifest["sidebar_action"] = {
         "default_title": "__MSG_statsPageName__",
