@@ -40,8 +40,8 @@ Default: `false`
 
 *Note: Nano Adblocker does not connect to `jspenguin.com` yet, this option will become available as soon as it does.*
 
-When set to `true`, Nano Adblocker will no longer send background requests to `jspenguin.com`. Doing so will cause your filters to 
-update 3 to 7 times less frequently and you can no longer report broken websites from the popup panel. 
+When set to `true`, Nano Adblocker will no longer send background requests to `jspenguin.com`. Consequently, your filters will 
+update 3 to 7 times *less* frequently and you can no longer report broken websites from the popup panel. 
 
 ---
 
