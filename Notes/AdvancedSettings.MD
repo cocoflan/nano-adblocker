@@ -68,8 +68,8 @@ When set to `true`, Nano Adblocker will discard exception and `badfilter` rules 
 compiling filters **in the future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** 
 cause discarded filters to be immediately restored. 
 
-Filters that are transformed to exception rule due to only having negated domains will not be affected **for now**. This is really 
-hard to fix due to the parsing logic is not designed with discarding whitelists in mind. 
+Negated domains are sometimes transformed into exception rules, they will not be affected **for now**. This is really hard to fix 
+due to the parsing logic is not designed with discarding whitelists in mind. 
 
 Setting this toggle to `true` **will definitely** break *many* websites and you are to fix them **by yourself**. 
 
