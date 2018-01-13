@@ -29,6 +29,13 @@
             "strict_min_version": "52.0",
         },
     };
+    manifest["sidebar_action"] = {
+        "default_title": "__MSG_statsPageName__",
+        "default_panel": "logger-ui.html",
+        "default_icon": {
+            "128": "img/128_on.png",
+        },
+    };
 
     await fs.writeFile(basePath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
 

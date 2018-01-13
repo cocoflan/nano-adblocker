@@ -34,10 +34,6 @@ vAPI.net = {
     canFilterResponseBody:
         typeof browser.webRequest === 'object' &&
         typeof browser.webRequest.filterResponseData === 'function'
-        
-        // Patch 2018-01-04: This feature is buggy beyond reason, disable it
-        // until it can be ironed out
-        && false
 };
 
 /******************************************************************************/
