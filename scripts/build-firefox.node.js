@@ -29,6 +29,9 @@
             "strict_min_version": "52.0",
         },
     };
+    /*
+    // Notes 2018-01-13: The side bar feels really quirky, disable it until it
+    // gets better
     manifest["sidebar_action"] = {
         "default_title": "__MSG_statsPageName__",
         "default_panel": "logger-ui.html",
@@ -36,6 +39,7 @@
             "128": "img/128_on.png",
         },
     };
+    */
 
     await fs.writeFile(basePath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
 
