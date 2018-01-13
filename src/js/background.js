@@ -131,8 +131,8 @@ var µBlock = (function() { // jshint ignore:line
 
         // read-only
         systemSettings: {
-            compiledMagic: 'puuijtkfpspv',
-            selfieMagic: 'puuijtkfpspv'
+            compiledMagic: '0dedw24amlmf',
+            selfieMagic: '0dedw24amlmf'
         },
 
         restoreBackupSettings: {
