@@ -23,3 +23,6 @@ You must use integer in either case, otherwise the header is ignored.
 Nano Adblocker will read some assets from a mirror server, when doing so, those filters will update every day instead of 3 to 5 days 
 depending on the filter. If a failover happens, or you opt out from mirror server using advanced settings, the original update delay 
 is restored. 
+
+The mirror server will update its cache every 2 hours to 3 days depending on the asset. Manual marking filters as outdated will bypass 
+the mirror server. 
