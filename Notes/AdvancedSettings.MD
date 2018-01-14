@@ -6,12 +6,18 @@ If you are not familiar with advanced settings of uBlock Origin,
 In Nano Adblocker, most of the advanced settings are the same as uBlock Origin, however, the default value of some settings are 
 different: 
 - `assetFetchTimeout` defaults to `60`
-- `manualUpdateAssetFetchPeriod` defaults to `500`
+- `manualUpdateAssetFetchPeriod` defaults to `1`
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
 functionalities **can change or break at any time**, make sure to backup your settings if you want to play around with them. Please 
 open an issue when they break for you, or otherwise behave in a way that contradicts the description below. We cannot fix issues 
 that we are not aware of, please take the time to report issues you encounter. 
+
+When fetching assets, you should either get them all done in one burst or wait a significant delay between them if you need to spread 
+things out. It is expensive to keep sockets open and it is even more expensive to create new sockets. uBlock Origin waits 2 seconds 
+between two requests and that just does not make sense, therefore, `manualUpdateAssetFetchPeriod` is set to 1 millisecond in order 
+to reuse the same socket to load multiple assets from the same host. When updating assets in the background, however, Nano Adblocker 
+will wait 5 minutes between two requests to not slow down other connections, uBlock Origin will instead only wait for 2 minutes. 
 
 ---
 
