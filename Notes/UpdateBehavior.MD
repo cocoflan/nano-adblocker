@@ -15,3 +15,11 @@ Nano Adblocker allows you to use hour as unit, but will round it *up* to the nea
 instead ignore the header. 
 
 You must use integer in either case, otherwise the header is ignored. 
+
+## Nano Mirror
+
+*Note: This part of this documentation is a draft, and may not reflect the current behavior of Nano Adblocker.*
+
+Nano Adblocker will read some filters from a mirror server, when doing so, those filters will update every day instead of 3 to 5 days 
+depending on the filter. If a failover happens, or you opt out from mirror server using advanced settings, the original update delay 
+is restored. 
