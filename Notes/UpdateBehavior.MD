@@ -25,4 +25,4 @@ depending on the filter. If a failover happens, or you opt out from mirror serve
 is restored. 
 
 The mirror server will update its cache every 2 hours to 3 days depending on the asset. Manual marking filters as outdated will bypass 
-the mirror server. 
+the mirror server for once. 
