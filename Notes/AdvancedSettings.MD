@@ -17,9 +17,10 @@ that we are not aware of, please take the time to report issues you encounter.
 When fetching assets, you should either get them all done in one burst or wait a significant delay between them if you need to spread 
 things out. It is expensive to keep sockets open and it is even more expensive to create new sockets. In fact, holding sockets open is 
 how [Slowloris](https://en.wikipedia.org/wiki/Slowloris_(computer_security)) attacks are carried out. uBlock Origin waits 2 seconds 
-between two requests and that just does not make sense. therefore, `manualUpdateAssetFetchPeriod` is set to 1 millisecond in order 
-to reuse the same socket to load multiple assets from the same host. When updating assets in the background, however, Nano Adblocker 
-will wait 5 minutes between two requests to not slow down other connections, uBlock Origin will instead only wait for 2 minutes. 
+between two requests and that just does not make sense. In Nano Adblocker, `manualUpdateAssetFetchPeriod` is set to 1 millisecond in 
+order to reuse the same socket to load multiple assets from the same host. When updating assets in the background, however, 
+Nano Adblocker will wait 5 minutes between two requests to not slow down other connections, uBlock Origin will instead only wait for 
+2 minutes. 
 
 ---
 
