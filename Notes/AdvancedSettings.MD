@@ -7,6 +7,7 @@ In Nano Adblocker, most of the advanced settings are the same as uBlock Origin, 
 different: 
 - `assetFetchTimeout` defaults to `60`
 - `autoUpdateAssetFetchPeriod` defaults to `300` <sup>1</sup>
+- `autoUpdatePeriod` defaults to `4`
 - `manualUpdateAssetFetchPeriod` defaults to `1` <sup>1</sup>
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
