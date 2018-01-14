@@ -24,5 +24,4 @@ Nano Adblocker will read some assets from a mirror server, when doing so, those 
 depending on the filter. If a failover happens, or you opt out from mirror server using advanced settings, the original update delay 
 is restored. 
 
-The mirror server will update its cache every 2 hours to 3 days depending on the asset. Manual marking filters as outdated will bypass 
-the mirror server for once. 
+The mirror server will update its cache every 2 hours to 3 days depending on the asset. 
