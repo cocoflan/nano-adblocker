@@ -61,6 +61,10 @@ node build-edge.node.js --edge
 
 You need to run the platform specific build script when changing vAPI scripts or the manifest. 
 
+### Nano Defender for Edge
+
+Similar to the build process for Firefox, just replace `--firefox` with `--edge`. 
+
 ### Packaging
 
 Unlike other platforms, Edge extension packaging is more complicated than simply zipping build files. However, packaging is only 
