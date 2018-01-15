@@ -63,7 +63,7 @@ You need to run the platform specific build script when changing vAPI scripts or
 
 ### Nano Defender for Edge
 
-Similar to the build process for Firefox, just replace `--firefox` with `--edge`. 
+Same as the build process for Firefox, just replace `--firefox` with `--edge`. 
 
 ### Packaging
 
