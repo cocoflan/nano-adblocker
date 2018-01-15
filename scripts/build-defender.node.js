@@ -51,14 +51,11 @@
         manifest["background"]["persistent"] = true;
         manifest["minimum_edge_version"] = "40.15063.674.0";
 
-        /*
-        // TODO 2018-01-14: Edge seems to only care whether this key exists, and not it's value
         manifest["browser_specific_settings"] = {
             "edge": {
                 "browser_action_next_to_addressbar": false,
             },
         };
-        */
     }
 
     await fs.writeFile(buildPath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
