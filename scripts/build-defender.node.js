@@ -21,9 +21,9 @@
     // This is not beautiful, but good enough
     await fs.copyFile("../" + repository + "/Extension Compiler/Extension/common.js", buildPath + "/common.js");
     if (isFirefox) {
-        await fs.appendFile(buildPath + "/common.js", "\na.isFirefox = true;\na.debugMode = false;\n", { encoding: "utf8" });
+        await fs.appendFile(buildPath + "/common.js", "\na.isFirefox = true;\na.debugMode = false;\n", "utf8");
     } else {
-        await fs.appendFile(buildPath + "/common.js", "\na.isEdge = true;\na.debugMode = false;\n", { encoding: "utf8" });
+        await fs.appendFile(buildPath + "/common.js", "\na.isEdge = true;\na.debugMode = false;\n", "utf8");
     }
 
     let manifest = await fs.readFile(buildPath + "/manifest.json", "utf8");

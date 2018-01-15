@@ -100,7 +100,7 @@ const uBOVersion = "v1.14.25.100 (with sidebar disabled)";
             }
         }
 
-        await fs.writeFile(localePath + "/" + lang + "/messages.json", JSON.stringify(result, null, 2), { encoding: "utf8" });
+        await fs.writeFile(localePath + "/" + lang + "/messages.json", JSON.stringify(result, null, 2), "utf8");
     };
 
     const [langsOriginal, langsExtra] = await Promise.all([
