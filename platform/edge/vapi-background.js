@@ -592,7 +592,7 @@ vAPI.tabs.reload = function(tabId, bypassCache) {
         }
     };
 
-    // Patch 2018-01-05: 'reload' does not (yet) exist in Edge
+    // EDGE 2018-01-05: 'reload' does not (yet) exist
     try {
         chrome.tabs.reload(
             tabId,
@@ -665,12 +665,14 @@ vAPI.setIcon = (function() {
         titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
 
     // Patch 2017-12-08: Replace icons
+    // EDGE 2018-01-14: Change size, Edge does not care how big the image
+    // actually is
     var iconPaths = [
         {
-            '128': 'img/128_off.png'
+            '38': 'img/128_off.png'
         },
         {
-            '128': 'img/128_on.png'
+            '38': 'img/128_on.png'
         }
     ];
 
@@ -680,8 +682,8 @@ vAPI.setIcon = (function() {
         if ( browserAction.setIcon !== undefined ) {
             browserAction.setIcon({
                 tabId: tab.id,
-                // Patch 2018-01-05: Edge mutates the object that is passed in
-                path: Object.assign({}, iconPaths[status === 'on' ? 1 : 0]);
+                // EDGE 2018-01-05: Edge mutates the object that is passed in
+                path: Object.assign({}, iconPaths[status === 'on' ? 1 : 0])
             });
             browserAction.setBadgeText({
                 tabId: tab.id,
