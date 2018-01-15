@@ -665,7 +665,7 @@ vAPI.setIcon = (function() {
         titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
 
     // Patch 2017-12-08: Replace icons
-    // EDGE 2018-01-14: Change size, Edge does not care how big the image
+    // EDGE 2018-01-14: Change key, Edge does not care how big the image
     // actually is
     var iconPaths = [
         {

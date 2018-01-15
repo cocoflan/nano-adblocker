@@ -32,8 +32,8 @@
 
     manifest["browser_specific_settings"] = {
         "edge": {
-            "browser_action_next_to_addressbar": true
-        }
+            "browser_action_next_to_addressbar": true,
+        },
     };
 
     await fs.writeFile(basePath + "/manifest.json", JSON.stringify(manifest, null, 2), "utf8");
