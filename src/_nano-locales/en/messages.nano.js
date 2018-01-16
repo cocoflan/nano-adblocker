@@ -294,6 +294,10 @@
             "description": "English: The option '{{option}}' is not recognized."
         },
         "filterLinterRejectedOnlyUnsupportedType": {
+            // TODO 2018-01-15: This was phrased like this due to weird behavior of
+            // the type option 'webrtc', but turns out to be a bug:
+            // https://github.com/gorhill/uBlock/issues/3433
+            // Need to investigate whether this should be changed.
             "message": "A type option is not yet supported.",
             "description": "Error when unsupported type option used and entire rule discarded"
         },
