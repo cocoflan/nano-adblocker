@@ -25,13 +25,13 @@ again.*
 
 ## Notable Change
 
-### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/33)\] Nano Dashboard
+<!--
+### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/33)\] Nano Dashboard, clean and modern
 
-<!--, clean and modern
-
-![Screenshot](https://i.imgur.com/LUAu7KO.png)-->
+![Screenshot](https://i.imgur.com/LUAu7KO.png)
 
 Not yet available
+-->
 
 ### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/1)\] Nano Filter Linter, neat and saves frustration
 
