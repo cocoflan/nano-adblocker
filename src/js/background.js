@@ -31,13 +31,14 @@ var µBlock = (function() { // jshint ignore:line
     var oneSecond = 1000,
         oneMinute = 60 * oneSecond;
 
+    // Patch 2018-01-21: Update default values
     var hiddenSettingsDefault = {
         assetFetchTimeout: 60,
-        autoUpdateAssetFetchPeriod: 120,
-        autoUpdatePeriod: 7,
+        autoUpdateAssetFetchPeriod: 300,
+        autoUpdatePeriod: 4,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
-        manualUpdateAssetFetchPeriod: 500,
+        manualUpdateAssetFetchPeriod: 1,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
         userResourcesLocation: 'unset',

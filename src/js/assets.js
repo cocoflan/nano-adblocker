@@ -897,7 +897,8 @@ api.rmrf = function() {
 // Asset updater area.
 var updaterStatus,
     updaterTimer,
-    updaterAssetDelayDefault = 120000,
+    // Patch 2018-01-21: Update default value
+    updaterAssetDelayDefault = 300000,
     updaterAssetDelay = updaterAssetDelayDefault,
     updaterUpdated = [],
     updaterFetched = new Set(),

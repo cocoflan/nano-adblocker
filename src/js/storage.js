@@ -1183,8 +1183,9 @@
             timer = undefined;
             next = 0;
             var µb = µBlock;
+            // Patch 2018-01-21: Update default value
             µb.assets.updateStart({
-                delay: µb.hiddenSettings.autoUpdateAssetFetchPeriod * 1000 || 120000
+                delay: µb.hiddenSettings.autoUpdateAssetFetchPeriod * 1000 || 300000
             });
         }, updateDelay);
     };
@@ -1272,7 +1273,8 @@
             this.loadFilterLists();
         }
         if ( this.userSettings.autoUpdate ) {
-            this.scheduleAssetUpdater(this.hiddenSettings.autoUpdatePeriod * 3600000 || 25200000);
+            // Patch 2018-01-21: Update default value
+            this.scheduleAssetUpdater(this.hiddenSettings.autoUpdatePeriod * 3600000 || 10800000);
         } else {
             this.scheduleAssetUpdater(0);
         }
