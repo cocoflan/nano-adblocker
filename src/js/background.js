@@ -32,15 +32,20 @@ var µBlock = (function() { // jshint ignore:line
         oneMinute = 60 * oneSecond;
 
     var hiddenSettingsDefault = {
-        assetFetchTimeout: 30,
+        assetFetchTimeout: 60,
         autoUpdateAssetFetchPeriod: 120,
         autoUpdatePeriod: 7,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
-        manualUpdateAssetFetchPeriod: 2000,
+        manualUpdateAssetFetchPeriod: 500,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
-        userResourcesLocation: 'unset'
+        userResourcesLocation: 'unset',
+        
+        // Patch 2017-12-25: Add more advanced settings
+        _nanoIgnoreThirdPartyWhitelist: false,
+        _nanoIgnorePerformanceAuditing: false,
+        _nanoMakeUserFiltersPrivileged: false
     };
 
     return {
@@ -68,7 +73,12 @@ var µBlock = (function() { // jshint ignore:line
             requestLogMaxEntries: 1000,
             showIconBadge: true,
             tooltipsDisabled: false,
-            webrtcIPAddressHidden: false
+            webrtcIPAddressHidden: false,
+            
+            // Patch 2017-12-19: Add UI configuration
+            nanoDashboardAllowSelection: true,
+            nanoEditorWordSoftWrap: false,
+            nanoViewerWordSoftWrap: false
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
@@ -121,8 +131,8 @@ var µBlock = (function() { // jshint ignore:line
 
         // read-only
         systemSettings: {
-            compiledMagic: 'puuijtkfpspv',
-            selfieMagic: 'puuijtkfpspv'
+            compiledMagic: '0dedw24amlmf',
+            selfieMagic: '0dedw24amlmf'
         },
 
         restoreBackupSettings: {
@@ -138,6 +148,8 @@ var µBlock = (function() { // jshint ignore:line
         assetsBootstrapLocation: 'assets/assets.json',
 
         userFiltersPath: 'user-filters',
+        // Patch 2017-12-25: Add a special asset key for partial user filters
+        nanoPartialUserFiltersKey: 'nano-partial-user-filters',
         pslAssetKey: 'public_suffix_list.dat',
 
         selectedFilterLists: [],
@@ -174,5 +186,10 @@ var µBlock = (function() { // jshint ignore:line
     };
 
 })();
+
+/******************************************************************************/
+
+// Patch 2017-12-07: Make debugging less painful
+var nano = µBlock;
 
 /******************************************************************************/

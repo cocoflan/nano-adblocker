@@ -41,8 +41,11 @@ vAPI.app.onShutdown = function() {
     µb.staticNetFilteringEngine.reset();
     µb.staticExtFilteringEngine.reset();
     µb.sessionFirewall.reset();
+    
+    // TODO 2017-12-25: Why reset twice?
     µb.permanentFirewall.reset();
     µb.permanentFirewall.reset();
+    
     µb.sessionURLFiltering.reset();
     µb.permanentURLFiltering.reset();
 };
@@ -106,6 +109,8 @@ var onVersionReady = function(lastVersion) {
     // Starting with 1.9.17, non-advanced users can have access to the dynamic
     // filtering pane in read-only mode. Still, it should not be visible by
     // default.
+    /*
+    // Patch 2017-12-23: Not needed for Nano Adblocker
     if ( lastVersion.localeCompare('1.9.17') < 0 ) {
         if (
             µb.userSettings.advancedUserEnabled === false &&
@@ -115,6 +120,7 @@ var onVersionReady = function(lastVersion) {
             µb.keyvalSetOne('dynamicFilteringEnabled', false);
         }
     }
+    */
     if ( lastVersion !== vAPI.app.version ) {
         vAPI.storage.set({ version: vAPI.app.version });
     }
@@ -181,9 +187,12 @@ var onUserSettingsReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/1892
     // For first installation on a battery-powered device, disable generic
     // cosmetic filtering.
-    if ( µb.firstInstall && vAPI.battery ) {
-        userSettings.ignoreGenericCosmeticFilters = true;
-    }
+    //
+    // Patch 2017-12-16: This is just ridiculous, moving the problem to another
+    // place is not a solution
+    //if ( µb.firstInstall && vAPI.battery ) {
+    //    userSettings.ignoreGenericCosmeticFilters = true;
+    //}
 };
 
 /******************************************************************************/
@@ -259,7 +268,12 @@ var onSelectedFilterListsLoaded = function() {
         'compiledMagic': '',
         'dynamicFilteringString': 'behind-the-scene * 3p noop\nbehind-the-scene * 3p-frame noop',
         'urlFilteringString': '',
-        'hostnameSwitchesString': '',
+        // Patch 2017-12-23: Update default settings to block all CSP reports
+        // CSP reports are extremely easy to abuse, they can be exploited to
+        // track the user as they can be generated dynamically with JavaScript.
+        // The report-only header can also be used to see what extensions did
+        // to the DOM, disclosing extensions that the user have installed
+        'hostnameSwitchesString': 'no-csp-reports: * true',
         'lastRestoreFile': '',
         'lastRestoreTime': 0,
         'lastBackupFile': '',

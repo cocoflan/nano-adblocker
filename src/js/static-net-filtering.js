@@ -1399,7 +1399,13 @@ FilterParser.prototype.toNormalizedType = {
        'subdocument': 'sub_frame',
     'xmlhttprequest': 'xmlhttprequest',
             'webrtc': 'unsupported',
-         'websocket': 'websocket'
+         'websocket': 'websocket',
+
+    // Patch 2017-12-28: Add convenience options mapping
+             'ghide': 'generichide',
+               'css': 'stylesheet',
+            'iframe': 'subdocument',
+               'xhr': 'xmlhttprequest'
 };
 
 /******************************************************************************/
@@ -1451,6 +1457,14 @@ FilterParser.prototype.parseTypeOption = function(raw, not) {
 
     // Non-discrete network types can't be negated.
     if ( (typeBit & this.allNetRequestTypeBits) === 0 ) {
+        // Patch 2017-12-27: Show an appropriate warning message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchWarning(
+                vAPI.i18n('filterLinterWarningDiscardedNonNegatableType')
+                    .replace('{{type}}', raw)
+            );
+        }
+        
         return;
     }
 
@@ -1510,18 +1524,26 @@ FilterParser.prototype.parseOptions = function(s) {
         if ( not ) {
             opt = opt.slice(1);
         }
-        if ( opt === 'third-party' ) {
+        // Patch 2017-12-28: Add convenience options mapping
+        if ( opt === 'third-party' || opt === '3p' ) {
             this.parsePartyOption(false, not);
             continue;
         }
         // https://issues.adblockplus.org/ticket/616
         // `generichide` concept already supported, just a matter of
         // adding support for the new keyword.
-        if ( opt === 'elemhide' || opt === 'generichide' ) {
+        // Patch 2017-12-28: Add convenience options mapping
+        if ( opt === 'elemhide' || opt === 'generichide' || opt === 'ghide' ) {
             if ( not === false ) {
                 this.parseTypeOption('generichide', false);
                 continue;
             }
+            
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedNegatedGenerichide'));
+            }
+            
             this.unsupported = true;
             break;
         }
@@ -1531,6 +1553,12 @@ FilterParser.prototype.parseOptions = function(s) {
                 this.redirect = true;
                 continue;
             }
+            
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedRedirectInException'));
+            }
+            
             this.unsupported = true;
             break;
         }
@@ -1544,6 +1572,11 @@ FilterParser.prototype.parseOptions = function(s) {
         if ( opt.startsWith('domain=') ) {
             this.domainOpt = this.parseDomainOption(opt.slice(7));
             if ( this.domainOpt === '' ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadDomainOptionArguments'));
+                }
+                
                 this.unsupported = true;
                 break;
             }
@@ -1553,7 +1586,8 @@ FilterParser.prototype.parseOptions = function(s) {
             this.important = Important;
             continue;
         }
-        if ( opt === 'first-party' ) {
+        // Patch 2017-12-28: Add convenience options mapping
+        if ( opt === 'first-party' || opt === '1p' ) {
             this.parsePartyOption(true, not);
             continue;
         }
@@ -1562,6 +1596,11 @@ FilterParser.prototype.parseOptions = function(s) {
                 this.parseTypeOption('data', not);
                 this.dataType = 'csp';
                 this.dataStr = opt.slice(4).trim();
+            } else {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadCspOptionArguments'));
+                }
             }
             continue;
         }
@@ -1572,15 +1611,53 @@ FilterParser.prototype.parseOptions = function(s) {
             continue;
         }
         // Used by Adguard, purpose is unclear -- just ignore for now.
-        if ( opt === 'empty' ) {
+        // Patch 2017-12-28: This option in Adguard means a noop-redirect,
+        // not yet supported, discard the filter.
+        //if ( opt === 'empty' ) {
+        //    continue;
+        //}
+        // Patch 2017-12-28: Expand the option mp4 to media,redirect=nano-noopmp4-1s
+        if ( opt === 'mp4' ) {
+            // Patch 2017-12-28: Show an appropriate warning message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningExpandedMp4Option'));
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningDeprecatedMp4Option'));
+            }
+            
+            opts.push('media', 'redirect=nano-noopmp4-1s');
+            // Reflect changes
+            this.fopts = opts.join(',');
+            var pos = this.raw.lastIndexOf('$');
+            this.raw = this.raw.slice(0, pos + 1) + this.fopts;
+            
             continue;
         }
         // https://github.com/uBlockOrigin/uAssets/issues/192
         if ( opt === 'badfilter' ) {
+            // Patch 2017-12-26: Process discard third party whitelist compile
+            // flag
+            // Although badfilter option can be used to disable whitelists,
+            // all of them are already disabled with this flag
+            // Things will break really badly anyway, no reason to keep
+            // badfilter rules
+            if ( !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+                // No need to dispatch error to linter as this does not apply to
+                // first party rules
+                this.unsupported = true;
+                break;
+            }
+            
             this.badFilter = BadFilter;
             continue;
         }
         // Unrecognized filter option: ignore whole filter.
+        // Patch 2017-12-28: Show an appropriate warning message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(
+                vAPI.i18n('filterLinterRejectedUnknownOption')
+                    .replace('{{option}}', opt)
+            );
+        }
         this.unsupported = true;
         break;
     }
@@ -1704,6 +1781,12 @@ FilterParser.prototype.parse = function(raw) {
     if ( pos !== -1 ) {
         var c = s.charAt(pos + 1);
         if ( c === '#' || c === '@' ) {
+            // TODO 2018-01-03: Fix this
+            // https://github.com/NanoAdblocker/NanoCore/issues/77
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterInternalErrorCosmeticFilterPassedThrough'));
+            }
+            
             console.error('static-net-filtering.js > unexpected cosmetic filters');
             this.elemHiding = true;
             return this;
@@ -1713,6 +1796,14 @@ FilterParser.prototype.parse = function(raw) {
     // block or allow filter?
     // Important: this must be executed before parsing options
     if ( s.startsWith('@@') ) {
+        // Patch 2017-12-26: Process discard third party whitelist compile flag
+        if ( !nano.compileFlags.firstParty && nano.compileFlags.strip3pWhitelist ) {
+            // No need to dispatch error to linter as this does not apply to
+            // first party rules
+            this.unsupported = true;
+            return this;
+        }
+        
         this.action = AllowAction;
         s = s.slice(2);
     }
@@ -1727,6 +1818,11 @@ FilterParser.prototype.parse = function(raw) {
             // https://github.com/gorhill/uBlock/issues/952
             //   Discard Adguard-specific `$$` filters.
             if ( s.indexOf('$$') !== -1 ) {
+                // Patch 2017-12-27: Show an appropriate error message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAdguardElementRemove'));
+                }
+                
                 this.unsupported = true;
                 return this;
             }
@@ -1737,8 +1833,18 @@ FilterParser.prototype.parse = function(raw) {
             if ( this.types & this.unsupportedTypeBit ) {
                 this.types &= ~this.unsupportedTypeBit;
                 if ( this.types === 0 ) {
+                    // Patch 2017-12-27: Show an appropriate error message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedOnlyUnsupportedType'));
+                    }
+                    
                     this.unsupported = true;
                     return this;
+                } else {
+                    // Patch 2017-12-27: Show an appropriate warning message
+                    if ( nano.compileFlags.firstParty ) {
+                        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningUnsupportedTypeIgnored'));
+                    }
                 }
             }
             s = s.slice(0, pos);
@@ -1754,6 +1860,11 @@ FilterParser.prototype.parse = function(raw) {
         // string -- this ensure reverse-lookup will work fine.
         this.f = normalizeRegexSource(this.f);
         if ( this.f === '' ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedNetworkBadRegExp'));
+            }
+            
             console.error(
                 "uBlock Origin> discarding bad regular expression-based network filter '%s': '%s'",
                 raw,
@@ -1783,6 +1894,11 @@ FilterParser.prototype.parse = function(raw) {
 
         // https://github.com/chrisaljoudi/uBlock/issues/1096
         if ( s.startsWith('^') ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedInterventionForSMed79'));
+            }
+            
             this.unsupported = true;
             return this;
         }
@@ -2097,6 +2213,8 @@ FilterContainer.prototype.fromSelfie = function(selfie) {
 FilterContainer.prototype.compile = function(raw, writer) {
     // ORDER OF TESTS IS IMPORTANT!
 
+    // TODO 2017-12-27: Unless I missed something real hard, I cannot think of
+    // a single situation where this test is meaningful
     // Ignore empty lines
     var s = raw.trim();
     if ( s.length === 0 ) {
@@ -2104,7 +2222,7 @@ FilterContainer.prototype.compile = function(raw, writer) {
     }
 
     var parsed = this.filterParser.parse(s);
-
+    
     // Ignore element-hiding filters
     if ( parsed.elemHiding ) {
         return false;
@@ -2128,6 +2246,11 @@ FilterContainer.prototype.compile = function(raw, writer) {
         parsed.dataType === undefined &&
         this.compileHostnameOnlyFilter(parsed, writer)
     ) {
+        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        if ( nano.compileFlags.firstParty && parsed.redirect ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectPureHostname'));
+        }
+        
         return true;
     }
 
@@ -2228,6 +2351,12 @@ FilterContainer.prototype.compileToAtomicFilter = function(fdata, parsed, writer
         type = parsed.types;
     if ( type === 0 ) {
         writer.push([ descBits, parsed.tokenHash, fdata ]);
+        
+        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        if ( nano.compileFlags.firstParty && parsed.redirect ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoType'));
+        }
+        
         return;
     }
     var bitOffset = 1;
