@@ -7,10 +7,10 @@
 "use strict";
 
 /**
- * The version of uBlock Origin that Nano Adblocker is based on.
+ * Based on string.
  * @const {string}
  */
-const uBOVersion = "v1.14.25.101 [dada3fe] [sidebar disabled]";
+const basedOnData = "uBlock Origin Version/1.14.25.101+2 Commit/dada3fe Sidebar/disabled";
 
 (async () => {
     console.log("[Nano] Pack Locale :: Started");
@@ -96,7 +96,7 @@ const uBOVersion = "v1.14.25.101 [dada3fe] [sidebar disabled]";
                 result[key].message = result[key].message.replace("Nano", "uBlock Origin");
             }
             if (key === "aboutBasedOn") {
-                result[key].message = result[key].message.replace("Nano", "uBlock Origin").replace("{{@version}}", uBOVersion);
+                result[key].message = result[key].message.replace("{{@data}}", basedOnData);
             }
         }
 

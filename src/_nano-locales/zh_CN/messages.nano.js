@@ -171,8 +171,8 @@
 
         // Based on message of about page
         "aboutBasedOn": {
-            "message": "基于 uBlock Origin {{@version}}",
-            "description": "English: Based on uBlock Origin {{@version}}"
+            "message": "基于 {{@data}}",
+            "description": "English: Based on {{@data}}"
         }
     };
 })();
