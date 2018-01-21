@@ -106,7 +106,7 @@
         // Extra help messages for user filters
         "1pResourcesReference": {
             "message": "Nano 拥有两套资源，",
-            "description": "English: Nano Adblocker comes with two sets of resources,"
+            "description": "English: Nano comes with two sets of resources,"
         },
         "1pResourcesOriginal": {
             "message": "uBlock Origin 的资源",

@@ -106,7 +106,7 @@
         // Extra help messages for user filters
         "1pResourcesReference": {
             "message": "Nano ma dwa zestawy zasobów,",
-            "description": "English: Nano Adblocker comes with two sets of resources,"
+            "description": "English: Nano comes with two sets of resources,"
         },
         "1pResourcesOriginal": {
             "message": "zasoby uBlocka Origin",
