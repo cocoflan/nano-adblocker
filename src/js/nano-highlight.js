@@ -73,13 +73,13 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Cosmetic
                 {
                     token: 'keyword.control',
-                    regex: /#@?(?:\?|\$)?#\^?/,
+                    regex: /#@?(?:\?|\$)?#\^?(?!$)/,
                     next: 'double_hash'
                 },
                 {
                     // Operator @ is at the wrong place
                     token: 'invalid.illegal',
-                    regex: /#@?(?:\?|\$)?@#\^?/,
+                    regex: /#@?(?:\?|\$)?@#\^?(?!$)/,
                     next: 'double_hash'
                 },
                 {

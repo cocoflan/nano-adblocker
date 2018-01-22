@@ -331,7 +331,12 @@
     // https://github.com/gorhill/uBlock/issues/1022
     // Be sure to end with an empty line.
     content = content.trim();
-    if ( content !== '' ) { content += '\n'; }
+    if ( content !== '' ) {
+        content += '\n';
+    } else {
+        // Patch 2018-01-21: Reset linter when saving empty user filters
+        nano.filterLinter.clearResult();
+    }
     this.assets.put(this.userFiltersPath, content, callback);
     this.removeCompiledFilterList(this.userFiltersPath);
 };
@@ -900,14 +905,7 @@
 //   applying 1st-party filters.
 
 µBlock.applyCompiledFilters = function(rawText, firstparty) {
-    if ( rawText === '' ) {
-        // Patch 2017-12-28: Reset linter when applying empty user filters
-        if ( firstparty ) {
-            nano.filterLinter.clearResult();
-        }
-    
-        return;
-    }
+    if ( rawText === '' ) { return; }
     var reader = new this.CompiledLineReader(rawText);
     this.staticNetFilteringEngine.fromCompiledContent(reader);
     this.staticExtFilteringEngine.fromCompiledContent(reader, {
