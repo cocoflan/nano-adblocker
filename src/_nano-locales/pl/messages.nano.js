@@ -109,7 +109,7 @@
             "description": "English: Nano comes with two sets of resources,"
         },
         "1pResourcesOriginal": {
-            "message": "zasoby uBlocka Origin",
+            "message": "zasoby uBlock Origin",
             "description": "English: uBlock Origin Resources"
         },
         "1pResourcesAnd": {
