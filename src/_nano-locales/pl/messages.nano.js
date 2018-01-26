@@ -109,7 +109,7 @@
             "description": "English: Nano comes with two sets of resources,"
         },
         "1pResourcesOriginal": {
-            "message": "zasoby uBlocka Origin",
+            "message": "zasoby uBlock Origin",
             "description": "English: uBlock Origin Resources"
         },
         "1pResourcesAnd": {
@@ -144,7 +144,7 @@
             "description": "Error when hostname not valid"
         },
         "whitelistLinterInvalidRegExp": {
-            "message": "To wyrażenie regularne ma błędy składniowe.",
+            "message": "To wyrażenie regularne zawiera błędy w składni.",
             "description": "Error when regular expression has syntax errors"
         },
         "whitelistLinterInvalidURL": {
@@ -203,7 +203,7 @@
             "description": "Error when raw JavaScript injection"
         },
         "filterLinterRejectedBadSelector": {
-            "message": "Selektor w tej regule ma błędy składniowe.",
+            "message": "Selektor tej reguły zawiera błędy w składni.",
             "description": "Error when selector has syntax errors"
         },
         "filterLinterRejectedTooExpensive": {
@@ -211,7 +211,7 @@
             "description": "Error when expensive cosmetic is generic"
         },
         "filterLinterRejectedStyleInjection": {
-            "message": "Ta reguła wstrzykiwania CSS ma błędy składniowe.",
+            "message": "Ta reguła wstrzykiwania CSS zawiera błędy w składni.",
             "description": "Error when CSS injection has syntax errors"
         },
         // Network filtering warnings
