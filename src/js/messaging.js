@@ -513,7 +513,7 @@ var onMessage = function(request, sender, callback) {
         request.entity = µb.URI.entityFromDomain(request.domain);
         response.specificCosmeticFilters =
             µb.cosmeticFilteringEngine.retrieveDomainSelectors(request, response);
-        // If response body filtering is supported, than the scriptlets have
+        // If response body filtering is supported, then the scriptlets have
         // already been injected.
         if (
             µb.canFilterResponseBody === false ||
