@@ -105,7 +105,7 @@ var applyChanges = function() {
 
 // Patch 2017-12-26: Add invokables to advanced settings dashboard
 var nanoRestart = function() {
-        messaging.send(
+    messaging.send(
         'dashboard',
         {
             what: 'hiddenInvoke_nanoRestart'
