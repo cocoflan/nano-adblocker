@@ -103,7 +103,15 @@ var applyChanges = function() {
 
 /******************************************************************************/
 
-// Patch 2017-12-26: Add force recompile to advanced settings dashboard
+// Patch 2017-12-26: Add invokables to advanced settings dashboard
+var nanoRestart = function() {
+        messaging.send(
+        'dashboard',
+        {
+            what: 'hiddenInvoke_nanoRestart'
+        }
+    );
+};
 var nanoForceRecompile = function() {
     messaging.send(
         'dashboard',
@@ -118,6 +126,9 @@ var nanoForceRecompile = function() {
 // Handle user interaction
 uDom('#advancedSettings').on('input', advancedSettingsChanged);
 uDom('#advancedSettingsApply').on('click', applyChanges);
+
+// Patch 2017-12-26: Add invokables to advanced settings dashboard
+uDom('#Invokable_nanoRestart').on('click', nanoRestart);
 uDom('#Invokable_nanoForceRecompile').on('click', nanoForceRecompile);
 
 renderAdvancedSettings();

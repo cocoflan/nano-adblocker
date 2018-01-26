@@ -993,7 +993,10 @@ var onMessage = function(request, sender, callback) {
         µb.hiddenSettingsFromString(request.content);
         break;
     
-    // Patch 2017-12-26: Add force recompile to advanced settings dashboard
+    // Patch 2017-12-26: Add invokables to advanced settings dashboard
+    case 'hiddenInvoke_nanoRestart':
+        vAPI.app.restart();
+        break;
     case 'hiddenInvoke_nanoForceRecompile':
         nano.nanoForceRecompile();
         break;
