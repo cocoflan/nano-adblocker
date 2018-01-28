@@ -92,4 +92,62 @@ self.chrome = self.browser;
     };
 })();
 
+// Patch 2018-01-27: Hotfix for fetch, I know this fix is disgusting, but it
+// gets the job done I will get a proper shim working in the near future
+window.econfig = {};
+window.econfig.dateStripMarks = true;
+window.econfig.fetchAware = false;
+if (window.chrome.webRequest) {
+    window.chrome.webRequest.ResourceType = {
+        "MAIN_FRAME": "main_frame",
+        "SUB_FRAME": "sub_frame",
+        "STYLESHEET": "stylesheet",
+        "SCRIPT": "script",
+        "IMAGE": "image",
+        // "FONT": "font", // Not available as of 41
+        "OBJECT": "object",
+        "XMLHTTPREQUEST": "xmlhttprequest",
+        "FETCH": "fetch", // Not available as of 40, available in 41, but not Chromium
+        "PING": "ping",
+        // "CSP_REPORT": "csp_report", // Not available as of 41
+        // "MEDIA": "media", // Not available as of 41
+        // "WEBSOCKET": "websocket", // Not available as of 41
+        "OTHER": "other",
+    };
+    (() => {
+        const _addListener = window.chrome.webRequest.onBeforeRequest.addListener;
+        window.chrome.webRequest.onBeforeRequest.addListener = (callback, filter, opt_extraInfoSpec) => {
+            if (!window.econfig.fetchAware) {
+                if (filter && filter.types) {
+                    if (filter.types.includes("xmlhttprequest")) {
+                        filter.types.push("fetch");
+                    }
+                }
+                const _callback = callback;
+                callback = (details) => {
+                    if (details.type === "fetch") {
+                        details.type = "xmlhttprequest";
+                    }
+                    return _callback(details);
+                };
+            }
+            try {
+                _addListener(callback, filter, opt_extraInfoSpec);
+            } catch (err) {
+                console.warn("chrome.webRequest.onBeforeRequest: Crash prevented\n", err);
+            }
+        };
+    })();
+    (() => {
+        const _addListener = window.chrome.webRequest.onBeforeSendHeaders.addListener;
+        window.chrome.webRequest.onBeforeSendHeaders.addListener = (callback, filter, opt_extraInfoSpec) => {
+            try {
+                _addListener(callback, filter, opt_extraInfoSpec);
+            } catch (err) {
+                console.warn("chrome.webRequest.onBeforeSendHeaders: Crash prevented\n", err);
+            }
+        };
+    })();
+}
+
 /******************************************************************************/
