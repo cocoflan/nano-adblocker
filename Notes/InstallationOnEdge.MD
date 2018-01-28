@@ -2,6 +2,8 @@
 
 ### The Edge builds are highly experimental, it *will* break on a regular basis. 
 
+### Please report *any* problems you encounter, I don't use the Edge build actively and I can't fix bugs that I'm not aware of. 
+
 1. Download build(s) from the [release page](https://github.com/NanoAdblocker/NanoCore/releases) and extract it. Both Nano Adblocker 
 and Nano Defender are located there. 
 
