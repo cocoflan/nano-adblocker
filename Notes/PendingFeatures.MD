@@ -5,7 +5,7 @@ submit Pull Requests to speed up the process.
 
 Features in the same group do not have any particular order. 
 
-Local issues (issues in **this** repository, **not** upstream) related to features listed here will stay closed until there are work 
+Local issues (**issues in *this* repository, *not* upstream**) related to features listed here will stay closed until there are work 
 being done to implementing them. Discussion can continue in those closed issues. Please create new local issues if none exists for 
 the feature you want to talk about. 
 
