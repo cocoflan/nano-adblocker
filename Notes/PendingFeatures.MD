@@ -1,11 +1,11 @@
 # Pending Features
 
-This file details all feature requests that are accepted or close to be accepted. We will implement them eventually, please submit 
-Pull Requests to speed up the process. 
+This file details all feature requests that are accepted or close to be accepted. We will implement them eventually, feel free to 
+submit Pull Requests to speed up the process. 
 
 Features in the same group do not have any particular order. 
 
-Local issues (issues in this repository, **not** upstream) related to features listed here will stay closed until there are work 
+Local issues (issues in **this** repository, **not** upstream) related to features listed here will stay closed until there are work 
 being done to implementing them. Discussion can continue in those closed issues. Please create new local issues if none exists for 
 the feature you want to talk about. 
 
@@ -52,7 +52,7 @@ https://github.com/gorhill/uBlock/issues/783
 
 An option to not collapse network blocked resources on a per-domain or URL basis. 
 
-ABP seems to have the option `$~collapse`
+Adblock Plus seems to have the option `$~collapse`
 
 `hard`
 
@@ -88,7 +88,7 @@ https://github.com/gorhill/uBlock/issues/515
 
 Add dark theme. 
 
-Maybe separate settings for normal and incognito mode?
+Maybe separate settings for normal and incognito mode? 
 
 Blocked by https://github.com/NanoAdblocker/NanoCore/issues/33
 
