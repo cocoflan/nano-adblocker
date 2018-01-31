@@ -89,5 +89,5 @@ Default: `false`
 
 When set to `true`, Nano Adblocker will treat user filters as a privileged filter. 
 
-Privileged filters have access to experimental syntax features **if there are any**. Nano Adblocker's own filters are always 
-privileged. 
+Privileged filters have access to experimental syntax features **if there are any**. Nano Adblocker's own filters (Nano filters) 
+are always privileged. 
