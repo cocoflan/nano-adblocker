@@ -44,6 +44,7 @@ var µBlock = (function() { // jshint ignore:line
         userResourcesLocation: 'unset',
         
         // Patch 2017-12-25: Add more advanced settings
+        _nanoDisableHTMLFiltering: false,
         _nanoIgnoreThirdPartyWhitelist: false,
         _nanoIgnorePerformanceAuditing: false,
         _nanoMakeUserFiltersPrivileged: false
@@ -192,5 +193,16 @@ var µBlock = (function() { // jshint ignore:line
 
 // Patch 2017-12-07: Make debugging less painful
 var nano = µBlock;
+
+/******************************************************************************/
+
+// Patch 2018-01-25: Add a flag to disable HTML filtering.
+// Reading hidden settings is currently synchronous, must update this logic if
+// hidden settings handling have changed.
+// If the new logic is asynchronous, then must test the effect of the potential
+// race condition
+if ( nano.hiddenSettings._nanoDisableHTMLFiltering ) {
+    nano.canFilterResponseBody = false;
+}
 
 /******************************************************************************/

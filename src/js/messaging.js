@@ -513,7 +513,7 @@ var onMessage = function(request, sender, callback) {
         request.entity = µb.URI.entityFromDomain(request.domain);
         response.specificCosmeticFilters =
             µb.cosmeticFilteringEngine.retrieveDomainSelectors(request, response);
-        // If response body filtering is supported, than the scriptlets have
+        // If response body filtering is supported, then the scriptlets have
         // already been injected.
         if (
             µb.canFilterResponseBody === false ||
@@ -993,7 +993,10 @@ var onMessage = function(request, sender, callback) {
         µb.hiddenSettingsFromString(request.content);
         break;
     
-    // Patch 2017-12-26: Add force recompile to advanced settings dashboard
+    // Patch 2017-12-26: Add invokables to advanced settings dashboard
+    case 'hiddenInvoke_nanoRestart':
+        vAPI.app.restart();
+        break;
     case 'hiddenInvoke_nanoForceRecompile':
         nano.nanoForceRecompile();
         break;
