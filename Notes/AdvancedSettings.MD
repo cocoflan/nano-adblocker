@@ -31,7 +31,7 @@ Even when a functionality is considered stable, it is not guaranteed to always w
 
 ---
 
-## `_nanoRestart` invokable
+### `_nanoRestart` invokable
 
 Available since 1.0.0.29
 
@@ -46,6 +46,15 @@ Available since 1.0.0.22
 
 When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which *all* filters will be recompiled. 
 **Any unsaved changes will be discarded** during the restart and all opened extension pages will be closed. 
+
+---
+
+### `_nanoAttemptPolyfillHTMLFiltering` toggleable `[unavailable]`
+
+Default: `false`
+
+When set to `true`, Nano Adblocker will attempt to polyfill HTML filtering for browsers that do not natively support it. The polyfill 
+is less reliable and consume more resource. 
 
 ---
 
