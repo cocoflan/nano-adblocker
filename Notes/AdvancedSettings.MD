@@ -49,11 +49,11 @@ When invoked, Nano Adblocker will discard compiled filters and selfies then rest
 
 ---
 
-### `_nanoAttemptPolyfillBodyFiltering` toggleable `[unavailable]`
+### `_nanoAttemptPolyfillHTMLFiltering` toggleable `[unavailable]`
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will attempt to polyfill request body filtering for browsers that are *marked* as do not 
+When set to `true`, Nano Adblocker will attempt to polyfill request body filtering for (only) browsers that are *marked* as do not 
 natively support it. The polyfill is less reliable and consume more resource. 
 
 ---
