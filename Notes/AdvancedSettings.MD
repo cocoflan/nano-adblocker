@@ -49,7 +49,7 @@ When invoked, Nano Adblocker will discard compiled filters and selfies then rest
 
 ---
 
-### `_nanoAttemptPolyfillHTMLFiltering` toggleable `[unavailable]`
+### `_nanoAttemptPolyfillBodyFiltering` toggleable `[unavailable]`
 
 Default: `false`
 
