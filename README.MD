@@ -62,3 +62,10 @@ Available since 1.0.0.6
 ![Screenshot](https://i.imgur.com/KktoFJL.png)
 
 Available since 1.0.0.0
+
+## Other Change
+
+- [Advanced Settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
+- [Filter Incompatibility](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
+- [Update Behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
+
