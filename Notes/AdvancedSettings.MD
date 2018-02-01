@@ -53,8 +53,8 @@ When invoked, Nano Adblocker will discard compiled filters and selfies then rest
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will attempt to polyfill HTML filtering for browsers that do not natively support it. The polyfill 
-is less reliable and consume more resource. 
+When set to `true`, Nano Adblocker will attempt to polyfill request body filtering for browsers that are *marked* as do not 
+natively support it. The polyfill is less reliable and consume more resource. 
 
 ---
 
@@ -64,7 +64,8 @@ Available since 1.0.0.29
 
 Default: `false`
 
-When set to `true`, Nano Adblocker will no longer apply HTML filtering. An extension restart is required. 
+When set to `true`, Nano Adblocker will *mark* the browser as does not support native request body filtering regardless whether it 
+actually supports it. An extension restart is required. 
 
 ---
 
