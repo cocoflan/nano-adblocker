@@ -262,8 +262,11 @@ body[dir="rtl"] #tooltip {
     direction: rtl;
     }
 #tooltip.show {
+    /* Patch 2018-02-01: Disable tooltip animation */
+    /*
     transition: opacity 0.15s 0.5s;
     -webkit-transition: opacity 0.15s 0.5s;
+    */
     visibility: visible;
     opacity: 1;
     }
