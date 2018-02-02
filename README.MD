@@ -65,7 +65,7 @@ Available since 1.0.0.0
 
 ## Other Change
 
-*Note: user interface and other housekeeping changes are not listed here*
+*Note: user interface and other housekeeping changes are not listed here.*
 
 - [Extended advanced settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
 - [Extended filter syntax](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
