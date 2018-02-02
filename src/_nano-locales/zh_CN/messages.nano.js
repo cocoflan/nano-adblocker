@@ -169,6 +169,16 @@
             "description": "Title of the filter viewer"
         },
 
+        // Popup tooltips
+        "popupTipForceEnableScroll": {
+            "message": "临时强制滚动",
+            "description": "Force scroll button"
+        },
+        "popupTipBugReporter": {
+            "message": "打开问题汇报器",
+            "description": "Bug reporter button"
+        },
+
         // Based on message of about page
         "aboutBasedOn": {
             "message": "基于 {{@data}}",

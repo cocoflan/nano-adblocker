@@ -323,6 +323,16 @@
             "description": "Title of the filter viewer"
         },
 
+        // Popup tooltips
+        "popupTipForceEnableScroll": {
+            "message": "Force enable scrolling",
+            "description": "Force scroll button"
+        },
+        "popupTipBugReporter": {
+            "message": "Open the bug reporter",
+            "description": "Bug reporter button"
+        },
+
         // Based on message of about page
         "aboutBasedOn": {
             "message": "Based on {{@data}}",
