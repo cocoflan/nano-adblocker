@@ -148,13 +148,13 @@ var onMessage = function(request, sender, callback) {
     case 'injectForceScrollCSS':
         if ( vAPI.supportsUserStylesheets ) {
             vAPI.insertCSS(request.tabId, {
-                code: 'body,html{overflow:scroll!important;}',
+                code: '*{overflow:auto!important;}',
                 cssOrigin: 'user',
                 runAt: 'document_start'
             });
         } else {
             vAPI.insertCSS(request.tabId, {
-                code: 'body,html{overflow:scroll!important;}',
+                code: '*{overflow:auto!important;}',
                 runAt: 'document_start'
             });
         }
