@@ -171,7 +171,7 @@
 
         // Popup tooltips
         "popupTipForceEnableScroll": {
-            "message": "临时强制滚动（会破坏布局）",
+            "message": "进入临时强制滚动模式（会破坏布局）",
             "description": "Force scroll button"
         },
         "popupTipBugReporter": {
