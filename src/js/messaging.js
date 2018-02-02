@@ -143,6 +143,22 @@ var onMessage = function(request, sender, callback) {
         µb.mouseEventRegister.x = µb.mouseEventRegister.y = -1;
         µb.elementPickerExec(request.tabId, request.targetURL, request.zap);
         break;
+    
+    // Patch 2018-02-01: Add force enable scroll
+    case 'injectForceScrollCSS':
+        if ( vAPI.supportsUserStylesheets ) {
+            vAPI.insertCSS(request.tabId, {
+                code: 'body,html{overflow:scroll!important;}',
+                cssOrigin: 'user',
+                runAt: 'document_start'
+            });
+        } else {
+            vAPI.insertCSS(request.tabId, {
+                code: 'body,html{overflow:scroll!important;}',
+                runAt: 'document_start'
+            });
+        }
+        break;
 
     case 'gotoURL':
         µb.openNewTab(request.details);
