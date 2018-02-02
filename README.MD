@@ -68,4 +68,4 @@ Available since 1.0.0.0
 - [Advanced Settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
 - [Filter Incompatibility](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
 - [Update Behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
-
+- `Block CSP reports` is enabled by default (to prevent websites from abusing it to track users)
