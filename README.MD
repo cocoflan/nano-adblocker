@@ -65,7 +65,11 @@ Available since 1.0.0.0
 
 ## Other Change
 
-- [Advanced Settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
-- [Filter Incompatibility](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
-- [Update Behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
-- `Block CSP reports` is enabled by default (to prevent websites from abusing it to track users)
+*Note: UI and other housekeeping changes are not listed here*
+
+- [Extended advanced settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
+- [Extended filter syntax](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
+- [Optimized update behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
+- Enabled `Block CSP reports` by default (to prevent websites from abusing it to track users)
+- Added a few more filters to filters manager
+- Added force scroll mode (for use in combination with element zapper)
