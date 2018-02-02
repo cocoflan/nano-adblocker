@@ -325,7 +325,7 @@
 
         // Popup tooltips
         "popupTipForceEnableScroll": {
-            "message": "Enter force scrolling mode",
+            "message": "Enter force scrolling mode (will break layout)",
             "description": "Force scroll button"
         },
         "popupTipBugReporter": {
