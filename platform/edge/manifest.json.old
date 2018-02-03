@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
 
-    "name": "Nano Adblocker",
-    "version": "1.0.0.13",
+    "name": "uBlock Origin",
+    "version": "1.15.4",
 
     "commands": {
         "launch-element-zapper": {
