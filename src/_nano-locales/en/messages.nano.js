@@ -324,12 +324,13 @@
         },
 
         // Popup tooltips
+        // TODO 2018-02-02: Beta stage, do not translate!
         "popupTipForceEnableScroll": {
-            "message": "Enter force scrolling mode (will break layout)",
+            "message": "(beta) Enter force scrolling mode (will break layout)",
             "description": "Force scroll button"
         },
         "popupTipBugReporter": {
-            "message": "Open the bug reporter",
+            "message": "(beta) Open the bug reporter",
             "description": "Bug reporter button"
         },
 
