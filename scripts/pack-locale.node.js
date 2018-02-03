@@ -10,7 +10,7 @@
  * Based on string.
  * @const {string}
  */
-const basedOnData = "uBlock Origin Version/1.14.25.101+2 Commit/dada3fe Sidebar/disabled";
+const basedOnData = "uBlock Origin Version/1.15.0.0+1 Commit/7f9435f Sidebar/disabled";
 
 (async () => {
     console.log("[Nano] Pack Locale :: Started");
