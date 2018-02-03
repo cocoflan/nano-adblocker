@@ -169,6 +169,19 @@
             "description": "Title of the filter viewer"
         },
 
+        // Popup tooltips
+        // TODO 2018-02-02: Beta stage, do not translate!
+        /*
+        "popupTipForceEnableScroll": {
+            "message": "进入临时强制滚动模式（会破坏布局）",
+            "description": "Force scroll button"
+        },
+        "popupTipBugReporter": {
+            "message": "打开问题汇报器",
+            "description": "Bug reporter button"
+        },
+        */
+
         // Based on message of about page
         "aboutBasedOn": {
             "message": "基于 {{@data}}",

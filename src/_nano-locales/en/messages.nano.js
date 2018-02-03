@@ -323,6 +323,17 @@
             "description": "Title of the filter viewer"
         },
 
+        // Popup tooltips
+        // TODO 2018-02-02: Beta stage, do not translate!
+        "popupTipForceEnableScroll": {
+            "message": "(beta) Enter force scrolling mode (will break layout)",
+            "description": "Force scroll button"
+        },
+        "popupTipBugReporter": {
+            "message": "(beta) Open the bug reporter",
+            "description": "Bug reporter button"
+        },
+
         // Based on message of about page
         "aboutBasedOn": {
             "message": "Based on {{@data}}",
