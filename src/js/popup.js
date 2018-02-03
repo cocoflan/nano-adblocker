@@ -419,6 +419,8 @@ var renderPopup = function() {
     // If you think the `=== true` is pointless, you are mistaken
     uDom.nodeFromId('gotoPick').classList.toggle('enabled', popupData.canElementPicker === true);
     uDom.nodeFromId('gotoZap').classList.toggle('enabled', popupData.canElementPicker === true);
+    // Patch 2018-02-01: Add force enable scroll
+    uDom.nodeFromId('forceEnableScroll').classList.toggle('enabled', popupData.canElementPicker === true);
 
     var blocked = popupData.pageBlockedRequestCount,
         total = popupData.pageAllowedRequestCount + blocked;
@@ -664,6 +666,21 @@ var toggleNetFilteringSwitch = function(ev) {
     );
     renderTooltips('#switch');
     hashFromPopupData();
+};
+
+/******************************************************************************/
+
+// Patch 2018-02-01: Add force enable scroll
+var forceEnableScroll = function() {
+    messaging.send(
+        'popupPanel',
+        {
+            what: 'injectForceScrollCSS',
+            tabId: popupData.tabId
+        }
+    );
+
+    vAPI.closePopup();
 };
 
 /******************************************************************************/
@@ -1078,6 +1095,9 @@ var onHideTooltip = function() {
 
     uDom('#switch').on('click', toggleNetFilteringSwitch);
     uDom('#gotoZap').on('click', gotoZap);
+    // Patch 2018-02-01: Add force enable scroll
+    uDom('#forceEnableScroll').on('click', forceEnableScroll);
+    
     uDom('#gotoPick').on('click', gotoPick);
     uDom('h2').on('click', toggleFirewallPane);
     uDom('#refresh').on('click', reloadTab);

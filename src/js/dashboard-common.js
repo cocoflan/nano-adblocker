@@ -112,6 +112,9 @@ self.uBlockDashboard.dateNowToSensibleString = function() {
 
 /******************************************************************************/
 
+// Patch 2017-12-20: Make this script reusable in new dashboard
+if ( typeof uDom !== 'undefined' ) {
+
 // Open links in the proper window
 uDom('a').attr('target', '_blank');
 uDom('a[href*="dashboard.html"]').attr('target', '_parent');
@@ -122,3 +125,5 @@ uDom('.whatisthis').on('click', function() {
         .first()
         .toggleClass('whatisthis-expanded');
 });
+
+}

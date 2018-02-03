@@ -29,8 +29,28 @@
 
 /******************************************************************************/
 
+var editor = nanoIDE.init('userFilters', true, false);
+
+/******************************************************************************/
+
 var messaging = vAPI.messaging;
 var cachedUserFilters = '';
+
+/******************************************************************************/
+
+// Patch 2017-12-27: Show linting result in the editor
+function renderLinterAnnotation() {
+    var renderAnnotation = function(data) {
+        editor.session.setAnnotations(data.errors.concat(data.warnings));
+    };
+    messaging.send(
+        'dashboard',
+        { 
+            what: 'fetchUserFilterLintingResult'
+        },
+        renderAnnotation
+    );
+}
 
 /******************************************************************************/
 
@@ -38,7 +58,7 @@ var cachedUserFilters = '';
 
 function userFiltersChanged(changed) {
     if ( typeof changed !== 'boolean' ) {
-        changed = uDom.nodeFromId('userFilters').value.trim() !== cachedUserFilters;
+        changed = nanoIDE.getLinuxValue().trim() !== cachedUserFilters;
     }
     uDom.nodeFromId('userFiltersApply').disabled = !changed;
     uDom.nodeFromId('userFiltersRevert').disabled = !changed;
@@ -46,21 +66,37 @@ function userFiltersChanged(changed) {
 
 /******************************************************************************/
 
+// TODO 2017-12-06: Find out what is the purpose of the parameter first
 function renderUserFilters(first) {
     var onRead = function(details) {
         if ( details.error ) { return; }
-        var textarea = uDom.nodeFromId('userFilters');
         cachedUserFilters = details.content.trim();
-        textarea.value = details.content;
         if ( first ) {
-            textarea.value += '\n';
-            var textlen = textarea.value.length;
-            textarea.setSelectionRange(textlen, textlen);
-            textarea.focus();
+            nanoIDE.setValueFocus(details.content + '\n');
+        } else {
+            nanoIDE.setValueFocus(details.content);
         }
         userFiltersChanged(false);
+        
+        // Patch 2017-12-27: Render annotations
+        renderLinterAnnotation();
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);
+}
+// Patch 2018-01-01: Read line wrap settings
+function loadLineWrapSettings() {
+    var onLoad = function(lineWrap) {
+        nanoIDE.setLineWrap(lineWrap === true);
+        renderUserFilters(true);
+    };
+    vAPI.messaging.send(
+        'dashboard',
+        {
+            what: 'userSettings',
+            name: 'nanoEditorWordSoftWrap'
+        },
+        onLoad
+    );
 }
 
 /******************************************************************************/
@@ -68,6 +104,10 @@ function renderUserFilters(first) {
 function allFiltersApplyHandler() {
     messaging.send('dashboard', { what: 'reloadAllFilters' });
     uDom('#userFiltersApply').prop('disabled', true );
+
+    // Patch 2017-12-27: Render new annotations, need to wait a bit for filters
+    // to be compiled
+    setTimeout(renderLinterAnnotation, 500);
 }
 
 /******************************************************************************/
@@ -100,8 +140,7 @@ var handleImportFilePicker = function() {
 
     var fileReaderOnLoadHandler = function() {
         var sanitized = abpImporter(this.result);
-        var textarea = uDom('#userFilters');
-        textarea.val(textarea.val().trim() + '\n' + sanitized);
+        nanoIDE.setValueFocus(nanoIDE.getLinuxValue().trim() + '\n' + sanitized);
         userFiltersChanged();
     };
     var file = this.files[0];
@@ -130,7 +169,8 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportUserFiltersToFile = function() {
-    var val = uDom('#userFilters').val().trim();
+    // Just get value, not Linux value
+    var val = editor.getValue().trim();
     if ( val === '' ) {
         return;
     }
@@ -146,46 +186,45 @@ var exportUserFiltersToFile = function() {
 /******************************************************************************/
 
 var applyChanges = function() {
-    var textarea = uDom.nodeFromId('userFilters');
-
     var onWritten = function(details) {
         if ( details.error ) {
             return;
         }
-        textarea.value = details.content;
+        // TODO 2017-12-06: Maybe set the cursor back to its original position?
+        nanoIDE.setValueFocus(details.content);
         cachedUserFilters = details.content.trim();
-        userFiltersChanged();
+        // Patch 2017-12-06: Add false as I just set the value to be the same
+        userFiltersChanged(false);
         allFiltersApplyHandler();
-        textarea.focus();
     };
 
     var request = {
         what: 'writeUserFilters',
-        content: textarea.value
+        content: nanoIDE.getLinuxValue()
     };
     messaging.send('dashboard', request, onWritten);
 };
 
 var revertChanges = function() {
-    uDom.nodeFromId('userFilters').value = cachedUserFilters + '\n';
-    userFiltersChanged();
+    nanoIDE.setValueFocus(cachedUserFilters + '\n');
+    // Patch 2017-12-06: Add false as I just set the value to be the same
+    userFiltersChanged(false);
 };
 
 /******************************************************************************/
 
 var getCloudData = function() {
-    return uDom.nodeFromId('userFilters').value;
+    return nanoIDE.getLinuxValue();
 };
 
 var setCloudData = function(data, append) {
     if ( typeof data !== 'string' ) {
         return;
     }
-    var textarea = uDom.nodeFromId('userFilters');
     if ( append ) {
-        data = uBlockDashboard.mergeNewLines(textarea.value, data);
+        data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue(), data);
     }
-    textarea.value = data;
+    nanoIDE.setValueFocus(data);
     userFiltersChanged();
 };
 
@@ -198,11 +237,12 @@ self.cloud.onPull = setCloudData;
 uDom('#importUserFiltersFromFile').on('click', startImportFilePicker);
 uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportUserFiltersToFile').on('click', exportUserFiltersToFile);
-uDom('#userFilters').on('input', userFiltersChanged);
 uDom('#userFiltersApply').on('click', applyChanges);
 uDom('#userFiltersRevert').on('click', revertChanges);
+editor.session.on('change', userFiltersChanged);
 
-renderUserFilters(true);
+// Patch 2018-01-01: Read line wrap settings
+loadLineWrapSettings();
 
 /******************************************************************************/
 

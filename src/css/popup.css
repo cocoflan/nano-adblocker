@@ -133,8 +133,13 @@ p {
 body.off #switch .fa {
     color: #ccc;
     }
-#basicTools {
+#basicTools, #basicTools2 {
+    /* Patch 2018-02-01: Make it two rows */
     margin: 0.8em 0 0.4em 0;
+    }
+#basicTools {
+    /* Patch 2018-02-01: Make it two rows */
+    margin-bottom: 1.0em;
     }
 .tool:first-child {
     margin-left: 0;
@@ -143,7 +148,9 @@ body.off #switch .fa {
     color: #aaa;
     cursor: pointer;
     visibility: hidden;
-    margin-left: 0.4em;
+    /* Patch 2018-02-01: Adjust spacing for two rows basic tools */
+    margin-left: 1.4em;
+    
     min-width: 1em;
     padding: 0 0.2em;
     unicode-bidi: embed;
@@ -262,8 +269,11 @@ body[dir="rtl"] #tooltip {
     direction: rtl;
     }
 #tooltip.show {
+    /* Patch 2018-02-01: Disable tooltip animation, it is too long */
+    /*
     transition: opacity 0.15s 0.5s;
     -webkit-transition: opacity 0.15s 0.5s;
+    */
     visibility: visible;
     opacity: 1;
     }
