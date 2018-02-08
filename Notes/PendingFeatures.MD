@@ -42,6 +42,12 @@ now. They will be moved to group 1 if there are enough demand for them. Like alw
 
 ---
 
+`$document` for whitelist. 
+
+This should only be available to privileged filters unless the user chooses to enable it for all fitlers. 
+
+---
+
 Option to make synchronization automatic. 
 
 Could be difficult to get it right. Need to consider merge conflicts and storage cap. 
