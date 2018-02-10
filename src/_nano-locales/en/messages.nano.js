@@ -324,14 +324,26 @@
         },
 
         // Popup tooltips
+        "popupCacheControlPrompt": {
+            "message": "cache control",
+            "description": "The cache control strip name"
+        },
+        "popupTipOpenFirewallPane": {
+            "message": "Toggle the firewall pane",
+            "description": "Tooltip for toggle firewall pane button"
+        },
+        "popupTipRefreshButton": {
+            "message": "Click: refresh this page.\n\nCtrl+click: refresh this page bypassing cache.",
+            "description": "English: Click: refresh this page.\n\nCtrl+click: refresh this page bypassing cache."
+        },
         // TODO 2018-02-02: Beta stage, do not translate!
         "popupTipForceEnableScroll": {
             "message": "(beta) Enter force scroll mode (will break layout)",
-            "description": "Force scroll button"
+            "description": "Tooltip for force scroll button"
         },
         "popupTipBugReporter": {
             "message": "(beta) Open the bug reporter",
-            "description": "Bug reporter button"
+            "description": "Tooltip for bug reporter button"
         },
 
         // Based on message of about page
