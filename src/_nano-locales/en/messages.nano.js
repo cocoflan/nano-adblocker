@@ -333,7 +333,7 @@
             "description": "Tooltip for toggle firewall pane button"
         },
         "popupTipRefreshButton": {
-            "message": "Click: refresh this page.\n\nCtrl+click: refresh this page bypassing cache.",
+            "message": "Click to refresh this page.\n\nCtrl+click to refresh this page bypassing cache.",
             "description": "English: Click: refresh this page.\n\nCtrl+click: refresh this page bypassing cache."
         },
         // TODO 2018-02-02: Beta stage, do not translate!
