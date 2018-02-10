@@ -124,11 +124,15 @@ p {
 #switch .fa {
     color: #0046ff;
     cursor: pointer;
-    font-size: 700%;
+    
+    /* Patch 2018-02-10: Make switch button smaller */
+    font-size: 600%;
+    
     margin: 0;
     }
 #switch .fa:hover {
-    opacity: 0.9;
+    /* Patch 2018-02-10: Adjust hover color */
+    opacity: 0.8;
     }
 body.off #switch .fa {
     color: #ccc;
@@ -148,6 +152,7 @@ body.off #switch .fa {
     color: #aaa;
     cursor: pointer;
     visibility: hidden;
+    
     /* Patch 2018-02-01: Adjust spacing for two rows basic tools */
     margin-left: 1.4em;
     
@@ -220,26 +225,19 @@ body[dir="rtl"] #extraTools > span > span.badge {
     color: #333;
     }
 
-#refresh {
-    background-color: #ffe;
-    border: 1px solid #ddc;
-    border-radius: 4px;
-    color: #888;
-    cursor: pointer;
-    display: none;
-    font-size: 3.5em;
-    left: 4px;
-    line-height: 1;
-    padding: 4px 8px;
-    position: absolute;
-    right: 4px;
-    text-align: center;
+/* Patch 2018-02-10: Add explicit button for openeing firewall */
+#nanoAdvancedSectionStrip {
+    font-size: 2em;
+    margin: 0px;
     }
+#nanoAdvancedSectionStrip .tool {
+    margin-left: 0px;
+}
 body.dirty #refresh {
-    display: block;
+    color: red;
     }
-body.dirty #refresh:hover {
-    color: black;
+body #refresh:hover {
+    color: #444;;
     }
 
 #tooltip {
