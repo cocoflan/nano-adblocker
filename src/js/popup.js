@@ -1095,11 +1095,15 @@ var onHideTooltip = function() {
 
     uDom('#switch').on('click', toggleNetFilteringSwitch);
     uDom('#gotoZap').on('click', gotoZap);
+    
     // Patch 2018-02-01: Add force enable scroll
     uDom('#forceEnableScroll').on('click', forceEnableScroll);
     
     uDom('#gotoPick').on('click', gotoPick);
-    uDom('h2').on('click', toggleFirewallPane);
+    
+    // Patch 2018-02-10: Move openeing firewall pane to a explicit button
+    uDom('#nanoFirewallPaneToggle').on('click', toggleFirewallPane);
+    
     uDom('#refresh').on('click', reloadTab);
     uDom('.hnSwitch').on('click', toggleHostnameSwitch);
     uDom('#saveRules').on('click', saveFirewallRules);

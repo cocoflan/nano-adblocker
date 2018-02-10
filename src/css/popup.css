@@ -26,7 +26,12 @@ h2 {
     background-color: #eee;
     border: 0;
     color: #666;
+    
+    /* Patch 2018-02-10: Add explicit button for openeing firewall */
+    /*
     cursor: pointer;
+    */
+    
     font-size: 100%;
     font-weight: normal;
     padding: 0.2em;
@@ -142,8 +147,7 @@ body.off #switch .fa {
     margin: 0.8em 0 0.4em 0;
     }
 #basicTools {
-    /* Patch 2018-02-01: Make it two rows */
-    margin-bottom: 1.0em;
+    margin-bottom: 1.4em;
     }
 .tool:first-child {
     margin-left: 0;
@@ -152,10 +156,7 @@ body.off #switch .fa {
     color: #aaa;
     cursor: pointer;
     visibility: hidden;
-    
-    /* Patch 2018-02-01: Adjust spacing for two rows basic tools */
-    margin-left: 1.4em;
-    
+    margin-left: 0.4em;
     min-width: 1em;
     padding: 0 0.2em;
     unicode-bidi: embed;
@@ -226,11 +227,11 @@ body[dir="rtl"] #extraTools > span > span.badge {
     }
 
 /* Patch 2018-02-10: Add explicit button for openeing firewall */
-#nanoAdvancedSectionStrip {
+#nanoCacheControlStrip {
     font-size: 2em;
     margin: 0px;
     }
-#nanoAdvancedSectionStrip .tool {
+#nanoCacheControlStrip .tool {
     margin-left: 0px;
 }
 body.dirty #refresh {
