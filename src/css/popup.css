@@ -147,7 +147,8 @@ body.off #switch .fa {
     margin: 0.8em 0 0.4em 0;
     }
 #basicTools {
-    margin-bottom: 1.4em;
+    /* Patch 2018-02-01: Make it two rows */
+    margin-bottom: 1.2em;
     }
 .tool:first-child {
     margin-left: 0;
@@ -156,7 +157,10 @@ body.off #switch .fa {
     color: #aaa;
     cursor: pointer;
     visibility: hidden;
-    margin-left: 0.4em;
+    
+    /* Patch 2018-02-01: Adjust spacing for two rows basic tools */
+    margin-left: 0.6em;
+    
     min-width: 1em;
     padding: 0 0.2em;
     unicode-bidi: embed;

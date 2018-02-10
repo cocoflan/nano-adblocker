@@ -176,7 +176,7 @@
         },
         "popupTipOpenFirewallPane": {
             // TODO 2018-02-10: There must be a better translation, but translated like so to stay
-            // consistent with uBlock Origin
+            // consistent with other strings of uBlock Origin
             "message": "是否显示防火墙边窗",
             "description": "Tooltip for toggle firewall pane button"
         },
