@@ -72,4 +72,5 @@ Available since 1.0.0.0
 - [Optimized update behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it to track users)
 - Added a few more filters to filters manager
+- Tweaked the popup panel for usability
 - Added force scroll mode (to be used with element zapper)
