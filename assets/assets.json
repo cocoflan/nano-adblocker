@@ -608,7 +608,8 @@
     "title": "POL: Official Polish filters for AdBlock, uBlock Origin & AdGuard",
     "lang": "pl",
     "contentURL": "https://raw.githubusercontent.com/MajkiIT/polish-ads-filter/master/polish-adblock-filters/adblock.txt",
-    "supportURL": "https://github.com/MajkiIT/polish-ads-filter/issues"
+    "supportURL": "https://github.com/MajkiIT/polish-ads-filter/issues",
+    "instructionURL": "https://github.com/MajkiIT/polish-ads-filter#polish-filters-for-adblock-ublock-origin--adguard"
   },
   "RUS-0": {
     "content": "filters",
