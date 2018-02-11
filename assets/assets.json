@@ -68,7 +68,8 @@
     "contentURL": [
       "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoWhitelist.txt",
       "assets/NanoFilters/NanoWhitelist.txt"
-    ]
+    ],
+    "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
   },
   "nano-defender": {
     "content": "filters",
@@ -79,6 +80,7 @@
       "https://raw.githubusercontent.com/jspenguin2017/uBlockProtector/master/uBlockProtectorList.txt",
       "assets/ThirdParty/NanoDefender.txt"
     ],
+    "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues",
     "instructionURL": "https://jspenguin2017.github.io/uBlockProtector/"
   },
 
@@ -101,7 +103,7 @@
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/badware.txt",
       "assets/ThirdParty/uBlockBadware.txt"
     ],
-    "supportURL": "https://github.com/gorhill/uBlock/wiki/Badware-risks",
+    "supportURL": "https://github.com/uBlockOrigin/uAssets/issues",
     "instructionURL": "https://github.com/gorhill/uBlock/wiki/Badware-risks"
   },
   "ublock-experimental": {
@@ -110,7 +112,6 @@
     "title": "uBlock filters – Experimental",
     "off": true,
     "contentURL": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/experimental.txt",
-    "supportURL": "https://github.com/gorhill/uBlock/wiki/Experimental-filters",
     "instructionURL": "https://github.com/gorhill/uBlock/wiki/Experimental-filters"
   },
   "ublock-privacy": {
@@ -120,7 +121,8 @@
     "contentURL": [
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/privacy.txt",
       "assets/ThirdParty/uBlockPrivacy.txt"
-    ]
+    ],
+    "supportURL": "https://github.com/uBlockOrigin/uAssets/issues"
   },
   "ublock-abuse": {
     "content": "filters",
@@ -129,14 +131,16 @@
     "contentURL": [
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/resource-abuse.txt",
       "assets/ThirdParty/uBlockAbuse.txt"
-    ]
+    ],
+    "supportURL": "https://github.com/uBlockOrigin/uAssets/issues"
   },
   "ublock-annoyances": {
     "content": "filters",
     "group": "default",
     "title": "uBlock filters – Annoyances",
     "off": true,
-    "contentURL": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/annoyances.txt"
+    "contentURL": "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/annoyances.txt",
+    "supportURL": "https://github.com/uBlockOrigin/uAssets/issues"
   },
   "ublock-unbreak": {
     "content": "filters",
@@ -145,7 +149,8 @@
     "contentURL": [
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/unbreak.txt",
       "assets/ThirdParty/uBlockUnbreak.txt"
-    ]
+    ],
+    "supportURL": "https://github.com/uBlockOrigin/uAssets/issues"
   },
 
 
