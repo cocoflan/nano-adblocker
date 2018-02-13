@@ -22,4 +22,4 @@ Note that Edge will disable side loaded extensions on every start.
 
 ![Screenshot](https://i.imgur.com/rkVyCX4.png)
 
-### We have submitted Nano Adblocker to Microsoft Store, please use [Feedback Hub](https://developer.microsoft.com/en-us/microsoft-edge/extensions/requests/) to request Microsoft to speed up the process. 
+### We have submitted Nano Adblocker to Microsoft Store, please use [Feedback Hub](https://developer.microsoft.com/en-us/microsoft-edge/extensions/requests/) to request Microsoft to speed up the review process. 
