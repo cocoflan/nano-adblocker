@@ -469,9 +469,8 @@ var buttonPurgeAllHandler = function(ev) {
         'dashboard',
         {
             what: 'purgeAllCaches',
-            // Patch 2017-12-23: Make hard to be just control key, no need for
-            // shift anymore
-            hard: ev.ctrlKey
+            // Patch 2018-02-12: Make hard to be any special key
+            hard: ev.ctrlKey || ev.metaKey || ev.shiftKey
         },
         function() { renderFilterLists(true); }
     );
