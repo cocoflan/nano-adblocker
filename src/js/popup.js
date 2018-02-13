@@ -527,7 +527,8 @@ var renderTooltips = function(selector) {
 
 var tooltipTargetSelectors = new Map([
     [
-        '#switch',
+        // Patch 2018-02-12: Change tooltip anchor
+        '#switch .fa',
         {
             state: 'body.off',
             i18n: 'popupPowerSwitchInfo',
@@ -664,7 +665,10 @@ var toggleNetFilteringSwitch = function(ev) {
             tabId: popupData.tabId
         }
     );
-    renderTooltips('#switch');
+    
+    // Patch 2018-02-12: Change tooltip anchor
+    renderTooltips('#switch .fa');
+    
     hashFromPopupData();
 };
 
@@ -1093,7 +1097,9 @@ var onHideTooltip = function() {
     }
     getPopupData(tabId);
 
-    uDom('#switch').on('click', toggleNetFilteringSwitch);
+    // Patch 2018-02-12: Change tooltip anchor
+    uDom('#switch .fa').on('click', toggleNetFilteringSwitch);
+    
     uDom('#gotoZap').on('click', gotoZap);
     
     // Patch 2018-02-01: Add force enable scroll
