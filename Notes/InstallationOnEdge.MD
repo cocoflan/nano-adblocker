@@ -1,8 +1,6 @@
 # Installation On Edge
 
-### The Edge builds are highly experimental, it *will* break on a regular basis. 
-
-### Please report problems you encounter, even minor ones. 
+### The Edge builds are still experimental, please report problems you encounter, even minor ones. 
 
 I don't use the Edge builds actively and I can't fix bugs that I'm not aware of. 
 
@@ -24,4 +22,4 @@ Note that Edge will disable side loaded extensions on every start.
 
 ![Screenshot](https://i.imgur.com/rkVyCX4.png)
 
-### We have submitted Nano Adblocker to Microsoft Store, although the review can take months. 
+### We have submitted Nano Adblocker to Microsoft Store, please use [Feedback Hub](https://developer.microsoft.com/en-us/microsoft-edge/extensions/requests/) to request Microsoft to speed up the process. 
