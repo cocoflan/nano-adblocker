@@ -65,7 +65,7 @@ Available since 1.0.0.29
 Default: `false`
 
 When set to `true`, Nano Adblocker will *mark* the browser as does not support native request body filtering regardless whether it 
-actually supports it. An extension restart is required. **Turning off advanced mode does not prevent this setting from being applied.** 
+actually supports it. An extension restart is required. This settings is **not** affected by whether advanced mode is on. 
 
 ---
 
