@@ -182,7 +182,7 @@
             // Patch 2018-02-22: Mark extended advanced settings as required
             // immediately when needed
             _nanoDisableHTMLFiltering: this.hiddenSettings._nanoDisableHTMLFiltering
-        });
+        })
     );
 };
 
