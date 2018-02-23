@@ -228,7 +228,14 @@
     api.compile = function(parsed, writer) {
         var selector = parsed.suffix.slice(1).trim(),
             compiled = µb.staticExtFilteringEngine.compileSelector(selector);
-        if ( compiled === undefined ) { return; }
+        if ( compiled === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+            }
+            
+            return;
+        }
 
         // 1002 = html filtering
         writer.select(1002);
@@ -236,7 +243,14 @@
         // TODO: Mind negated hostnames, they are currently discarded.
 
         for ( var hostname of parsed.hostnames ) {
-            if ( hostname.charCodeAt(0) === 0x7E /* '~' */ ) { continue; }
+            if ( hostname.charCodeAt(0) === 0x7E /* '~' */ ) {
+                // Patch 2018-01-03: Show an appropriate warning message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningNegatedHTMLFiltering'));
+                }
+                
+                continue;
+            }
             var domain = µb.URI.domainFromHostname(hostname);
             writer.push([
                 compiled.charCodeAt(0) !== 0x7B /* '{' */ ? 64 : 65,

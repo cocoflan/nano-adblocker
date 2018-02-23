@@ -29,25 +29,66 @@
 
 /******************************************************************************/
 
+// Patch 2018-01-06: User filters can be an empty file, make it a special case
+// and do not show the error message
+var currentAsset = "";
+
+/******************************************************************************/
+
 var onAssetContentReceived = function(details) {
-    uDom('#content').text(details && (details.content || ''));
+    if ( details && details.content ) {
+        if ( !details.content.endsWith('\n') ) {
+            details.content += '\n';
+        }
+        nanoIDE.setValueFocus(details.content, -1);
+    } else {
+        nanoIDE.setValueFocus('', -1);
+        if ( currentAsset !== 'user-filters' ) {
+            nanoIDE.editor.session.setAnnotations([{
+                row: 0,
+                type: 'error',
+                text: vAPI.i18n('genericFilterReadError')
+            }]);
+        }
+    }
 };
 
 /******************************************************************************/
 
-var q = window.location.search;
-var matches = q.match(/^\?url=([^&]+)/);
-if ( !matches || matches.length !== 2 ) {
-    return;
-}
+// Patch 2018-01-01: Read line wrap settings
+var onLineWrapSettingsReceived = function(lineWrap) {
+    nanoIDE.setLineWrap(lineWrap === true);
+    
+    var q = window.location.search;
+    var matches = q.match(/^\?url=([^&]+)/);
+    if ( !matches || matches.length !== 2 ) {
+        // Patch 2018-01-06: Display an error
+        onAssetContentReceived();
+        return;
+    }
+    currentAsset = matches[1];
 
+    vAPI.messaging.send(
+        'default',
+        {
+            what: 'getAssetContent',
+            url: decodeURIComponent(currentAsset)
+        },
+        onAssetContentReceived
+    );
+};
+
+/******************************************************************************/
+
+// Patch 2018-01-01: Read line wrap settings
+nanoIDE.init('content', true, true);
 vAPI.messaging.send(
-    'default',
+    'dashboard',
     {
-        what : 'getAssetContent',
-        url: decodeURIComponent(matches[1])
+        what: 'userSettings',
+        name: 'nanoViewerWordSoftWrap'
     },
-    onAssetContentReceived
+    onLineWrapSettingsReceived
 );
 
 /******************************************************************************/

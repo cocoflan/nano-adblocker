@@ -774,7 +774,7 @@ var filterDocument = (function() {
                 utf8TextDecoder = new TextDecoder();
             }
             doc = domParser.parseFromString(
-                utf8TextDecoder.decode(filterer.buffer.slice(0, 1024)),
+                utf8TextDecoder.decode(filterer.buffer.slice(0, 4096)),
                 'text/html'
             );
             charsetFound = charsetFromDoc(doc);
