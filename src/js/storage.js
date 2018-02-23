@@ -177,8 +177,12 @@
         'immediateHiddenSettings',
         JSON.stringify({
             suspendTabsUntilReady: this.hiddenSettings.suspendTabsUntilReady,
-            userResourcesLocation: this.hiddenSettings.userResourcesLocation
-        })
+            userResourcesLocation: this.hiddenSettings.userResourcesLocation,
+            
+            // Patch 2018-02-22: Mark extended advanced settings as required
+            // immediately when needed
+            _nanoDisableHTMLFiltering: this.hiddenSettings._nanoDisableHTMLFiltering
+        });
     );
 };
 
@@ -1005,7 +1009,7 @@
         fetchResourceByKey('nano-resources', onNanoResourcesLoaded);
     };
 
-    // Patch 2018-02-22: Properly handle caching
+    // Patch 2018-02-22: Distinguish between two set of resources
     var hasChangedData = typeof updatedContent === 'string' && updatedContent.length !== 0;
     var fetchResourceByKey = function(key, callback) {
         if ( !hasChangedData ) {
