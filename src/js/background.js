@@ -44,7 +44,7 @@ var µBlock = (function() { // jshint ignore:line
         userResourcesLocation: 'unset',
         
         // Patch 2017-12-25: Add more advanced settings
-        _nanoDisableHTMLFiltering: false,
+        _nanoDisableHTMLFiltering: true,
         _nanoIgnoreThirdPartyWhitelist: false,
         _nanoIgnorePerformanceAuditing: false,
         _nanoMakeUserFiltersPrivileged: false
