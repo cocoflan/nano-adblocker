@@ -974,6 +974,7 @@ var onMessage = function(request, sender, callback) {
         // Patch 2017-12-09: Do the same thing for Nano filters
         if ( request.assetKey.startsWith('nano-') ) {
             nano.assets.purge('nano-resources');
+            nano.redirectEngine.invalidateResourcesSelfie();
         }
         break;
 

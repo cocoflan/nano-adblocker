@@ -969,7 +969,8 @@
 
 /******************************************************************************/
 
-µBlock.loadRedirectResources = function(updatedContent) {
+// Patch 2018-02-22: Distinguish between two set of resources
+µBlock.loadRedirectResources = function(updatedContent, isNano) {
     var µb = this,
         content = '';
 
@@ -1001,16 +1002,35 @@
         if ( details.content !== '' ) {
             content = details.content;
         }
-        nano.assets.get('nano-resources', onNanoResourcesLoaded);
+        fetchResourceByKey('nano-resources', onNanoResourcesLoaded);
     };
 
-    if ( typeof updatedContent === 'string' && updatedContent.length !== 0 ) {
-        return onResourcesLoaded({ content: updatedContent });
+    // Patch 2018-02-22: Properly handle caching
+    var hasChangedData = typeof updatedContent === 'string' && updatedContent.length !== 0;
+    var fetchResourceByKey = function(key, callback) {
+        if ( !hasChangedData ) {
+            nano.assets.get(key, callback);
+            return;
+        }
+        if ( key === 'ublock-resources' && !isNano ) {
+            callback({ content: updatedContent });
+            return;
+        }
+        if (key === 'nano-resources' && isNano ) {
+            callback({ content: updatedContent });
+            return;
+        }
+        nano.assets.get(key, callback);
+    };
+    
+    if ( hasChangedData ) {
+        fetchResourceByKey('ublock-resources', onResourcesLoaded);
+        return;
     }
 
     var onSelfieReady = function(success) {
         if ( success !== true ) {
-            µb.assets.get('ublock-resources', onResourcesLoaded);
+            fetchResourceByKey('ublock-resources', onResourcesLoaded);
         }
     };
 
@@ -1261,7 +1281,8 @@
             }
         }
         // https://github.com/gorhill/uBlock/issues/2594
-        if ( details.assetKey === 'ublock-resources' ) {
+        // Patch 2018-02-22: Add Nano Resources
+        if ( details.assetKey === 'ublock-resources' || details.assetKey === 'nano-resources' ) {
             if (
                 this.hiddenSettings.ignoreRedirectFilters === true &&
                 this.hiddenSettings.ignoreScriptInjectFilters === true
@@ -1299,6 +1320,12 @@
             this.redirectEngine.invalidateResourcesSelfie();
             if ( cached ) {
                 this.loadRedirectResources(details.content);
+            }
+        } else if ( details.assetKey === 'nano-resources' ) {
+            // Patch 2018-02-22: Add Nano Resources
+            this.redirectEngine.invalidateResourcesSelfie();
+            if ( cached ) {
+                this.loadRedirectResources(details.content, true);
             }
         }
         vAPI.messaging.broadcast({
