@@ -753,6 +753,9 @@
 
 /******************************************************************************/
 
+// https://github.com/gorhill/uBlock/issues/3406
+//   Lower minimum update period to 1 day.
+
 µBlock.extractFilterListMetadata = function(assetKey, raw) {
     var listEntry = this.availableFilterLists[assetKey];
     if ( listEntry === undefined ) { return; }
