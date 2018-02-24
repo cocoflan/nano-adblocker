@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -80,7 +80,48 @@
 
 /******************************************************************************/
 
-// For now, only boolean type is supported.
+µBlock.loadHiddenSettings = function() {
+    var onLoaded = function(bin) {
+        if ( bin instanceof Object === false ) { return; }
+        var µb = µBlock,
+            hs = bin.hiddenSettings;
+        // Remove following condition once 1.15.12+ is widespread.
+        if (
+            hs instanceof Object === false &&
+            typeof bin.hiddenSettingsString === 'string'
+        ) {
+            vAPI.storage.remove('hiddenSettingsString');
+            hs = µBlock.hiddenSettingsFromString(bin.hiddenSettingsString);
+        }
+        if ( hs instanceof Object ) {
+            var hsDefault = µb.hiddenSettingsDefault;
+            for ( var key in hsDefault ) {
+                if (
+                    hsDefault.hasOwnProperty(key) &&
+                    hs.hasOwnProperty(key) &&
+                    typeof hs[key] === typeof hsDefault[key]
+                ) {
+                    µb.hiddenSettings[key] = hs[key];
+                }
+            }
+        }
+        if ( vAPI.localStorage.getItem('immediateHiddenSettings') === null ) {
+            µb.saveImmediateHiddenSettings();
+        }
+    };
+
+    vAPI.storage.get(
+        [ 'hiddenSettings', 'hiddenSettingsString'],
+        onLoaded
+    );
+};
+
+µBlock.saveHiddenSettings = function(callback) {
+    vAPI.storage.set({ hiddenSettings: this.hiddenSettings, callback });
+    this.saveImmediateHiddenSettings();
+};
+
+/******************************************************************************/
 
 µBlock.hiddenSettingsFromString = function(raw) {
     var out = objectAssign({}, this.hiddenSettingsDefault),
@@ -114,23 +155,39 @@
             break;
         }
     }
-    this.hiddenSettings = out;
-    vAPI.localStorage.setItem('hiddenSettings', JSON.stringify(out));
-    vAPI.storage.set({ hiddenSettingsString: this.stringFromHiddenSettings() });
+    return out;
 };
-
-/******************************************************************************/
 
 µBlock.stringFromHiddenSettings = function() {
     var out = [],
-        keys = Object.keys(this.hiddenSettings).sort(),
-        key;
-    for ( var i = 0; i < keys.length; i++ ) {
-        key = keys[i];
+        keys = Object.keys(this.hiddenSettings).sort();
+    for ( var key of keys ) {
         out.push(key + ' ' + this.hiddenSettings[key]);
     }
     return out.join('\n');
 };
+
+/******************************************************************************/
+
+// These settings must be available immediately on startup, without delay
+// through the vAPI.localStorage. Add/remove settings as needed.
+
+µBlock.saveImmediateHiddenSettings = function() {
+    vAPI.localStorage.setItem(
+        'immediateHiddenSettings',
+        JSON.stringify({
+            suspendTabsUntilReady: this.hiddenSettings.suspendTabsUntilReady,
+            userResourcesLocation: this.hiddenSettings.userResourcesLocation,
+            
+            // Patch 2018-02-22: Mark extended advanced settings as required
+            // immediately when needed
+            _nanoDisableHTMLFiltering: this.hiddenSettings._nanoDisableHTMLFiltering
+        })
+    );
+};
+
+// Do this here to have these hidden settings loaded ASAP.
+µBlock.loadHiddenSettings();
 
 /******************************************************************************/
 
@@ -916,17 +973,13 @@
 
 /******************************************************************************/
 
-µBlock.loadRedirectResources = function(callback) {
+// Patch 2018-02-22: Distinguish between two set of resources
+µBlock.loadRedirectResources = function(updatedContent, isNano) {
     var µb = this,
         content = '';
 
-    if ( typeof callback !== 'function' ) {
-        callback = this.noopFunc;
-    }
-
     var onDone = function() {
         µb.redirectEngine.resourcesFromString(content);
-        callback();
     };
 
     var onUserResourcesLoaded = function(details) {
@@ -953,10 +1006,39 @@
         if ( details.content !== '' ) {
             content = details.content;
         }
-        nano.assets.get('nano-resources', onNanoResourcesLoaded);
+        fetchResourceByKey('nano-resources', onNanoResourcesLoaded);
     };
 
-    this.assets.get('ublock-resources', onResourcesLoaded);
+    // Patch 2018-02-22: Distinguish between two set of resources
+    var hasChangedData = typeof updatedContent === 'string' && updatedContent.length !== 0;
+    var fetchResourceByKey = function(key, callback) {
+        if ( !hasChangedData ) {
+            nano.assets.get(key, callback);
+            return;
+        }
+        if ( key === 'ublock-resources' && !isNano ) {
+            callback({ content: updatedContent });
+            return;
+        }
+        if (key === 'nano-resources' && isNano ) {
+            callback({ content: updatedContent });
+            return;
+        }
+        nano.assets.get(key, callback);
+    };
+    
+    if ( hasChangedData ) {
+        fetchResourceByKey('ublock-resources', onResourcesLoaded);
+        return;
+    }
+
+    var onSelfieReady = function(success) {
+        if ( success !== true ) {
+            fetchResourceByKey('ublock-resources', onResourcesLoaded);
+        }
+    };
+
+    µb.redirectEngine.resourcesFromSelfie(onSelfieReady);
 };
 
 /******************************************************************************/
@@ -1203,7 +1285,8 @@
             }
         }
         // https://github.com/gorhill/uBlock/issues/2594
-        if ( details.assetKey === 'ublock-resources' ) {
+        // Patch 2018-02-22: Add Nano Resources
+        if ( details.assetKey === 'ublock-resources' || details.assetKey === 'nano-resources' ) {
             if (
                 this.hiddenSettings.ignoreRedirectFilters === true &&
                 this.hiddenSettings.ignoreScriptInjectFilters === true
@@ -1238,8 +1321,15 @@
                 this.compilePublicSuffixList(details.content);
             }
         } else if ( details.assetKey === 'ublock-resources' ) {
+            this.redirectEngine.invalidateResourcesSelfie();
             if ( cached ) {
-                this.redirectEngine.resourcesFromString(details.content);
+                this.loadRedirectResources(details.content);
+            }
+        } else if ( details.assetKey === 'nano-resources' ) {
+            // Patch 2018-02-22: Add Nano Resources
+            this.redirectEngine.invalidateResourcesSelfie();
+            if ( cached ) {
+                this.loadRedirectResources(details.content, true);
             }
         }
         vAPI.messaging.broadcast({

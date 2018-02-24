@@ -533,6 +533,7 @@ var onMessage = function(request, sender, callback) {
         // already been injected.
         if (
             µb.canFilterResponseBody === false ||
+            µb.hiddenSettings.streamScriptInjectFilters !== true ||
             µb.textEncode === undefined ||
             µb.textEncode.normalizeCharset(request.charset) === undefined
         ) {
@@ -745,7 +746,7 @@ var backupUserData = function(callback) {
         version: vAPI.app.version,
         userSettings: µb.userSettings,
         selectedFilterLists: µb.selectedFilterLists,
-        hiddenSettingsString: µb.stringFromHiddenSettings(),
+        hiddenSettings: µb.hiddenSettings,
         netWhitelist: µb.stringFromWhitelist(µb.netWhitelist),
         dynamicFilteringString: µb.permanentFirewall.toString(),
         urlFilteringString: µb.permanentURLFiltering.toString(),
@@ -779,8 +780,14 @@ var restoreUserData = function(request) {
     var onAllRemoved = function() {
         µBlock.saveLocalSettings();
         vAPI.storage.set(userData.userSettings);
-        µb.hiddenSettingsFromString(userData.hiddenSettingsString || '');
+        var hiddenSettings = userData.hiddenSettings;
+        if ( hiddenSettings instanceof Object === false ) {
+            hiddenSettings = µBlock.hiddenSettingsFromString(
+                userData.hiddenSettingsString || ''
+            );
+        }
         vAPI.storage.set({
+            hiddenSettings: hiddenSettings,
             netWhitelist: userData.netWhitelist || '',
             dynamicFilteringString: userData.dynamicFilteringString || '',
             urlFilteringString: userData.urlFilteringString || '',
@@ -806,6 +813,7 @@ var restoreUserData = function(request) {
     // storage
     vAPI.cacheStorage.clear();
     vAPI.storage.clear(onAllRemoved);
+    vAPI.localStorage.removeItem('immediateHiddenSettings');
 };
 
 var resetUserData = function() {
@@ -886,6 +894,7 @@ var untangleRules = function(s) {
     var firewallRules = [];
     var urlRules = [];
     var switches = [];
+    var reIsSwitchRule = /^[a-z-]+:\s/;
 
     while ( lineBeg < textEnd ) {
         lineEnd = s.indexOf('\n', lineBeg);
@@ -898,12 +907,12 @@ var untangleRules = function(s) {
         line = s.slice(lineBeg, lineEnd).trim();
         lineBeg = lineEnd + 1;
 
-        if ( line.indexOf('://') !== -1 ) {
-            urlRules.push(line);
-        } else if ( line.indexOf(':') === -1 ) {
-            firewallRules.push(line);
-        } else {
+        if ( reIsSwitchRule.test(line) ) {
             switches.push(line);
+        } else if ( line.indexOf('://') !== -1 ) {
+            urlRules.push(line);
+        } else {
+            firewallRules.push(line);
         }
     }
 
@@ -960,10 +969,12 @@ var onMessage = function(request, sender, callback) {
         // https://github.com/gorhill/uBlock/pull/2314#issuecomment-278716960
         if ( request.assetKey.startsWith('ublock-') ) {
             µb.assets.purge('ublock-resources');
+            µb.redirectEngine.invalidateResourcesSelfie();
         }
         // Patch 2017-12-09: Do the same thing for Nano filters
         if ( request.assetKey.startsWith('nano-') ) {
             nano.assets.purge('nano-resources');
+            nano.redirectEngine.invalidateResourcesSelfie();
         }
         break;
 
@@ -1006,7 +1017,8 @@ var onMessage = function(request, sender, callback) {
         break;
 
     case 'writeHiddenSettings':
-        µb.hiddenSettingsFromString(request.content);
+        µb.hiddenSettings = µb.hiddenSettingsFromString(request.content);
+        µb.saveHiddenSettings();
         break;
     
     // Patch 2017-12-26: Add invokables to advanced settings dashboard
