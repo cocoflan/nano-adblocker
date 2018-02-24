@@ -267,22 +267,67 @@ var matchBucket = function(url, hostname, bucket, start) {
 };
 
 µBlock.validateWhitelistString = function(s) {
+    // Patch 2017-12-12: Mark the lines (up to first 10) that are bad
+    // This function used to return boolean but not anymore, need to watch out
+    // for that when taking upstream patches
+    var currLineNum = 0;
+    var badLines = [];
+    
     var lineIter = new this.LineIterator(s), line;
-    while ( !lineIter.eot() ) {
+    while ( !lineIter.eot() && badLines.length < 10 ) {
+        currLineNum++;
+
         line = lineIter.next().trim();
+        
         if ( line === '' ) { continue; }
         if ( line.startsWith('#') ) { continue; } // Comment
+        
         if ( line.indexOf('/') === -1 ) { // Plain hostname
-            if ( reInvalidHostname.test(line) ) { return false; }
+            if ( reInvalidHostname.test(line) ) {
+                badLines.push({
+                    row: currLineNum - 1,
+                    type: 'error',
+                    text: vAPI.i18n('whitelistLinterInvalidHostname')
+                });
+                continue;
+            }
+        } else if ( line.length > 2 && line.startsWith('/') && line.endsWith('/') ) { // Regex-based
+            try {
+                new RegExp(line.slice(1, -1));
+            } catch(ex) {
+                badLines.push({
+                    row: currLineNum - 1,
+                    type: 'error',
+                    text: vAPI.i18n('whitelistLinterInvalidRegExp')
+                });
+                continue;
+            }
+        } else if ( reHostnameExtractor.test(line) === false ) { // URL
+            badLines.push({
+                row: currLineNum - 1,
+                type: 'error',
+                text: vAPI.i18n('whitelistLinterInvalidURL')
+            });
             continue;
         }
-        if ( line.length > 2 && line.startsWith('/') && line.endsWith('/') ) { // Regex-based
-            try { new RegExp(line.slice(1, -1)); } catch(ex) { return false; }
-            continue;
-        }
-        if ( reHostnameExtractor.test(line) === false ) { return false; } // URL
+        
+        nano.whitelistLinter.lint(line, currLineNum - 1);
     }
-    return true;
+
+    var warnings = nano.whitelistLinter.warnings;
+    nano.whitelistLinter.reset();
+    if ( !lineIter.eot() ) {
+        warnings.push({
+            row: currLineNum,
+            type: 'warning',
+            text: vAPI.i18n('whitelistLinterAborted')
+        });
+    }
+    
+    return {
+        errors: badLines,
+        warnings: warnings
+    };
 };
 
 var reInvalidHostname = /[^a-z0-9.\-\[\]:]/,

@@ -18,10 +18,8 @@
 <p>
     <button id="whitelistApply" class="custom important" type="button" disabled="true" data-i18n="whitelistApply"></button>&ensp;
     <button id="whitelistRevert" class="custom" type="button" disabled="true" data-i18n="genericRevert"></button>
-<p><section id="whitelist">
-    <textarea dir="auto" spellcheck="false"></textarea>
-    <div>E</div>
-    </section>
+<p>
+    <div id="whitelist"></div>
 <p>
     <button id="importWhitelistFromFile" class="custom" data-i18n="whitelistImport"></button>&ensp;
     <button id="exportWhitelistToFile" class="custom" data-i18n="whitelistExport"></button>
@@ -35,6 +33,11 @@
 <script src="js/i18n.js"></script>
 <script src="js/dashboard-common.js"></script>
 <script src="js/cloud-ui.js"></script>
+<!-- Patch 2017-12-12: Change textarea to IDE, and clearly mark lines that are bad -->
+<script src="lib/ace/ace-1.2.9.js"></script>
+<script src="lib/ace/ext-searchbox-1.2.9.js"></script>
+<script src="js/nano-highlight.js"></script>
+<script src="js/nano-ide.js"></script>
 <script src="js/whitelist.js"></script>
 
 </body>
