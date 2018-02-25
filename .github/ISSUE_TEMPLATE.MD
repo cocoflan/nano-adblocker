@@ -31,6 +31,7 @@ I cannot read your mind, write down what is in your head!
 - Operating System and Version: 
 - Browser and Version: 
 - Nano Adblocker Version: 
+- Nano Defender Version (Optional if you are not using it): 
 
 #### Your filter lists (Required)
 <!--
