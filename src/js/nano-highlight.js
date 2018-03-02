@@ -56,7 +56,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
     exports.HighlightRules = function() {
         this.$rules = {
             start: [
-                // Comments
+                // Header
                 /*
                 {
                     token: 'invisible',
@@ -64,11 +64,13 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     next: 'header'
                 },
                 */
+                // Preprocessor
                 {
                     token: 'keyword',
                     regex: /^!#/,
                     next: 'preprocessor'
                 },
+                // Comments
                 {
                     token: 'invisible',
                     regex: /^(?:!|#(?: |$)|\[).*/
@@ -159,6 +161,11 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 {
                     token: 'keyword',
                     regex: /include (?!$)/,
+                    next: 'include_url'
+                },
+                {
+                    token: 'keyword',
+                    regex: /nano-include-content-(?:start|end) (?!$)/,
                     next: 'include_url'
                 },
                 // Invalid (default)

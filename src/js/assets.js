@@ -187,9 +187,12 @@ api.fetchFilterList = function(mainlistURL, onLoad, onError) {
 
         pendingSublistURLs.delete(details.url);
         loadedSublistURLs.add(details.url);
-        if ( isSublist ) { content.push('\n! ' + '>>>>>>>> ' + details.url); }
+        
+        // Patch 2018-03-01: Make generated content more highlighter friendly
+        if ( isSublist ) { content.push('\n!#nano-include-content-start ' + details.url); }
         content.push(details.content.trim());
-        if ( isSublist ) { content.push('! <<<<<<<< ' + details.url); }
+        if ( isSublist ) { content.push('!#nano-include-content-end ' + details.url); }
+        
         if (
             parsedMainURL !== undefined &&
             parsedMainURL.pathname.length > 0
