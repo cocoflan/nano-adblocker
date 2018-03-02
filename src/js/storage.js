@@ -776,7 +776,7 @@
         }
     }
     // Extract update frequency information
-    // Patch 2017-12-19: Change lower cap to 1 day and upper cap to 60 days
+    // Patch 2017-12-19: Add an upper cap of 60 days
     // Patch 2018-01-07: Accept hours as unit, but rounded up to day
     // Patch 2018-03-02: Accept "# Expires:" as alternative syntax
     matches = head.match(/(?:^|\n)(?:!|#)[\t ]*Expires:[\t ]*([\d]+)[\t ]*(day|hour)s?/i);
