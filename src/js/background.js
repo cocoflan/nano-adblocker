@@ -81,7 +81,7 @@ var µBlock = (function() { // jshint ignore:line
             // Patch 2017-12-19: Add UI configuration
             nanoDashboardAllowSelection: true,
             nanoEditorWordSoftWrap: false,
-            nanoViewerWordSoftWrap: false
+            nanoViewerWordSoftWrap: true
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
