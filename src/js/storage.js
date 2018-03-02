@@ -765,7 +765,7 @@
     // https://github.com/gorhill/uBlock/issues/313
     // Always try to fetch the name if this is an external filter list.
     if ( listEntry.title === '' || listEntry.group === 'custom' ) {
-        matches = head.match(/(?:^|\n)!\s*Title:([^\n]+)/i);
+        matches = head.match(/(?:^|\n)(?:!|#)\s*Title:([^\n]+)/i);
         if ( matches !== null ) {
             // https://bugs.chromium.org/p/v8/issues/detail?id=2869
             // JSON.stringify/JSON.parse is to work around String.slice()
@@ -777,11 +777,11 @@
     // Extract update frequency information
     // Patch 2017-12-19: Change lower cap to 1 day and upper cap to 30 days
     // Patch 2018-01-07: Accept hours as unit, but rounded up to day
-    matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*days?/i);
+    matches = head.match(/(?:^|\n)(?:!|#)[\t ]*Expires:[\t ]*([\d]+)[\t ]*days?/i);
     if ( matches !== null ) {
         v = parseInt(matches[1], 10);
     } else {
-        matches = head.match(/(?:^|\n)![\t ]*Expires:[\t ]*([\d]+)[\t ]*hours?/i);
+        matches = head.match(/(?:^|\n)(?:!|#)[\t ]*Expires:[\t ]*([\d]+)[\t ]*hours?/i);
         if ( matches !== null ) {
             v = Math.ceil(parseInt(matches[1], 10) / 24);
         }
