@@ -69,9 +69,14 @@ Available since 1.0.0.0
 
 - [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
 - [Extended filter syntax](/notes/filter-syntax.MD#filter-syntax)
-- [Extended filter list headers](/notes/filter-list-authoring.MD#filter-list-authoring)
+- [Polished filter list subscription process](/notes/filter-list-authoring.MD#filter-list-authoring)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it
   to track users)
 - Added a few more filters to filters manager
 - Made cache control button to be always shown
 - Added force scroll mode (to be used with element zapper)
+
+## Pending Features
+
+We are constantly improving! The list of pending features can be found
+[here](/notes/pending-features.MD#pending-features).

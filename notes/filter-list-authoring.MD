@@ -2,7 +2,7 @@
 
 A filter list is simply a text file, it can be served over HTTPS or file system.
 
-Details on [syntax can be found here](/notes/filter-syntax.MD#filter-syntax).
+Details on syntax can be found [here](/notes/filter-syntax.MD#filter-syntax).
 
 ## Headers
 
@@ -90,5 +90,5 @@ the order of `location` and `title` and do not encode the link.
 One slight problem is that lots of filters are not compatible with Adblock Plus,
 to make sure Adblock Plus will not react to the link, replace `abp://` with
 `ubo://`. However, uBlock Origin does not actually accept that, only Nano
-Adblocker recognize `ubo://`. We have decided to not make it `nano://` in the
-fear of name collision.
+Adblocker recognize `ubo://` as of now. We have decided to not make it
+`nano://` in the fear of name collision.
