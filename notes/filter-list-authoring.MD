@@ -87,7 +87,8 @@ this feature, your domain will be blacklisted.
 At lease one of such link must be present on the page when `load` event is
 fired. Unlike Adblock Plus, Nano Adblocker and uBlock Origin do not parse the
 link like a query string, so do not switch the order of `location` and `title`.
-You can use `encodeURIComponent` to encode the URL and title.
+You should encode the URL and title with `encodeURIComponent`. Also, the title
+field is required.
 
 One slight problem is that lots of filters are not compatible with Adblock Plus,
 to make sure Adblock Plus will not react to the link, replace `abp://` with
