@@ -1,6 +1,8 @@
 # Filter List Authoring
 
 A filter list is simply a text file, it can be served over HTTPS or file system.
+HTTP is also accepted for backwards compatibility. However, unless served from
+localhost, filter lists served over HTTP may be blocked in the future.
 
 Details on syntax can be found [here](/notes/filter-syntax.MD#filter-syntax).
 
@@ -24,7 +26,7 @@ uBlock Origin only accepts the first syntax form (with `!`).
 
 If this header is missing, the URL of the filter list will be used.
 
-Examples: 
+Examples:
 ```
 ! Title: My Filter List
 # Title: My Hosts File
