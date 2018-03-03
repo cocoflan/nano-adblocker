@@ -11,7 +11,7 @@ header. This can not only help others to understand the purpose of your filter,
 but also make automated indexing easier.
 
 Unlike Adblock Plus, Nano Adblocker and uBlock Origin will only parse a limited
-set of headers. Any header that you want to be parsed must be in the first
+set of headers. Any header that you want to be parsed must also be in the first
 1024 characters of your filter list, and only the *first* one will take effect
 if you have duplicate headers (for example, if you have 3 title headers, then
 the first one that appears will override the next two).
@@ -20,7 +20,7 @@ the first one that appears will override the next two).
 
 Indicates the title of the filter list, it is displayed in filter lists manager.
 
-uBlock Origin only accept the first syntax form (with `!`).
+uBlock Origin only accepts the first syntax form (with `!`).
 
 If this header is missing, the URL of the filter list will be used.
 
@@ -33,14 +33,15 @@ Examples:
 ### `! Expires: <time>` or `# Expires: <time>`
 
 Indicates the update interval of the filter list. Time can be expressed as days
-or hours, but you must use integers in either case. If you use hour as unit, it
-will be rounded *up* to nearest day. The lower cap is 1 day and upper cap is 60.
+or hours, but you must use an integer in either case. If you use hour as unit,
+it will be rounded *up* to the nearest day. The lower cap is 1 day and the upper
+cap is 60.
 
-uBlock Origin does not enforce an upper cap, only accept the first syntax form
-(with `!`), and does not accept hour as unit.
+uBlock Origin only accepts the first syntax form (with `!`), does not enforce
+an upper cap, and does not accept hour as unit.
 
 If this header is missing, Nano Adblocker will default to 3 days and uBlock
-Origin will default to 5 days. Some built-in filter lists of Nano Adblocker
+Origin will default to 5. Some built-in filter lists of Nano Adblocker
 also have different update intervals than uBlock Origin, please see
 [`assets.json`](/assets/assets.json) for more details. Note that this header
 will override the value set in `assets.json`.
@@ -60,7 +61,7 @@ the primary adblocker that your filter list support, that is, `[Nano Adblocker]`
 or `[uBlock Origin]`. However, lines starting with `[` are treated as comments
 in Nano Adblocker and uBlock Origin, so this line is optional.
 
-These are other headers that you should consider including:
+Although not parsed, these are some headers that you should consider including:
 - `[! or #] Description: <short description>`
 - `[! or #] Author[s]: <author or list of authors>`
 - `[! or #] Version: <version number>`
@@ -71,18 +72,20 @@ These are other headers that you should consider including:
 
 ## Publishing
 
-Although users can easily add filter lists from the dashboard, it is usually
-better to allow them to subscribe by simply clicking a link.
+Although users can easily subscribe to filter lists from the dashboard, it is
+usually better to allow them to subscribe by simply clicking a link.
 
 To make such link, you need to assign `href` of an anchor element (`<a>`) to:
 ```
 abp://subscribe?location=<URL>&title=<title>
 ```
 
+Make sure the URL is pointing to a *raw* text file and not HTML.
+
 At lease one of such link must be present on the page when `load` event is
 fired. Unlike Adblock Plus, Nano Adblocker and uBlock Origin do not parse the
-link like a query string, and do not unescape extracted data, so do not
-encode the link.
+link like a query string, and do not unescape extracted data, so do not switch
+the order of `location` and `title` and do not encode the link.
 
 One slight problem is that lots of filters are not compatible with Adblock Plus,
 to make sure Adblock Plus will not react to the link, replace `abp://` with

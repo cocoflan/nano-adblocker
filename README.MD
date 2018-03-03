@@ -69,7 +69,7 @@ Available since 1.0.0.0
 
 - [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
 - [Extended filter syntax](/notes/filter-syntax.MD#filter-syntax)
-- [Optimized update behavior](/notes/UpdateBehavior.MD#update-behavior)
+- [Extended filter list headers](/notes/filter-list-authoring.MD#filter-list-authoring)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it
   to track users)
 - Added a few more filters to filters manager
