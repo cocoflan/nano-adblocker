@@ -2,18 +2,18 @@
 
 Just another adblocker
 
-Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock). 
+Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock).
 
-Please open an issue if there is something you want us to know. 
+Please open an issue if there is something you want us to know.
 
-*Note: If you see different version available to different browsers then chances are the new release is stuck in review queue 
-again.*
+*Note: If you see different version available to different browsers then
+chances are the new release is stuck in review queue again.*
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
 ### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
 
-### [(Dev) Get it for Edge](/Notes/InstallationOnEdge.MD#installation-on-edge)
+### [(Dev) Get it for Edge](/notes/InstallationOnEdge.MD#installation-on-edge)
 
 ### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
 
@@ -67,10 +67,11 @@ Available since 1.0.0.0
 
 *Note: user interface and other housekeeping changes are not listed here.*
 
-- [Extended advanced settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
-- [Extended filter syntax](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
-- [Optimized update behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
-- Enabled `Block CSP reports` by default (to prevent websites from abusing it to track users)
+- [Extended advanced settings](/notes/AdvancedSettings.MD#advanced-settings)
+- [Extended filter syntax](/notes/FilterSyntax.MD#filter-syntax)
+- [Optimized update behavior](/notes/UpdateBehavior.MD#update-behavior)
+- Enabled `Block CSP reports` by default (to prevent websites from abusing it
+  to track users)
 - Added a few more filters to filters manager
-- Tweaked the popup panel for usability
+- Made cache control button to be always shown
 - Added force scroll mode (to be used with element zapper)
