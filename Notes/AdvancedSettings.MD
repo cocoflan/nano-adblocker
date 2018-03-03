@@ -19,7 +19,9 @@ expensive to keep sockets open and it is even more expensive to create new ones.
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
 functionalities **can change or break at any time**, make sure to back up your settings if you want to play around with them. Please 
 open an issue when they break for you, or otherwise behave in a way that contradicts the description below. We cannot fix issues 
-that we are not aware of, please take the time to report issues you encounter. 
+that we are not aware of, so please take the time to report them! 
+
+## Extra Functionalities
 
 When a functionality is marked as `[unavailable]`, it may show in the advanced settings page, but will not work at all, not 
 work as expected, or cause breakage when touched. 
@@ -28,8 +30,6 @@ When a functionality is marked as `[experimental]`, it may work properly, work s
 cause breakage when touched. 
 
 Even when a functionality is considered stable, it is not guaranteed to always work. **Use at your own risk!** 
-
-## Extra Functionalities
 
 ### `_nanoRestart` invokable
 
