@@ -13,16 +13,15 @@ encounter, even minor ones! We ca not fix bugs that we are not aware of!
    a version number that is at least `40.15063.674.0`. If not, you need to
    first update Windows. 
 
-![Screenshot](https://i.imgur.com/GZritjm.png)
-
 3. Enter the page `about:flags` and check `Enable extension developer features`.
 
 4. Restart Edge, open `Extensions` pannel, click `Load extension` button to side
    load the extracted package(s) from step 1.
 
-Note that Edge will disable side loaded extensions on every start.
+## Other Information
 
-![Screenshot](https://i.imgur.com/rkVyCX4.png)
+Edge will disable side loaded extensions on every launch, but please still
+spend the time to test it, so we can have a smooth release.
 
 We have submitted Nano Adblocker to Microsoft Store, please use
 [Feedback Hub](https://developer.microsoft.com/en-us/microsoft-edge/extensions/requests/)
