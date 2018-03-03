@@ -13,7 +13,7 @@ chances are the new release is stuck in review queue again.*
 
 ### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
 
-### [(Dev) Get it for Edge](/notes/InstallationOnEdge.MD#installation-on-edge)
+### [(Dev) Get it for Edge](/notes/install-in-edge.MD#install-in-edge)
 
 ### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
 
@@ -68,7 +68,7 @@ Available since 1.0.0.0
 *Note: user interface and other housekeeping changes are not listed here.*
 
 - [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
-- [Extended filter syntax](/notes/FilterSyntax.MD#filter-syntax)
+- [Extended filter syntax](/notes/filter-syntax.MD#filter-syntax)
 - [Optimized update behavior](/notes/UpdateBehavior.MD#update-behavior)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it
   to track users)

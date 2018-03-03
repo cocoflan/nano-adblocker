@@ -30,8 +30,8 @@ iframe -> subdocument
 When any of these convenience options are used, uBlock Origin will discard the
 filter.
 
-If any of the mapped option gets another meaning in uBlock Origin, **this
-mapping will change without notice**.
+Although unlikely, this mapping **may change** if any of the mapped options get
+another meaning in uBlock Origin.
 
 ## The Option `mp4`
 
