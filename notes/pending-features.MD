@@ -50,8 +50,10 @@ Pull Requests to speed things up.
 
 `$document` for whitelist.
 
-This should only be available to privileged filters unless the user chooses to
+This should only be available to user filters unless the user chooses to
 enable it for all fitlers.
+
+`hard`
 
 ---
 
@@ -59,6 +61,8 @@ Option to make synchronization automatic.
 
 Could be difficult to get it right. Need to consider merge conflicts and
 storage cap.
+
+`hard`
 
 https://github.com/gorhill/uBlock/issues/783
 
