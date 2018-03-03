@@ -60,8 +60,10 @@ Examples:
 
 The first line of most filter lists is `[Adblock Plus 2.0]`, so you should name
 the primary adblocker that your filter list support, that is, `[Nano Adblocker]`
-or `[uBlock Origin]`. However, lines starting with `[` are treated as comments
-in Nano Adblocker and uBlock Origin, so this line is optional.
+or `[uBlock Origin]`. Keep in mind that even if you write `[Adblock Plus 2.0]`,
+Adblock Plus will still reject your filter list if you use extended filter
+syntax. Note that lines starting with `[` are treated as comments in Nano
+Adblocker and uBlock Origin, so this line is optional.
 
 Although not parsed, these are some headers that you should consider including:
 - `[! or #] Description: <short description>`
