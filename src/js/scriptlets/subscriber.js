@@ -66,6 +66,7 @@ var onMaybeAbpLinkClicked = function(ev) {
     if ( href === '' ) {
         return;
     }
+    // Patch 2018-03-02: Accept `ubo:subscribe` links.
     var matches = /^(?:abp|ubo):\/*subscribe\/*\?location=([^&]+).*title=([^&]+)/.exec(href);
     if ( matches === null ) {
         matches = /^https?:\/\/.*?[&?]location=([^&]+).*?&title=([^&]+)/.exec(href);
@@ -111,6 +112,7 @@ var onMaybeAbpLinkClicked = function(ev) {
 
 setTimeout(function() {
     if (
+        // Patch 2018-03-02: Accept `ubo:subscribe` links.
         document.querySelector('link[rel="canonical"][href="https://filterlists.com/"]') !== null ||
         document.querySelector('a[href^="abp:"],a[href^="ubo:"],a[href^="https://subscribe.adblockplus.org/?"]') !== null
     ) {
