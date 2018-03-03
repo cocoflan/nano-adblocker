@@ -27,7 +27,7 @@ If this header is missing, the URL of the filter list will be used.
 Examples: 
 ```
 ! Title: My Filter List
-# Title: My Host File
+# Title: My Hosts File
 ```
 
 ### `! Expires: <time>` or `# Expires: <time>`
