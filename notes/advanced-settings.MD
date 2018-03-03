@@ -31,7 +31,7 @@ that we are not aware of, so please take the time to report them!
 When a functionality is marked as `[unavailable]`, it may show in the advanced
 settings page, but will not work at all, not work as expected, or cause breakage
 when touched. Also, implications of the descriptions of such functionalities
-may not reflect current behavior of Nano Adblocker.
+may not be accurate.
 
 When a functionality is marked as `[experimental]`, it may work properly, work
 sometimes, not work at all, not work as expected, or cause breakage when
