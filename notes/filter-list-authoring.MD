@@ -90,10 +90,10 @@ link like a query string, so do not switch the order of `location` and `title`.
 You should encode the URL and title with `encodeURIComponent`. Also, the title
 field is required.
 
-One slight problem is that lots of filters are not compatible with Adblock Plus,
-to make sure Adblock Plus will not react to the link, replace `abp://` with
-`ubo://`. However, uBlock Origin does not actually accept that, only Nano
-Adblocker recognize `ubo://` as of now. We have decided to not make it
+One slight problem is that a lot of filters are not compatible with Adblock
+Plus; to make sure Adblock Plus will not react to the link, replace `abp://`
+with `ubo://`. However, uBlock Origin does not actually accept that, and only
+Nano Adblocker recognize `ubo://` as of now. We have decided to not make it
 `nano://` in the fear of name collision.
 
 Examples (with URL to be `https://example.com/filter.txt` and title `My
