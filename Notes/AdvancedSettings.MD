@@ -17,7 +17,7 @@ expensive to keep sockets open and it is even more expensive to create new ones.
 [Slowloris](https://en.wikipedia.org/wiki/Slowloris_(computer_security)) attacks are carried out. 
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
-functionalities **can change or break at any time**, make sure to backup your settings if you want to play around with them. Please 
+functionalities **can change or break at any time**, make sure to back up your settings if you want to play around with them. Please 
 open an issue when they break for you, or otherwise behave in a way that contradicts the description below. We cannot fix issues 
 that we are not aware of, please take the time to report issues you encounter. 
 
@@ -50,7 +50,7 @@ When invoked, Nano Adblocker will discard compiled filters and selfies then rest
 Default: `false`
 
 When set to `true`, Nano Adblocker will attempt to polyfill request body filtering for (only) browsers that are *marked* as do not 
-natively support it. The polyfill is less reliable and consume more resource. 
+natively support it. The polyfill is less reliable and consumes more resource. 
 
 ### `_nanoDisableHTMLFiltering` toggleable `[experimental]`
 
@@ -65,7 +65,7 @@ actually supports it. An extension restart is required. This settings is **not**
 
 Default: `false`
 
-*Note: Nano Adblocker does not connect to `jspenguin.com` yet, this option will become available as soon as it does.*
+*Note: Nano Adblocker does not connect to `jspenguin.com` yet; this option will become available as soon as it does.*
 
 When set to `true`, Nano Adblocker will no longer send background requests to `jspenguin.com`. Consequently, some default filters and 
 internal assets will update up to 5 times *less* frequently and you can no longer report broken websites from the popup panel. 
@@ -78,7 +78,7 @@ When set to `true`, Nano Adblocker will no longer discard slow filter rules from
 future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** cause slow filters to be 
 immediately removed. 
 
-Performanced *will* be flushed down the toilet if not used properly, make sure you have a *really* fast computer when playing 
+Performance *will* be flushed down the toilet if not used properly, make sure you have a *really* fast computer when playing 
 around with this settings. 
 
 ### `_nanoIgnoreThirdPartyWhitelist` toggleable `[experimental]`
@@ -91,8 +91,8 @@ When set to `true`, Nano Adblocker will discard exception and `badfilter` rules 
 compiling filters **in the future**. Similarly, setting this toggle to `false` **or turning off advanced mode** will **not** 
 cause discarded filters to be immediately restored. 
 
-Negated domains are sometimes transformed into exception rules, they will not be affected **for now**. This is really hard to fix 
-due to the parsing logic is not designed with discarding whitelists in mind. 
+Negated domains are sometimes transformed into exception rules, and they will not be affected **for now**. This is really hard to 
+fix due to the parsing logic is not designed with discarding whitelists in mind. 
 
 Setting this toggle to `true` **will definitely** break *many* websites and you are to fix them **by yourself**. 
 
