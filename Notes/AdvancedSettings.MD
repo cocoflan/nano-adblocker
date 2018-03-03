@@ -3,6 +3,8 @@
 If you are not familiar with advanced settings of uBlock Origin, 
 [**please read this first**](https://github.com/gorhill/uBlock/wiki/Advanced-settings). 
 
+## Differences
+
 In Nano Adblocker, most of the advanced settings are the same as uBlock Origin, however, the default value of some settings are 
 different: 
 - `assetFetchTimeout` defaults to `60`
@@ -13,8 +15,6 @@ different:
 <sup>1</sup> When fetching assets, you should either get them all done in one burst or wait a significant delay between them. It is 
 expensive to keep sockets open and it is even more expensive to create new ones. In fact, holding sockets open is how 
 [Slowloris](https://en.wikipedia.org/wiki/Slowloris_(computer_security)) attacks are carried out. 
-
-## Stability
 
 Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
 functionalities **can change or break at any time**, make sure to backup your settings if you want to play around with them. Please 
@@ -38,8 +38,6 @@ Available since 1.0.0.29
 When invoked, Nano Adblocker will restart. **Any unsaved changes will be discarded** during the restart and all opened extension 
 pages will be closed. 
 
----
-
 ### `_nanoForceRecompile` invokable
 
 Available since 1.0.0.22
@@ -47,16 +45,12 @@ Available since 1.0.0.22
 When invoked, Nano Adblocker will discard compiled filters and selfies then restart, during which *all* filters will be recompiled. 
 **Any unsaved changes will be discarded** during the restart and all opened extension pages will be closed. 
 
----
-
 ### `_nanoAttemptPolyfillHTMLFiltering` toggleable `[unavailable]`
 
 Default: `false`
 
 When set to `true`, Nano Adblocker will attempt to polyfill request body filtering for (only) browsers that are *marked* as do not 
 natively support it. The polyfill is less reliable and consume more resource. 
-
----
 
 ### `_nanoDisableHTMLFiltering` toggleable `[experimental]`
 
@@ -67,8 +61,6 @@ Default: ~~`false`~~ Temporarily set to `true` due to some upstream bugs
 When set to `true`, Nano Adblocker will *mark* the browser as does not support native request body filtering regardless whether it 
 actually supports it. An extension restart is required. This settings is **not** affected by whether advanced mode is on. 
 
----
-
 ### `_nanoDisconnectFrom_jspenguincom` toggleable `[unavailable]`
 
 Default: `false`
@@ -77,8 +69,6 @@ Default: `false`
 
 When set to `true`, Nano Adblocker will no longer send background requests to `jspenguin.com`. Consequently, some default filters and 
 internal assets will update up to 5 times *less* frequently and you can no longer report broken websites from the popup panel. 
-
----
 
 ### `_nanoIgnorePerformanceAuditing` toggleable `[unavailable]`
 
@@ -90,8 +80,6 @@ immediately removed.
 
 Performanced *will* be flushed down the toilet if not used properly, make sure you have a *really* fast computer when playing 
 around with this settings. 
-
----
 
 ### `_nanoIgnoreThirdPartyWhitelist` toggleable `[experimental]`
 
@@ -107,8 +95,6 @@ Negated domains are sometimes transformed into exception rules, they will not be
 due to the parsing logic is not designed with discarding whitelists in mind. 
 
 Setting this toggle to `true` **will definitely** break *many* websites and you are to fix them **by yourself**. 
-
----
 
 ### `_nanoMakeUserFiltersPrivileged` toggleable
 
