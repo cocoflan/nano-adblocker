@@ -67,7 +67,7 @@ Available since 1.0.0.0
 
 *Note: user interface and other housekeeping changes are not listed here.*
 
-- [Extended advanced settings](/notes/AdvancedSettings.MD#advanced-settings)
+- [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
 - [Extended filter syntax](/notes/FilterSyntax.MD#filter-syntax)
 - [Optimized update behavior](/notes/UpdateBehavior.MD#update-behavior)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it
