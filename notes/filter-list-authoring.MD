@@ -80,12 +80,14 @@ To make such link, you need to assign `href` of an anchor element (`<a>`) to:
 abp://subscribe?location=<URL>&title=<title>
 ```
 
-Make sure the URL is pointing to a *raw* text file and not HTML.
+Make sure the URL is pointing to a *raw* text file and not HTML. Also, only
+anchor elements work, and the click must be initiated by the user. If you abuse
+this feature, your domain will be blacklisted.
 
 At lease one of such link must be present on the page when `load` event is
 fired. Unlike Adblock Plus, Nano Adblocker and uBlock Origin do not parse the
-link like a query string, and do not unescape extracted data, so do not switch
-the order of `location` and `title` and do not encode the link.
+link like a query string, and do not unescape extracted data. So do not switch
+the order of `location` and `title`, and do not encode the link.
 
 One slight problem is that lots of filters are not compatible with Adblock Plus,
 to make sure Adblock Plus will not react to the link, replace `abp://` with
