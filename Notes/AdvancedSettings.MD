@@ -1,7 +1,7 @@
 # Advanced Settings
 
 If you are not familiar with advanced settings of uBlock Origin, 
-[**first read this**](https://github.com/gorhill/uBlock/wiki/Advanced-settings). 
+[**please read this first**](https://github.com/gorhill/uBlock/wiki/Advanced-settings). 
 
 In Nano Adblocker, most of the advanced settings are the same as uBlock Origin, however, the default value of some settings are 
 different: 
@@ -10,16 +10,16 @@ different:
 - `autoUpdatePeriod` defaults to `4`
 - `manualUpdateAssetFetchPeriod` defaults to `1` <sup>1</sup>
 
-Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
-functionalities **can change or break at any time**, make sure to backup your settings if you want to play around with them. Please 
-open an issue when they break for you, or otherwise behave in a way that contradicts the description below. We cannot fix issues 
-that we are not aware of, please take the time to report issues you encounter. 
-
 <sup>1</sup> When fetching assets, you should either get them all done in one burst or wait a significant delay between them. It is 
 expensive to keep sockets open and it is even more expensive to create new ones. In fact, holding sockets open is how 
 [Slowloris](https://en.wikipedia.org/wiki/Slowloris_(computer_security)) attacks are carried out. 
 
----
+## Stability
+
+Beside different defaults, Nano Adblocker also offers a few more functionalities in the advanced settings page. These advanced 
+functionalities **can change or break at any time**, make sure to backup your settings if you want to play around with them. Please 
+open an issue when they break for you, or otherwise behave in a way that contradicts the description below. We cannot fix issues 
+that we are not aware of, please take the time to report issues you encounter. 
 
 When a functionality is marked as `[unavailable]`, it may show in the advanced settings page, but will not work at all, not 
 work as expected, or cause breakage when touched. 
@@ -29,7 +29,7 @@ cause breakage when touched.
 
 Even when a functionality is considered stable, it is not guaranteed to always work. **Use at your own risk!** 
 
----
+## Extra Functionalities
 
 ### `_nanoRestart` invokable
 
