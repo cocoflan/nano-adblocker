@@ -77,7 +77,7 @@ https://github.com/gorhill/uBlock/issues/783
 An option to not collapse network blocked resources on a per-domain or URL
 basis.
 
-Adblock Plus seems to have the option `$~collapse`
+Adblock Plus seems to have the option `$~collapse`.
 
 `hard`
 
