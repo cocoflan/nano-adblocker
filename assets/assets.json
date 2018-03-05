@@ -1,6 +1,7 @@
 {
   "assets.json": {
     "content": "internal",
+    "updateAfter": 5,
     "contentURL": [
       "https://raw.githubusercontent.com/NanoAdblocker/NanoCore/master/assets/assets.json",
       "assets/assets.json"
