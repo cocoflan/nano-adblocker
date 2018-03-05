@@ -48,6 +48,12 @@ Pull Requests to speed things up.
 
 ---
 
+Option to synchronize settings to Google Drive or Dropbox.
+
+https://github.com/gorhill/uBlock/issues/3572
+
+---
+
 `$document` for whitelist.
 
 This should only be available to user filters unless the user chooses to
