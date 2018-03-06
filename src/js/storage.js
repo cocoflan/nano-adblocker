@@ -779,6 +779,8 @@
     // Patch 2017-12-19: Add an upper cap of 60 days
     // Patch 2018-01-07: Accept hours as unit, but rounded up to day
     // Patch 2018-03-02: Accept "# Expires:" as alternative syntax
+    // Patch 2018-03-05: When a filter list loses explicit header, reset the
+    // update period
     matches = head.match(/(?:^|\n)(?:!|#)[\t ]*Expires:[\t ]*([\d]+)[\t ]*(day|hour)s?/i);
     if ( matches !== null ) {
         v = parseInt(matches[1], 10);
@@ -786,15 +788,25 @@
             v = Math.ceil(v / 24);
         }
     }
-    if ( typeof v === 'number' ) {
-        if ( v < 1 ) {
-            v = 1;
-        } else if ( v > 60 ) {
-            v = 60;
+    
+    if ( typeof v !== 'number' ) {
+        if ( typeof listEntry.updateAfterDefault === 'number' ) {
+            v = listEntry.updateAfterDefault;
+        } else {
+            // Notes 2018-03-05: This must be updated if the default update
+            // interval is changed
+            v = 3;
         }
-        if ( v !== listEntry.updateAfter ) {
-            this.assets.registerAssetSource(assetKey, { updateAfter: v });
-        }
+    }
+    
+    if ( v < 1 ) {
+        v = 1;
+    } else if ( v > 60 ) {
+        v = 60;
+    }
+    
+    if ( v !== listEntry.updateAfter ) {
+        this.assets.registerAssetSource(assetKey, { updateAfter: v });
     }
 };
 
