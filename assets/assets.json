@@ -17,6 +17,7 @@
   },
   "ublock-resources": {
     "content": "internal",
+    "updateAfter": 5,
     "contentURL": [
       "https://raw.githubusercontent.com/uBlockOrigin/uAssets/master/filters/resources.txt",
       "assets/ThirdParty/uBlockResources.txt"
@@ -24,6 +25,7 @@
   },
   "nano-resources": {
     "content": "internal",
+    "updateAfter": 5,
     "contentURL": [
       "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoResources.txt",
       "assets/NanoFilters/NanoResources.txt"
@@ -239,6 +241,7 @@
   "malware-0": {
     "content": "filters",
     "group": "malware",
+    "updateAfterDefault": 5,
     "title": "Malware Domain List",
     "contentURL": [
       "https://www.malwaredomainlist.com/hostslist/hosts.txt",
@@ -248,6 +251,7 @@
   "malware-1": {
     "content": "filters",
     "group": "malware",
+    "updateAfterDefault": 5,
     "title": "Malware domains",
     "contentURL": [
       "https://mirror.cedia.org.ec/malwaredomains/justdomains",
@@ -355,6 +359,7 @@
     "content": "filters",
     "group": "multipurpose",
     "updateAfter": 5,
+    "updateAfterDefault": 5,
     "title": "Peter Lowe’s Ad and tracking server list",
     "contentURL": [
       "https://pgl.yoyo.org/adservers/serverlist.php?hostformat=hosts&showintro=1&mimetype=plaintext",
