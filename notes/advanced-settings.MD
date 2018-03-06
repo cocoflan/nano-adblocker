@@ -62,7 +62,8 @@ Default: `false`
 
 When set to `true`, Nano Adblocker will attempt to polyfill request body
 filtering for (only) browsers that are *marked* as do not natively support it.
-The polyfill is less reliable and consumes more resource.
+The polyfill is less reliable and consumes more resource. This settings is
+**not** affected by whether advanced mode is on.
 
 ### `_nanoDisableHTMLFiltering` toggleable `[experimental]`
 
@@ -85,7 +86,8 @@ become available as soon as it does.*
 When set to `true`, Nano Adblocker will no longer send background requests to
 `jspenguin.com`. Consequently, some default filters and internal assets will
 update up to 5 times *less* frequently and you can no longer report broken
-websites from the popup panel.
+websites from the popup panel. This settings is **not** affected by whether
+advanced mode is on.
 
 ### `_nanoIgnorePerformanceAuditing` toggleable `[unavailable]`
 
