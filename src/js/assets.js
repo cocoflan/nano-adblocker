@@ -151,7 +151,7 @@ api.fetchText = function(url, onLoad, onError) {
 
     // Patch 2018-03-05: Add ability to opt out from assets mirror
     if ( 
-        nano.hiddenSettings._nanoDisconnectFrom_jspenguincom &&
+        nano.hiddenSettings._nanoDisconnectFrom_jspenguincom === true &&
         actualUrl.startsWith('https://jspenguin.com/NanoAdblocker/AssetsMirror/')
     ) {
         onErrorEvent.call(xhr);
