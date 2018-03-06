@@ -48,6 +48,11 @@ also have different update intervals than uBlock Origin, please see
 [`assets.json`](/assets/assets.json) for more details. Note that this header
 will override the value set in `assets.json`.
 
+Note that if your filter list used to have this header, but removed (or became
+invalid) later, then Nano Adblocker will reset the update interval to the
+default value; uBlock Origin does not do this and will keep the last update
+interval that it has.
+
 Examples:
 ```
 ! Expires: 1 day
