@@ -129,7 +129,7 @@ Add tool tips to Logger.
 
 ---
 
-Styling Subreddit to fit the theme.
+Style Subreddit to fit our theme.
 
 `low priority`
 
