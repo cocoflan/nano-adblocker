@@ -19,9 +19,9 @@ chances are the new release is stuck in review queue again.*
 
 ## For Developers
 
-### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
-
 ### [Edge version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
+
+### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
 ## Notable Change
 
