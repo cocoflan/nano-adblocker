@@ -127,6 +127,12 @@ Add tool tips to Logger.
 
 `low priority`
 
+---
+
+Styling Subreddit to fit the theme.
+
+`low priority`
+
 ## Group 3
 
 These features are either unimaginably hard to implement or close to pointless.
