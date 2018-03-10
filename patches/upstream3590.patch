@@ -9,7 +9,7 @@ index a7d539c..61ca5bf 100644
 -        if ( option === 'first-party' ) {
 -            srcs.push(µburi.domainFromHostname(des) || des);
 +        if ( option === 'first-party' || option === '~third-party' ) {
-+            srcs.push(µburi.domainFromHostname(des) || des || '*');
++            srcs.push(µburi.domainFromHostname(des) || des || '<first-party>');
              continue;
          }
          // One and only one type must be specified.
