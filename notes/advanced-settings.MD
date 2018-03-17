@@ -69,7 +69,7 @@ The polyfill is less reliable and consumes more resource. This settings is
 
 Available since 1.0.0.29
 
-Default: ~~`false`~~ Temporarily set to `true` due to some upstream bugs
+Default: `false`
 
 When set to `true`, Nano Adblocker will *mark* the browser as does not support
 native request body filtering regardless whether it actually supports it. An
