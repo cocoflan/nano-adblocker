@@ -39,9 +39,11 @@ Not yet available
 
 ![Screenshot](https://i.imgur.com/zboYYEr.png)
 
+<!--
 #### Get notified for common mistakes
 
 ![Screenshot](https://i.imgur.com/IkTaEQ3.png)
+-->
 
 Partially available since 1.0.0.22
 
