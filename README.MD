@@ -15,6 +15,8 @@ chances are the new release is stuck in review queue again.*
 
 ### [(Beta) Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
 
+### Maintainers wanted for other browsers (open an issue and let me know)
+
 ### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
 
 ## For Developers
