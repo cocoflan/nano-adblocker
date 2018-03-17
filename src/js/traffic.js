@@ -336,8 +336,8 @@ var toBlockDocResult = function(url, hostname, logData) {
 
 var onBeforeBehindTheSceneRequest = function(details) {
     var µb = µBlock,
-        pageStore = µb.pageStoreFromTabId(vAPI.noTabId);
-    if ( !pageStore ) { return; }
+        pageStore = µb.pageStoreFromTabId(details.tabId);
+    if ( pageStore === null ) { return; }
 
     var result = 0,
         context = pageStore.createContextFromPage(),
@@ -347,6 +347,13 @@ var onBeforeBehindTheSceneRequest = function(details) {
     context.requestURL = requestURL;
     context.requestHostname = µb.URI.hostnameFromURI(requestURL);
     context.requestType = requestType;
+
+    if ( details.tabId === vAPI.anyTabId && context.pageHostname === '' ) {
+        context.pageHostname = µb.URI.hostnameFromURI(details.documentUrl);
+        context.pageDomain = µb.URI.domainFromHostname(context.pageHostname);
+        context.rootHostname = context.pageHostname;
+        context.rootDomain = context.pageDomain;
+    }
 
     // https://bugs.chromium.org/p/chromium/issues/detail?id=637577#c15
     //   Do not filter behind-the-scene network request of type `beacon`: there
@@ -361,7 +368,11 @@ var onBeforeBehindTheSceneRequest = function(details) {
     // https://github.com/gorhill/uBlock/issues/3150
     //   Ability to globally block CSP reports MUST also apply to
     //   behind-the-scene network requests.
-    if ( µb.userSettings.advancedUserEnabled || requestType === 'csp_report' ) {
+    if (
+        details.tabId !== vAPI.noTabId ||
+        µb.userSettings.advancedUserEnabled ||
+        requestType === 'csp_report'
+    ) {
         result = pageStore.filterRequest(context);
     }
 
@@ -369,7 +380,7 @@ var onBeforeBehindTheSceneRequest = function(details) {
 
     if ( µb.logger.isEnabled() ) {
         µb.logger.writeOne(
-            vAPI.noTabId,
+            details.tabId,
             'net',
             pageStore.logData,
             requestType,
@@ -592,8 +603,15 @@ var filterDocument = (function() {
         return textDecoder.decode(buffer);
     };
 
-    var reContentTypeDocument = /^(?:text\/html|application\/xhtml+xml)/i,
+    var reContentTypeDocument = /^(?:text\/html|application\/xhtml\+xml)/i,
         reContentTypeCharset = /charset=['"]?([^'" ]+)/i;
+
+    var mimeFromContentType = function(contentType) {
+        var match = reContentTypeDocument.exec(contentType);
+        if ( match !== null ) {
+            return match[0].toLowerCase();
+        }
+    };
 
     var charsetFromContentType = function(contentType) {
         var match = reContentTypeCharset.exec(contentType);
@@ -774,8 +792,8 @@ var filterDocument = (function() {
                 utf8TextDecoder = new TextDecoder();
             }
             doc = domParser.parseFromString(
-                utf8TextDecoder.decode(filterer.buffer.slice(0, 4096)),
-                'text/html'
+                utf8TextDecoder.decode(filterer.buffer.slice(0, 1024)),
+                filterer.mime
             );
             charsetFound = charsetFromDoc(doc);
             charsetUsed = µb.textEncode.normalizeCharset(charsetFound);
@@ -786,7 +804,7 @@ var filterDocument = (function() {
 
         doc = domParser.parseFromString(
             textDecode(charsetUsed, filterer.buffer),
-            'text/html'
+            filterer.mime
         );
 
         // https://github.com/gorhill/uBlock/issues/3507
@@ -801,7 +819,7 @@ var filterDocument = (function() {
                 charsetUsed = charsetFound;
                 doc = domParser.parseFromString(
                     textDecode(charsetFound, filterer.buffer),
-                    'text/html'
+                    filterer.mime
                 );
             }
         }
@@ -868,6 +886,7 @@ var filterDocument = (function() {
             selectors: undefined,
             scriptlets: undefined,
             buffer: null,
+            mime: undefined,
             charset: undefined
         };
 
@@ -895,7 +914,8 @@ var filterDocument = (function() {
         var headers = details.responseHeaders,
             contentType = headerValueFromName('content-type', headers);
         if ( contentType !== '' ) {
-            if ( reContentTypeDocument.test(contentType) === false ) { return; }
+            request.mime = mimeFromContentType(contentType);
+            if ( request.mime === undefined ) { return; }
             var charset = charsetFromContentType(contentType);
             if ( charset !== undefined ) {
                 charset = µb.textEncode.normalizeCharset(charset);
@@ -1053,25 +1073,48 @@ var injectCSP = function(pageStore, details) {
 
     µb.updateBadgeAsync(tabId);
 
-    var csp,
-        headers = details.responseHeaders,
-        i = headerIndexFromName('content-security-policy', headers);
-    if ( i !== -1 ) {
-        csp = headers[i].value.trim();
-        headers.splice(i, 1);
-    }
-    cspSubsets = cspSubsets.join(', ');
-    // Use comma to add a new subset to potentially existing one(s). This new
-    // subset has its own reporting options and won't cause spurious CSP
-    // reports to outside world.
+    // Use comma to merge CSP directives.
     // Ref.: https://www.w3.org/TR/CSP2/#implementation-considerations
+    //
+    // https://github.com/gorhill/uMatrix/issues/967
+    //   Inject a new CSP header rather than modify an existing one, except
+    //   if the current environment does not support merging headers:
+    //   Firefox 58/webext and less can't merge CSP headers, so we will merge
+    //   them here.
+    var headers = details.responseHeaders;
+
+    if ( cantMergeCSPHeaders ) {
+        var i = headerIndexFromName('content-security-policy', headers);
+        if ( i !== -1 ) {
+            cspSubsets.unshift(headers[i].value.trim());
+            headers.splice(i, 1);
+        }
+    }
+
     headers.push({
         name: 'Content-Security-Policy',
-        value: csp === undefined ? cspSubsets : csp + ', ' + cspSubsets
+        value: cspSubsets.join(', ')
     });
 
     return { 'responseHeaders': headers };
 };
+
+// https://github.com/gorhill/uMatrix/issues/967#issuecomment-373002011
+//   This can be removed once Firefox 60 ESR is released.
+var cantMergeCSPHeaders = (function() {
+    if (
+        self.browser instanceof Object &&
+        typeof self.browser.runtime.getBrowserInfo === 'function'
+    ) {
+        self.browser.runtime.getBrowserInfo().then(function(info) {
+            cantMergeCSPHeaders =
+                info.vendor === 'Mozilla' &&
+                info.name === 'Firefox' &&
+                parseInt(info.version, 10) < 59;
+        });
+    }
+    return false;
+})();
 
 /******************************************************************************/
 
