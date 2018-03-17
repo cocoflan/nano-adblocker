@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2018 Raymond Hill
+    Copyright (C) 2014-2016 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,29 +19,38 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global CodeMirror, uDom, uBlockDashboard */
+/* global uDom, uBlockDashboard */
+
+/******************************************************************************/
+
+(function() {
 
 'use strict';
 
 /******************************************************************************/
 
-(function() {
+var editor = nanoIDE.init('userFilters', true, false);
 
 /******************************************************************************/
 
 var messaging = vAPI.messaging;
 var cachedUserFilters = '';
 
-var cmEditor = new CodeMirror(
-    document.getElementById('userFilters'),
-    {
-        autofocus: true,
-        inputStyle: 'contenteditable',
-        lineNumbers: true,
-        lineWrapping: true,
-        styleActiveLine: true
-    }
-);
+/******************************************************************************/
+
+// Patch 2017-12-27: Show linting result in the editor
+function renderLinterAnnotation() {
+    var renderAnnotation = function(data) {
+        editor.session.setAnnotations(data.errors.concat(data.warnings));
+    };
+    messaging.send(
+        'dashboard',
+        { 
+            what: 'fetchUserFilterLintingResult'
+        },
+        renderAnnotation
+    );
+}
 
 /******************************************************************************/
 
@@ -49,7 +58,7 @@ var cmEditor = new CodeMirror(
 
 function userFiltersChanged(changed) {
     if ( typeof changed !== 'boolean' ) {
-        changed = cmEditor.getValue().trim() !== cachedUserFilters;
+        changed = nanoIDE.getLinuxValue().trim() !== cachedUserFilters;
     }
     uDom.nodeFromId('userFiltersApply').disabled = !changed;
     uDom.nodeFromId('userFiltersRevert').disabled = !changed;
@@ -57,21 +66,37 @@ function userFiltersChanged(changed) {
 
 /******************************************************************************/
 
+// TODO 2017-12-06: Find out what is the purpose of the parameter first
 function renderUserFilters(first) {
     var onRead = function(details) {
         if ( details.error ) { return; }
-        var content = details.content.trim();
-        cachedUserFilters = content;
-        if ( content.length !== 0 ) {
-            content += '\n';
-        }
-        cmEditor.setValue(content);
+        cachedUserFilters = details.content.trim();
         if ( first ) {
-            cmEditor.clearHistory();
+            nanoIDE.setValueFocus(details.content + '\n');
+        } else {
+            nanoIDE.setValueFocus(details.content);
         }
         userFiltersChanged(false);
+        
+        // Patch 2017-12-27: Render annotations
+        renderLinterAnnotation();
     };
     messaging.send('dashboard', { what: 'readUserFilters' }, onRead);
+}
+// Patch 2018-01-01: Read line wrap settings
+function loadLineWrapSettings() {
+    var onLoad = function(lineWrap) {
+        nanoIDE.setLineWrap(lineWrap === true);
+        renderUserFilters(true);
+    };
+    vAPI.messaging.send(
+        'dashboard',
+        {
+            what: 'userSettings',
+            name: 'nanoEditorWordSoftWrap'
+        },
+        onLoad
+    );
 }
 
 /******************************************************************************/
@@ -79,6 +104,10 @@ function renderUserFilters(first) {
 function allFiltersApplyHandler() {
     messaging.send('dashboard', { what: 'reloadAllFilters' });
     uDom('#userFiltersApply').prop('disabled', true );
+
+    // Patch 2017-12-27: Render new annotations, need to wait a bit for filters
+    // to be compiled
+    setTimeout(renderLinterAnnotation, 500);
 }
 
 /******************************************************************************/
@@ -111,7 +140,8 @@ var handleImportFilePicker = function() {
 
     var fileReaderOnLoadHandler = function() {
         var sanitized = abpImporter(this.result);
-        cmEditor.setValue(cmEditor.getValue().trim() + '\n' + sanitized);
+        nanoIDE.setValueFocus(nanoIDE.getLinuxValue().trim() + '\n' + sanitized);
+        userFiltersChanged();
     };
     var file = this.files[0];
     if ( file === undefined || file.name === '' ) {
@@ -139,8 +169,11 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportUserFiltersToFile = function() {
-    var val = cmEditor.getValue().trim();
-    if ( val === '' ) { return; }
+    // Just get value, not Linux value
+    var val = editor.getValue().trim();
+    if ( val === '' ) {
+        return;
+    }
     var filename = vAPI.i18n('1pExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
         .replace(/ +/g, '_');
@@ -154,40 +187,45 @@ var exportUserFiltersToFile = function() {
 
 var applyChanges = function() {
     var onWritten = function(details) {
-        if ( details.error ) { return; }
+        if ( details.error ) {
+            return;
+        }
+        // TODO 2017-12-06: Maybe set the cursor back to its original position?
+        nanoIDE.setValueFocus(details.content);
         cachedUserFilters = details.content.trim();
+        // Patch 2017-12-06: Add false as I just set the value to be the same
+        userFiltersChanged(false);
         allFiltersApplyHandler();
     };
-    messaging.send(
-        'dashboard',
-        {
-            what: 'writeUserFilters',
-            content: cmEditor.getValue()
-        },
-        onWritten
-    );
+
+    var request = {
+        what: 'writeUserFilters',
+        content: nanoIDE.getLinuxValue()
+    };
+    messaging.send('dashboard', request, onWritten);
 };
 
 var revertChanges = function() {
-    var content = cachedUserFilters;
-    if ( content.length !== 0 ) {
-        content += '\n';
-    }
-    cmEditor.setValue(content);
+    nanoIDE.setValueFocus(cachedUserFilters + '\n');
+    // Patch 2017-12-06: Add false as I just set the value to be the same
+    userFiltersChanged(false);
 };
 
 /******************************************************************************/
 
 var getCloudData = function() {
-    return cmEditor.getValue();
+    return nanoIDE.getLinuxValue();
 };
 
 var setCloudData = function(data, append) {
-    if ( typeof data !== 'string' ) { return; }
-    if ( append ) {
-        data = uBlockDashboard.mergeNewLines(cmEditor.getValue(), data);
+    if ( typeof data !== 'string' ) {
+        return;
     }
-    cmEditor.setValue(data);
+    if ( append ) {
+        data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue(), data);
+    }
+    nanoIDE.setValueFocus(data);
+    userFiltersChanged();
 };
 
 self.cloud.onPush = getCloudData;
@@ -201,11 +239,10 @@ uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportUserFiltersToFile').on('click', exportUserFiltersToFile);
 uDom('#userFiltersApply').on('click', applyChanges);
 uDom('#userFiltersRevert').on('click', revertChanges);
+editor.session.on('change', userFiltersChanged);
 
-renderUserFilters(true);
-
-cmEditor.on('changes', userFiltersChanged);
-CodeMirror.commands.save = applyChanges;
+// Patch 2018-01-01: Read line wrap settings
+loadLineWrapSettings();
 
 /******************************************************************************/
 

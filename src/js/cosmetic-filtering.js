@@ -546,7 +546,6 @@ FilterContainer.prototype.freeze = function() {
     this.frozen = true;
 };
 
-
 /******************************************************************************/
 
 // https://github.com/gorhill/uBlock/issues/1668
@@ -606,7 +605,8 @@ FilterContainer.prototype.compile = function(parsed, writer) {
         this.compileHostnameSelector(hostname, parsed, writer);
     }
     if ( applyGlobally ) {
-        this.compileGenericSelector(parsed, writer);
+        // Patch 2018-01-03: Pass an extra argument as linting flag
+        this.compileGenericSelector(parsed, writer, true);
     }
 
     return true;
@@ -640,12 +640,28 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
     //   ##.foo:matches-css-before(...)
     //   ##:xpath(...)
     //   ##.foo:style(...)
+    // Notes 2017-12-26: If we are to keep slow filters, we cannot simply mark		
+    // the filter as valid here, as assumptions made by following code will no		
+    // longer be valid
     if ( this.reNeedHostname.test(selector) ) {
         µb.logger.writeOne(
             '',
             'error',
             'Cosmetic filtering – invalid generic filter: ##' + selector
         );
+
+        // Patch 2018-01-03: show an appropriate error or warning message
+        if ( nano.compileFlags.firstParty ) {
+            // IMPORTANT! Must change this if arguments signature changed by
+            // gorhill
+            if ( arguments.length === 3 ) {
+                // Applying generically, part of the filter is already accepted
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningConvertedToException'));
+            } else {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedTooExpensive'));
+            }
+        }
+
         return;
     }
 
@@ -654,7 +670,14 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
 
     if ( type === 0x23 /* '#' */ ) {
         key = this.keyFromSelector(selector);
-        if ( key === undefined ) { return; }
+        if ( key === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+            }
+            
+            return;
+        }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
         // selector falls into that category.
@@ -665,13 +688,25 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
         // Complex selector-based CSS rule.
         if ( µb.staticExtFilteringEngine.compileSelector(selector) !== undefined ) {
             writer.push([ 1 /* lg+ */, key.slice(1), selector ]);
+        } else {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+            }
         }
         return;
     }
 
     if ( type === 0x2E /* '.' */ ) {
         key = this.keyFromSelector(selector);
-        if ( key === undefined ) { return; }
+        if ( key === undefined ) {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+            }
+            
+            return;
+        }
         // Simple selector-based CSS rule: no need to test for whether the
         // selector is valid, the regex took care of this. Most generic
         // selector falls into that category.
@@ -682,12 +717,24 @@ FilterContainer.prototype.compileGenericHideSelector = function(parsed, writer) 
         // Complex selector-based CSS rule.
         if ( µb.staticExtFilteringEngine.compileSelector(selector) !== undefined ) {
             writer.push([ 3 /* lg+ */, key.slice(1), selector ]);
+        } else {
+            // Patch 2017-12-27: Show an appropriate error message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+            }
         }
         return;
     }
 
     var compiled = µb.staticExtFilteringEngine.compileSelector(selector);
-    if ( compiled === undefined ) { return; }
+    if ( compiled === undefined ) {
+        // Patch 2017-12-27: Show an appropriate error message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+        }
+
+        return;
+    }
     // TODO: Detect and error on procedural cosmetic filters.
 
     // https://github.com/gorhill/uBlock/issues/909
@@ -730,7 +777,14 @@ FilterContainer.prototype.compileGenericUnhideSelector = function(
 ) {
     // Procedural cosmetic filters are acceptable as generic exception filters.
     var compiled = µb.staticExtFilteringEngine.compileSelector(parsed.suffix);
-    if ( compiled === undefined ) { return; }
+    if ( compiled === undefined ) {
+        // Patch 2017-12-27: Show an appropriate error message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+        }
+        
+        return;
+    }
 
     // https://github.com/chrisaljoudi/uBlock/issues/497
     //   All generic exception filters are put in the same bucket: they are
@@ -753,7 +807,14 @@ FilterContainer.prototype.compileHostnameSelector = function(
     }
 
     var compiled = µb.staticExtFilteringEngine.compileSelector(parsed.suffix);
-    if ( compiled === undefined ) { return; }
+    if ( compiled === undefined ) {
+        // Patch 2017-12-27: Show an appropriate error message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedBadSelector'));
+        }
+        
+        return;
+    }
 
     var domain = this.µburi.domainFromHostname(hostname),
         hash;
