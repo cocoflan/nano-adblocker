@@ -41,13 +41,10 @@ vAPI.app.onShutdown = function() {
     µb.staticNetFilteringEngine.reset();
     µb.staticExtFilteringEngine.reset();
     µb.sessionFirewall.reset();
-    
-    // TODO 2017-12-25: Why reset twice?
     µb.permanentFirewall.reset();
-    µb.permanentFirewall.reset();
-    
     µb.sessionURLFiltering.reset();
     µb.permanentURLFiltering.reset();
+    µb.hnSwitches.reset();
 };
 
 /******************************************************************************/
