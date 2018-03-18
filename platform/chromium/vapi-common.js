@@ -65,6 +65,13 @@ vAPI.getURL = chrome.runtime.getURL;
 
 /******************************************************************************/
 
+// Patch 2017-12-08: Add a function for getting extendion ID
+vAPI.getExtensionID = function() {
+    return chrome.runtime.id;
+};
+
+/******************************************************************************/
+
 vAPI.i18n = chrome.i18n.getMessage;
 
 setScriptDirection(vAPI.i18n('@@ui_locale'));

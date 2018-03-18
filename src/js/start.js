@@ -171,9 +171,12 @@ var onUserSettingsReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/1892
     // For first installation on a battery-powered device, disable generic
     // cosmetic filtering.
-    if ( µb.firstInstall && vAPI.battery ) {
-        userSettings.ignoreGenericCosmeticFilters = true;
-    }
+    //
+    // Patch 2017-12-16: This is just ridiculous, moving the problem to another
+    // place is not a solution
+    //if ( µb.firstInstall && vAPI.battery ) {
+    //    userSettings.ignoreGenericCosmeticFilters = true;
+    //}
 };
 
 /******************************************************************************/
@@ -249,7 +252,12 @@ var onSelectedFilterListsLoaded = function() {
         'compiledMagic': '',
         'dynamicFilteringString': 'behind-the-scene * 3p noop\nbehind-the-scene * 3p-frame noop',
         'urlFilteringString': '',
-        'hostnameSwitchesString': '',
+        // Patch 2017-12-23: Update default settings to block all CSP reports
+        // CSP reports are extremely easy to abuse, they can be exploited to
+        // track the user as they can be generated dynamically with JavaScript.
+        // The report-only header can also be used to see what extensions did
+        // to the DOM, disclosing extensions that the user have installed
+        'hostnameSwitchesString': 'no-csp-reports: * true',
         'lastRestoreFile': '',
         'lastRestoreTime': 0,
         'lastBackupFile': '',
