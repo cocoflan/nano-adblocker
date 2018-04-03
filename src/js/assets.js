@@ -85,7 +85,7 @@ api.fetchText = function(url, onLoad, onError) {
     }
 
     var contentLoaded = 0,
-        timeoutAfter = µBlock.hiddenSettings.assetFetchTimeout * 1000 || 30000,
+        timeoutAfter = µBlock.hiddenSettings.assetFetchTimeout * 1000 || 60000,
         timeoutTimer,
         xhr = new XMLHttpRequest();
 
@@ -149,6 +149,15 @@ api.fetchText = function(url, onLoad, onError) {
         timeoutTimer = vAPI.setTimeout(onTimeout, timeoutAfter);
     };
 
+    // Patch 2018-03-05: Add ability to opt out from assets mirror
+    if ( 
+        nano.hiddenSettings._nanoDisconnectFrom_jspenguincom === true &&
+        actualUrl.startsWith('https://jspenguin.com/NanoAdblocker/AssetsMirror/')
+    ) {
+        onErrorEvent.call(xhr);
+        return;
+    }
+    
     // Be ready for thrown exceptions:
     // I am pretty sure it used to work, but now using a URL such as
     // `file:///` on Chromium 40 results in an exception being thrown.
@@ -186,9 +195,12 @@ api.fetchFilterList = function(mainlistURL, onLoad, onError) {
 
         pendingSublistURLs.delete(details.url);
         loadedSublistURLs.add(details.url);
-        if ( isSublist ) { content.push('\n! ' + '>>>>>>>> ' + details.url); }
+        
+        // Patch 2018-03-01: Make generated content more highlighter friendly
+        if ( isSublist ) { content.push('\n!#nano-include-content-start ' + details.url); }
         content.push(details.content.trim());
-        if ( isSublist ) { content.push('! <<<<<<<< ' + details.url); }
+        if ( isSublist ) { content.push('!#nano-include-content-end ' + details.url); }
+        
         if (
             parsedMainURL !== undefined &&
             parsedMainURL.pathname.length > 0
@@ -278,7 +290,7 @@ var registerAssetSource = function(assetKey, dict) {
         entry.contentURL = [];
     }
     if ( typeof entry.updateAfter !== 'number' ) {
-        entry.updateAfter = 5;
+        entry.updateAfter = 3;
     }
     if ( entry.submitter ) {
         entry.submitTime = Date.now(); // To detect stale entries
@@ -361,6 +373,7 @@ var getAssetSourceRegistry = function(callback) {
     var registryReady = function() {
         var callers = assetSourceRegistryStatus;
         assetSourceRegistryStatus = 'ready';
+        // TODO 2017-12-12: Woudln't a for...of loop be better?
         var fn;
         while ( (fn = callers.shift()) ) {
             fn(assetSourceRegistry);
@@ -894,7 +907,8 @@ api.rmrf = function() {
 // Asset updater area.
 var updaterStatus,
     updaterTimer,
-    updaterAssetDelayDefault = 120000,
+    // Patch 2018-01-21: Update default value
+    updaterAssetDelayDefault = 300000,
     updaterAssetDelay = updaterAssetDelayDefault,
     updaterUpdated = [],
     updaterFetched = new Set(),
@@ -948,8 +962,9 @@ var updateNext = function() {
             if ( cacheEntry && (cacheEntry.writeTime + assetEntry.updateAfter * 86400000) > now ) {
                 continue;
             }
+            // Patch 2017-12-09: Add nano-resources
             // Update of user scripts/resources forbidden?
-            if ( assetKey === 'ublock-resources' && noRemoteResources ) {
+            if ( (assetKey === 'ublock-resources' || assetKey === 'nano-resources') && noRemoteResources ) {
                 continue;
             }
             if (
