@@ -127,15 +127,13 @@ var onVersionReady = function(lastVersion) {
     // Remove when everybody is beyond 1.15.19b8.
     (function patch1015019008(s) {
         if ( vAPI.firefox !== undefined ) { return; }
-        var match = /^(\d+)\.(\d+)\.(\d+)(?:\D+(\d+))?/.exec(s);
+        
+        // Patch 2018-04-03: Add our own version check
+        var match = /.(\d+)\.(\d+)$/.exec(s);
         if ( match === null ) { return; }
-        var v =
-            parseInt(match[1], 10) * 1000 * 1000 * 1000 +
-            parseInt(match[2], 10) * 1000 * 1000 +
-            parseInt(match[3], 10) * 1000 +
-            (match[4] ? parseInt(match[4], 10) : 0);
-        if ( /rc\d+$/.test(s) ) { v += 100; }
-        if ( v > 1015019008 ) { return; }
+        if ( parseInt(match[1], 10) > 0 ) { return; }
+        if ( parseInt(match[2], 10) > 40 ) { return; }
+        
         if ( µb.getNetFilteringSwitch('http://behind-the-scene/') ) { return; }
         var fwRules = [
             'behind-the-scene * * noop',
