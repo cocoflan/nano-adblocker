@@ -30,6 +30,14 @@
 /******************************************************************************/
 
 var editor = nanoIDE.init('userFilters', true, false);
+editor.commands.addCommand({
+    name: "save",
+    bindKey: {win: "Ctrl-S", mac: null},
+    exec: function() {
+        var btn = document.getElementById("userFiltersApply");
+        btn.click();
+    }
+});
 
 /******************************************************************************/
 
