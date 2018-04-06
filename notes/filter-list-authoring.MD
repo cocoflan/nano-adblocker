@@ -21,9 +21,6 @@ the first one that appears will override the next two).
 ### `! Title: <title>` or `# Title: <title>`
 
 Indicates the title of the filter list, it is displayed in filter lists manager.
-
-uBlock Origin only accepts the first syntax form (with `!`).
-
 If this header is missing, the URL of the filter list will be used.
 
 Examples:
@@ -39,8 +36,7 @@ or hours, but you must use an integer in either case. If you use hour as unit,
 it will be rounded *up* to the nearest day. The lower cap is 1 day and the upper
 cap is 60.
 
-uBlock Origin only accepts the first syntax form (with `!`), does not enforce
-an upper cap, and does not accept hour as unit.
+uBlock Origin does not enforce an upper cap, and does not accept hour as unit.
 
 If this header is missing, Nano Adblocker will default to 3 days and uBlock
 Origin will default to 5. Some built-in filter lists of Nano Adblocker
