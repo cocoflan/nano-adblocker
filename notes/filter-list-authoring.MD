@@ -82,7 +82,7 @@ usually better to allow them to subscribe by simply clicking a link.
 
 To make such link, you need to assign `href` of an anchor element (`<a>`) to:
 ```
-abp://subscribe?location=<URL>&title=<title>
+ubo://subscribe?location=<URL>&title=<title>
 ```
 
 Make sure the URL is pointing to a *raw* text file and not HTML. Also, only
@@ -95,15 +95,8 @@ link like a query string, so do not switch the order of `location` and `title`.
 You should encode the URL and title with `encodeURIComponent`. Also, the title
 field is required.
 
-One slight problem is that a lot of filters are not compatible with Adblock
-Plus; to make sure Adblock Plus will not react to the link, replace `abp://`
-with `ubo://`. However, uBlock Origin does not actually accept that, and only
-Nano Adblocker recognize `ubo://` as of now. We have decided to not make it
-`nano://` in the fear of name collision.
-
 Examples (with URL to be `https://example.com/filter.txt` and title `My
 Filter`):
 ```
-abp://subscribe?location=https%3A%2F%2Fexample.com%2Ffilter.txt&title=My%20Filter
 ubo://subscribe?location=https%3A%2F%2Fexample.com%2Ffilter.txt&title=My%20Filter
 ```
