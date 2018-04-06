@@ -95,8 +95,12 @@ link like a query string, so do not switch the order of `location` and `title`.
 You should encode the URL and title with `encodeURIComponent`. Also, the title
 field is required.
 
+Note that `abp://` is also accepted, but it is recommended to use `ubo://` if
+you use extended syntax.
+
 Examples (with URL to be `https://example.com/filter.txt` and title `My
 Filter`):
 ```
 ubo://subscribe?location=https%3A%2F%2Fexample.com%2Ffilter.txt&title=My%20Filter
+abp://subscribe?location=https%3A%2F%2Fexample.com%2Ffilter.txt&title=My%20Filter
 ```
