@@ -122,6 +122,10 @@ var µBlock = (function() { // jshint ignore:line
             'chrome-extension-scheme',
             'chrome-scheme',
             'moz-extension-scheme',
+            
+            // Patch 2018-04-18: Whitelist Edge extension pages by default
+            'ms-browser-extension-scheme',
+            
             'opera-scheme',
             'vivaldi-scheme',
             ''
