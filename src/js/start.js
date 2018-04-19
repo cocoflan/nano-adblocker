@@ -130,15 +130,13 @@ var onVersionReady = function(lastVersion) {
     // Remove when everybody is beyond 1.15.19b8.
     (function patch1015019008(s) {
         if ( vAPI.firefox !== undefined ) { return; }
-        var match = /^(\d+)\.(\d+)\.(\d+)(?:\D+(\d+))?/.exec(s);
+        
+        // Patch 2018-04-03: Add our own version check
+        var match = /.(\d+)\.(\d+)$/.exec(s);
         if ( match === null ) { return; }
-        var v =
-            parseInt(match[1], 10) * 1000 * 1000 * 1000 +
-            parseInt(match[2], 10) * 1000 * 1000 +
-            parseInt(match[3], 10) * 1000 +
-            (match[4] ? parseInt(match[4], 10) : 0);
-        if ( /rc\d+$/.test(s) ) { v += 100; }
-        if ( v > 1015019008 ) { return; }
+        if ( parseInt(match[1], 10) > 0 ) { return; }
+        if ( parseInt(match[2], 10) > 40 ) { return; }
+        
         if ( µb.getNetFilteringSwitch('http://behind-the-scene/') ) { return; }
         var fwRules = [
             'behind-the-scene * * noop',
@@ -200,9 +198,12 @@ var onUserSettingsReady = function(fetched) {
     // https://github.com/gorhill/uBlock/issues/1892
     // For first installation on a battery-powered device, disable generic
     // cosmetic filtering.
-    if ( µb.firstInstall && vAPI.battery ) {
-        userSettings.ignoreGenericCosmeticFilters = true;
-    }
+    //
+    // Patch 2017-12-16: This is just ridiculous, moving the problem to another
+    // place is not a solution
+    //if ( µb.firstInstall && vAPI.battery ) {
+    //    userSettings.ignoreGenericCosmeticFilters = true;
+    //}
 };
 
 /******************************************************************************/
@@ -282,6 +283,15 @@ var onSelectedFilterListsLoaded = function() {
         ].join('\n'),
         'urlFilteringString': '',
         'hostnameSwitchesString': [
+            // Patch 2017-12-23: Update default settings to block all CSP
+            // reports
+            // CSP reports are extremely easy to abuse, they can be exploited
+            // to track the user as they can be generated dynamically with
+            // JavaScript
+            // The report-only header can also be used to see what extensions
+            // did to the DOM, disclosing extensions that the user have
+            // installed
+            'no-csp-reports: * true',
             'no-large-media: behind-the-scene false'
         ].join('\n'),
         'lastRestoreFile': '',
