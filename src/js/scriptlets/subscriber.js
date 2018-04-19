@@ -66,7 +66,6 @@ var onMaybeAbpLinkClicked = function(ev) {
     if ( href === '' ) {
         return;
     }
-    // Patch 2018-03-02: Accept `ubo:subscribe` links.
     var matches = /^(?:abp|ubo):\/*subscribe\/*\?location=([^&]+).*title=([^&]+)/.exec(href);
     if ( matches === null ) {
         matches = /^https?:\/\/.*?[&?]location=([^&]+).*?&title=([^&]+)/.exec(href);
