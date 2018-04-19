@@ -23,6 +23,5 @@ encounter, even minor ones! We ca not fix bugs that we are not aware of!
 Edge will disable side loaded extensions on every launch, but please still
 spend the time to test it, so we can have a smooth release.
 
-We have submitted Nano Adblocker to Microsoft Store, please use
-[Feedback Hub](https://developer.microsoft.com/en-us/microsoft-edge/extensions/requests/)
-to request Microsoft to speed up the review process!
+Nano Adblocker is certification, it should be availalbe in a few days in
+Microsoft Store.
