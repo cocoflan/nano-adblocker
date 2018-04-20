@@ -225,7 +225,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 },
                 // Parameters
                 {
-                    token: 'keyword.operator',
+                    token: 'keyword',
                     regex: /,/,
                     next: 'script_inject_part2'
                 },
