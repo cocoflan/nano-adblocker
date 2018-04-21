@@ -42,9 +42,9 @@ key (a hard-coded random string generated at *compile time*). A cache buster
 will be supplied to first-party and third-party servers, it will reveal your
 system time accurate to 1 hour, your timezone will be kept private.
 
-By default, Nano Adblocker will block tracking scripts that would not result in
-breakage of the website, but there may be both false negatives and false
-positives.
+By default, Nano Adblocker will try to block tracking scripts that would not
+result in breakage of the website, but there may be both false negatives and
+false positives.
 
 Nano Defender may connect to third-party servers when it is required for fixing
 a website, only the bare minimum data required to successfully perform the
