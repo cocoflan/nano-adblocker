@@ -50,3 +50,7 @@ Nano Defender may connect to third-party servers when it is required for fixing
 a website, only the bare minimum data required to successfully perform the
 request will be sent. Nano Defender will never connect to a first-party server
 unless you loaded it in debug mode.
+
+We reserve the right to modify this privacy policy at any time, with or without
+notice. By using Nano Adblocker and/or Nano Defender, you consent to this
+privacy policy as well as the GPL-3.0 license.
