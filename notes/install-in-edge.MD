@@ -26,18 +26,27 @@ spend the time to test it, so we can have a smooth release.
 Nano Adblocker is certification, it should be availalbe in a few days on
 Microsoft Store.
 
+Nano Defender is not quite ready yet, we are still working on it.
+
 ## Privacy Policy
 
 Nano Adblocker and Nano Defender do not actively collect any data of any kind.
 
-Nano Adblocker may connect to third party servers to download assets updates.
-Built-in assets are defined [here](assets/assets.json). You may import other
-assets, in which case Nano Adblocker will connect to additional servers as
-per your instruction.
+Nano Adblocker may connect to first-party or third-party servers to download
+assets updates. Built-in assets are defined [here](/assets/assets.json). You
+may import other assets, in which case Nano Adblocker will connect to
+additional servers as per your instruction.
 
-When connecting to those servers, Nano Adblocker *may* supply a version key (a
-hard coded random string generated at *compile time*) in addition to normal
-data for a request.
+When connecting to first-party servers, Nano Adblocker *may* supply a version
+key (a hard-coded random string generated at *compile time*). A cache buster
+will be supplied to first-party and third-party servers, it will reveal your
+system time accurate to 1 hour, your timezone will be kept private.
 
 By default, Nano Adblocker will block tracking scripts that would not result in
-breakage of the website, but there may be both false negative and false positive.
+breakage of the website, but there may be both false negatives and false
+positives.
+
+Nano Defender may connect to third-party servers when it is required for fixing
+a website, only the bare minimum data required to successfully perform the
+request will be sent. Nano Defender will never connect to a first-party server
+unless you loaded it in debug mode.
