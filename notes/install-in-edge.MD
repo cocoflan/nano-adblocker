@@ -3,7 +3,7 @@
 The Edge builds are still **experimental**, please report problems you
 encounter, even minor ones! We ca not fix bugs that we are not aware of!
 
-## Installation
+## Side Loading
 
 1. Download build(s) from the
    [release page](https://github.com/NanoAdblocker/NanoCore/releases) and
