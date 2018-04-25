@@ -76,6 +76,9 @@ var warResolve = (function() {
 //   Do not redirect to a WAR if the platform suffers from spurious redirect
 //   conflicts, and the request to redirect is not `https:`.
 //   This special handling code can removed once the Chromium issue is fixed.
+// Notes 2018-04-25: I usually don't like this type of tradeoff, but websites
+// that uses CSP are probably also using HTTPS, so the tradeoff is reasonable
+// in this case
 var suffersSpuriousRedirectConflicts = vAPI.webextFlavor.soup.has('chromium');
 
 /******************************************************************************/
