@@ -5,6 +5,8 @@ encounter, even minor ones! We ca not fix bugs that we are not aware of!
 
 ## Side Loading
 
+*Note: Edge will disable side loaded extensions on every launch*
+
 1. Download build(s) from the
    [release page](https://github.com/NanoAdblocker/NanoCore/releases) and
    extract it. Both Nano Adblocker and Nano Defender are located there.
@@ -18,13 +20,9 @@ encounter, even minor ones! We ca not fix bugs that we are not aware of!
 4. Restart Edge, open `Extensions` pannel, click `Load extension` button to side
    load the extracted package(s) from step 1.
 
-## Other Information
+## Store Version
 
-Edge will disable side loaded extensions on every launch, but please still
-spend the time to test it, so we can have a smooth release.
-
-Nano Adblocker is certification, it should be availalbe in a few days on
-Microsoft Store.
+[Nano Adblocker](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
 
 Nano Defender is not quite ready yet, we are still working on it.
 
