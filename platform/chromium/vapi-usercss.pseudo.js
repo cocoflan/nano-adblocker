@@ -32,8 +32,9 @@
 //   (unfortunately) necessary from content scripts.
 
 if (
-    typeof vAPI === 'object' &&
-    /\bEdge\/\d+|\bChrom(?:e|ium)\/(?:[45][0-9]|6[0-5])/.test(navigator.userAgent)
+    // Patch 2018-04-19: Disable UserCSS for now
+    typeof vAPI === 'object' && true
+    // /\bEdge\/\d+|\bChrom(?:e|ium)\/(?:[45][0-9]|6[0-5])/.test(navigator.userAgent)
 ) {
 // >>>>>>>> start of HUGE-IF-BLOCK
 

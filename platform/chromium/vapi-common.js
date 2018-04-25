@@ -105,7 +105,8 @@ vAPI.webextFlavor = {
 
     // https://github.com/gorhill/uBlock/issues/3588
     if ( soup.has('chromium') && flavor.major >= 66 ) {
-        soup.add('user_stylesheet');
+        // Patch 2018-04-19: Disable UserCSS for now
+        //soup.add('user_stylesheet');
     }
 
     // Don't starve potential listeners
@@ -142,6 +143,13 @@ vAPI.download = function(details) {
 /******************************************************************************/
 
 vAPI.getURL = chrome.runtime.getURL;
+
+/******************************************************************************/
+
+// Patch 2017-12-08: Add a function for getting extendion ID
+vAPI.getExtensionID = function() {
+    return chrome.runtime.id;
+};
 
 /******************************************************************************/
 
