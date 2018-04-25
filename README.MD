@@ -7,7 +7,8 @@ Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock).
 Please open an issue if there is something you want us to know.
 
 *Chrome Web Store approves new builds within seconds but Microsoft Store takes
-weeks for a new version to be published, that is out of my control.*
+weeks for a new version to be published, so the Edge version will be somewhat
+behind and that is out of my control.*
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 

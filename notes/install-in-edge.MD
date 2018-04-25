@@ -1,7 +1,13 @@
 # Install in Edge
 
-The Edge builds are still **experimental**, please report problems you
-encounter, even minor ones! We ca not fix bugs that we are not aware of!
+The Edge builds are still **in beta**, please report problems you encounter,
+even minor ones! We ca not fix bugs that we are not aware of!
+
+## Store Version
+
+[Nano Adblocker](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
+
+Nano Defender is not quite ready yet, we are still working on it.
 
 ## Side Loading
 
@@ -19,12 +25,6 @@ encounter, even minor ones! We ca not fix bugs that we are not aware of!
 
 4. Restart Edge, open `Extensions` pannel, click `Load extension` button to side
    load the extracted package(s) from step 1.
-
-## Store Version
-
-[Nano Adblocker](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
-
-Nano Defender is not quite ready yet, we are still working on it.
 
 ## Privacy Policy
 
