@@ -220,7 +220,7 @@
             "description": "English: Nano discarded the type option '{{type}}' because it cannot be negated."
         },
         "filterLinterWarningExpandedMp4Option": {
-            "message": "Nano replaced the option 'mp4' with 'media,redirect=nano-noopmp4-1s'.",
+            "message": "Nano replaced the option 'mp4' with 'media,redirect=noopmp4-1s'.",
             "description": "Warning when 'mp4' is replaced"
         },
         "filterLinterWarningDeprecatedMp4Option": {

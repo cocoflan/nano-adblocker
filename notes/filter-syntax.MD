@@ -36,7 +36,7 @@ another meaning in uBlock Origin.
 ## The Option `mp4`
 
 Nano Adblocker will replace the option `mp4` with
-`media,redirect=nano-noopmp4-1s`, uBlock Origin will instead discard the filter.
+`media,redirect=noopmp4-1s`, uBlock Origin will instead discard the filter.
 
 This option should not be negated, however, Nano Adblocker will treat `~mp4` to
 be the same as `mp4`, **this may change in the future without notice**.

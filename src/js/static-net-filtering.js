@@ -1621,7 +1621,7 @@ FilterParser.prototype.parseOptions = function(s) {
         //if ( opt === 'empty' ) {
         //    continue;
         //}
-        // Patch 2017-12-28: Expand the option mp4 to media,redirect=nano-noopmp4-1s
+        // Patch 2017-12-28: Expand the option mp4 to media,redirect=noopmp4-1s
         if ( opt === 'mp4' ) {
             // Patch 2017-12-28: Show an appropriate warning message
             if ( nano.compileFlags.firstParty ) {
@@ -1629,7 +1629,7 @@ FilterParser.prototype.parseOptions = function(s) {
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningDeprecatedMp4Option'));
             }
             
-            opts.push('media', 'redirect=nano-noopmp4-1s');
+            opts.push('media', 'redirect=noopmp4-1s');
             // Reflect changes
             this.fopts = opts.join(',');
             var pos = this.raw.lastIndexOf('$');
