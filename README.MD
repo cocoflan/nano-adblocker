@@ -16,7 +16,7 @@ somewhat behind and that is out of my control.*
 
 ### Maintainers wanted for other browsers (open an issue and let me know)
 
-### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
+### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://jspenguin2017.github.io/uBlockProtector/)
 
 ## For Developers
 
