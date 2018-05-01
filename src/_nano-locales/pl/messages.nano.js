@@ -236,15 +236,15 @@
             "description": "Warning when 'redirect=' has no type"
         },
         "filterLinterWarningRedirectTooManyTypes": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ ma ona zbyt wiele typów opcji.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ zawiera ona zbyt wiele typów opcji.",
             "description": "Warning when 'redirect=' has too many types"
         },
         "filterLinterWarningRedirectNoResourceToken": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie ma ona żadnych argumentów.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie zawiera ona żadnych argumentów.",
             "description": "Warning when 'redirect=' has no arguments"
         },
         "filterLinterWarningRedirectNoSupportedType": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie ma ona żadnych obsługiwanych opcji typu.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie zawiera ona żadnych obsługiwanych opcji typu.",
             "description": "Warning when 'redirect=' has no supported type"
         },
         "filterLinterWarningRedirectNegatedDomain": {
@@ -252,7 +252,7 @@
             "description": "Warning when negated domain used with 'redirect='"
         },
         "filterLinterWarningRedirectNoValidDestinationDomain": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie ma ona żadnej prawidłowej domeny docelowej.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie zawiera ona żadnej prawidłowej domeny docelowej.",
             "description": "Warning when 'redirect=' has no destination"
         },
         "filterLinterWarningRedirectPureHostname": {
@@ -282,11 +282,11 @@
             "description": "Error when 'redirect=' used in exception"
         },
         "filterLinterRejectedBadDomainOptionArguments": {
-            "message": "Opcja 'domain=...' ma nieprawidłowe argumenty.",
+            "message": "Opcja 'domain=...' zawiera nieprawidłowe argumenty.",
             "description": "Error when 'domain=' has invalid arguments"
         },
         "filterLinterRejectedBadCspOptionArguments": {
-            "message": "Opcja 'csp=...' ma nieprawidłowe argumenty.",
+            "message": "Opcja 'csp=...' zawiera nieprawidłowe argumenty.",
             "description": "Error when 'csp=' has invalid arguments"
         },
         "filterLinterRejectedUnknownOption": {
