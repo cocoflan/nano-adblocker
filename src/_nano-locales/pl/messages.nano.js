@@ -323,6 +323,31 @@
             "description": "Title of the filter viewer"
         },
 
+         // Popup tooltips
+        "popupCacheControlPrompt": {
+            "message": "sterowanie pamięcią podręczną",
+            "description": "The cache control strip name"
+        },
+        "popupTipOpenFirewallPane": {
+            "message": "Przełącz panel zapory sieciowej",
+            "description": "Tooltip for toggle firewall pane button"
+        },
+        "popupTipRefreshButton": {
+            "message": "Kliknij, by odświeżyć tę stronę.\n\nCtrl+klik, by odświeżyć tę stronę, pomijając pamięć podręczną.",
+            "description": "English: Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache."
+        },
+        // TODO 2018-02-02: Beta stage, do not translate!
+        /*        
+        "popupTipForceEnableScroll": {
+            "message": "(beta) Enter force scroll mode (will break layout)",
+            "description": "Tooltip for force scroll button"
+        },
+        "popupTipBugReporter": {
+            "message": "(beta) Open the bug reporter",
+            "description": "Tooltip for bug reporter button"
+        },
+        */
+        
         // Based on message of about page
         "aboutBasedOn": {
             "message": "Bazuje na {{@data}}",
