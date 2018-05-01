@@ -325,7 +325,7 @@
 
          // Popup tooltips
         "popupCacheControlPrompt": {
-            "message": "sterowanie pamięcią podręczną",
+            "message": "sterowanie cache",
             "description": "The cache control strip name"
         },
         "popupTipOpenFirewallPane": {
