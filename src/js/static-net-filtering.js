@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1378,10 +1378,12 @@ var FilterParser = function() {
 
 FilterParser.prototype.toNormalizedType = {
             'beacon': 'other',
+               'css': 'stylesheet',
               'data': 'data',
           'document': 'main_frame',
           'elemhide': 'generichide',
               'font': 'font',
+             'frame': 'sub_frame',
       'genericblock': 'unsupported',
        'generichide': 'generichide',
              'image': 'image',
@@ -1397,6 +1399,7 @@ FilterParser.prototype.toNormalizedType = {
             'script': 'script',
         'stylesheet': 'stylesheet',
        'subdocument': 'sub_frame',
+               'xhr': 'xmlhttprequest',
     'xmlhttprequest': 'xmlhttprequest',
             'webrtc': 'unsupported',
          'websocket': 'websocket',
@@ -1524,6 +1527,7 @@ FilterParser.prototype.parseOptions = function(s) {
         if ( not ) {
             opt = opt.slice(1);
         }
+        
         // Patch 2017-12-28: Add convenience options mapping
         if ( opt === 'third-party' || opt === '3p' ) {
             this.parsePartyOption(false, not);
@@ -1586,6 +1590,7 @@ FilterParser.prototype.parseOptions = function(s) {
             this.important = Important;
             continue;
         }
+
         // Patch 2017-12-28: Add convenience options mapping
         if ( opt === 'first-party' || opt === '1p' ) {
             this.parsePartyOption(true, not);
@@ -1616,7 +1621,7 @@ FilterParser.prototype.parseOptions = function(s) {
         //if ( opt === 'empty' ) {
         //    continue;
         //}
-        // Patch 2017-12-28: Expand the option mp4 to media,redirect=nano-noopmp4-1s
+        // Patch 2017-12-28: Expand the option mp4 to media,redirect=noopmp4-1s
         if ( opt === 'mp4' ) {
             // Patch 2017-12-28: Show an appropriate warning message
             if ( nano.compileFlags.firstParty ) {
@@ -1624,7 +1629,7 @@ FilterParser.prototype.parseOptions = function(s) {
                 nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningDeprecatedMp4Option'));
             }
             
-            opts.push('media', 'redirect=nano-noopmp4-1s');
+            opts.push('media', 'redirect=noopmp4-1s');
             // Reflect changes
             this.fopts = opts.join(',');
             var pos = this.raw.lastIndexOf('$');
@@ -1679,7 +1684,10 @@ FilterParser.prototype.translate = function() {
         this.dataStr = "connect-src https: http:";
         // https://bugs.chromium.org/p/chromium/issues/detail?id=669086
         // TODO: remove when most users are beyond Chromium v56
-        if ( vAPI.chromiumVersion < 57 ) {
+        if (
+            vAPI.webextFlavor.soup.has('chromium') &&
+            vAPI.webextFlavor.major < 57
+        ) {
             this.dataStr += '; frame-src *';
         }
         return;
@@ -1930,14 +1938,14 @@ FilterParser.prototype.parse = function(raw) {
     // https://github.com/gorhill/uBlock/issues/3034
     // - We can remove anchoring if we need to match all at the start.
     if ( s.startsWith('*') ) {
-        s = s.replace(/^\*+([^%0-9a-z])/, '$1');
+        s = s.replace(/^\*+([^%0-9a-z])/i, '$1');
         this.anchor &= ~0x6;
     }
     // remove pointless trailing *
     // https://github.com/gorhill/uBlock/issues/3034
     // - We can remove anchoring if we need to match all at the end.
     if ( s.endsWith('*') ) {
-        s = s.replace(/([^%0-9a-z])\*+$/, '$1');
+        s = s.replace(/([^%0-9a-z])\*+$/i, '$1');
         this.anchor &= ~0x1;
     }
 
@@ -2246,7 +2254,7 @@ FilterContainer.prototype.compile = function(raw, writer) {
         parsed.dataType === undefined &&
         this.compileHostnameOnlyFilter(parsed, writer)
     ) {
-        // Patch 2017-12-28: Redirect option will be ignored if no type declared
+        // Patch 2017-12-28: Redirect option will be ignored if pure hostname
         if ( nano.compileFlags.firstParty && parsed.redirect ) {
             nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectPureHostname'));
         }

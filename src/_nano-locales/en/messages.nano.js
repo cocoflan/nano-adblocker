@@ -220,7 +220,7 @@
             "description": "English: Nano discarded the type option '{{type}}' because it cannot be negated."
         },
         "filterLinterWarningExpandedMp4Option": {
-            "message": "Nano replaced the option 'mp4' with 'media,redirect=nano-noopmp4-1s'.",
+            "message": "Nano replaced the option 'mp4' with 'media,redirect=noopmp4-1s'.",
             "description": "Warning when 'mp4' is replaced"
         },
         "filterLinterWarningDeprecatedMp4Option": {
@@ -324,14 +324,26 @@
         },
 
         // Popup tooltips
+        "popupCacheControlPrompt": {
+            "message": "cache control",
+            "description": "The cache control strip name"
+        },
+        "popupTipOpenFirewallPane": {
+            "message": "Toggle the firewall pane",
+            "description": "Tooltip for toggle firewall pane button"
+        },
+        "popupTipRefreshButton": {
+            "message": "Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache.",
+            "description": "English: Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache."
+        },
         // TODO 2018-02-02: Beta stage, do not translate!
         "popupTipForceEnableScroll": {
             "message": "(beta) Enter force scroll mode (will break layout)",
-            "description": "Force scroll button"
+            "description": "Tooltip for force scroll button"
         },
         "popupTipBugReporter": {
             "message": "(beta) Open the bug reporter",
-            "description": "Bug reporter button"
+            "description": "Tooltip for bug reporter button"
         },
 
         // Based on message of about page

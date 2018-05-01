@@ -61,16 +61,16 @@ if (
 // The padlock/eraser must be manually positioned:
 // - Its vertical position depends on the height of the popup title bar
 // - Its horizontal position depends on whether there is a vertical scrollbar.
-document.getElementById('rulesetTools').style.setProperty(
-    'top',
-    (document.getElementById('appinfo').getBoundingClientRect().bottom + 3) + 'px'
-);
-
 var positionRulesetTools = function() {
-    document.getElementById('rulesetTools').style.setProperty(
-        'left',
-        (document.getElementById('firewallContainer').getBoundingClientRect().left + 3) + 'px'
-    );
+    var vpos = document.getElementById('appinfo')
+                       .getBoundingClientRect()
+                       .bottom + window.scrollY + 3;
+    var hpos = document.getElementById('firewallContainer')
+                       .getBoundingClientRect()
+                       .left + window.scrollX + 3;
+    var style = document.getElementById('rulesetTools').style;
+    style.setProperty('top', (vpos >>> 0) + 'px');
+    style.setProperty('left', (hpos >>> 0) + 'px');
 };
 
 // https://github.com/chrisaljoudi/uBlock/issues/996
@@ -317,12 +317,11 @@ var updateAllFirewallCells = function() {
         );
     }
 
-    positionRulesetTools();
-
-    uDom.nodeFromId('firewallContainer').classList.toggle(
-        'dirty',
-        popupData.matrixIsDirty === true
-    );
+    var dirty = popupData.matrixIsDirty === true;
+    if ( dirty ) {
+        positionRulesetTools();
+    }
+    uDom.nodeFromId('firewallContainer').classList.toggle('dirty', dirty);
 };
 
 /******************************************************************************/
@@ -411,9 +410,7 @@ var renderPopup = function() {
     elem.classList.toggle('advancedUser', popupData.advancedUserEnabled);
     elem.classList.toggle(
         'off',
-        popupData.pageURL === '' ||
-        !popupData.netFilteringSwitch ||
-        popupData.pageHostname === 'behind-the-scene' && !popupData.advancedUserEnabled
+        popupData.pageURL === '' || !popupData.netFilteringSwitch
     );
 
     // If you think the `=== true` is pointless, you are mistaken
@@ -527,7 +524,8 @@ var renderTooltips = function(selector) {
 
 var tooltipTargetSelectors = new Map([
     [
-        '#switch',
+        // Patch 2018-02-12: Change tooltip anchor
+        '#switch .fa',
         {
             state: 'body.off',
             i18n: 'popupPowerSwitchInfo',
@@ -584,6 +582,11 @@ var renderOnce = function() {
     uDom.nodeFromId('appname').textContent = popupData.appName;
     uDom.nodeFromId('version').textContent = popupData.appVersion;
 
+    // https://github.com/uBlockOrigin/uBlock-issues/issues/22
+    if ( popupData.advancedUserEnabled !== true ) {
+        uDom('#firewallContainer [data-i18n-tip][data-src]').removeAttr('data-tip');
+    }
+
     // For large displays: we do not want the left pane -- optional and
     // hidden by defaut -- to dictate the height of the popup. The right pane
     // dictates the height of the popup, and the left pane will have a
@@ -626,7 +629,10 @@ var renderOnce = function() {
 /******************************************************************************/
 
 var renderPopupLazy = function() {
-    messaging.send('popupPanel', { what: 'getPopupLazyData', tabId: popupData.tabId });
+    messaging.send(
+        'popupPanel',
+        { what: 'getPopupLazyData', tabId: popupData.tabId }
+    );
 };
 
 var onPopupMessage = function(data) {
@@ -648,12 +654,6 @@ messaging.addChannelListener('popup', onPopupMessage);
 
 var toggleNetFilteringSwitch = function(ev) {
     if ( !popupData || !popupData.pageURL ) { return; }
-    if (
-        popupData.pageHostname === 'behind-the-scene' &&
-        !popupData.advancedUserEnabled
-    ) {
-        return;
-    }
     messaging.send(
         'popupPanel',
         {
@@ -664,7 +664,10 @@ var toggleNetFilteringSwitch = function(ev) {
             tabId: popupData.tabId
         }
     );
-    renderTooltips('#switch');
+    
+    // Patch 2018-02-12: Change tooltip anchor
+    renderTooltips('#switch .fa');
+    
     hashFromPopupData();
 };
 
@@ -1089,17 +1092,23 @@ var onHideTooltip = function() {
     // Extract the tab id of the page this popup is for
     var matches = window.location.search.match(/[\?&]tabId=([^&]+)/);
     if ( matches && matches.length === 2 ) {
-        tabId = matches[1];
+        tabId = parseInt(matches[1], 10) || 0;
     }
     getPopupData(tabId);
 
-    uDom('#switch').on('click', toggleNetFilteringSwitch);
+    // Patch 2018-02-12: Change tooltip anchor
+    uDom('#switch .fa').on('click', toggleNetFilteringSwitch);
+    
     uDom('#gotoZap').on('click', gotoZap);
+    
     // Patch 2018-02-01: Add force enable scroll
     uDom('#forceEnableScroll').on('click', forceEnableScroll);
     
     uDom('#gotoPick').on('click', gotoPick);
-    uDom('h2').on('click', toggleFirewallPane);
+    
+    // Patch 2018-02-10: Move openeing firewall pane to a explicit button
+    uDom('#nanoFirewallPaneToggle').on('click', toggleFirewallPane);
+    
     uDom('#refresh').on('click', reloadTab);
     uDom('.hnSwitch').on('click', toggleHostnameSwitch);
     uDom('#saveRules').on('click', saveFirewallRules);
@@ -1115,3 +1124,11 @@ var onHideTooltip = function() {
 /******************************************************************************/
 
 })();
+
+
+/******************************************************************************/
+
+// Patch 2018-04-18: Fix popup page for edge
+if ( typeof elib === "object" ) {
+    elib.unbreak_popup();
+}

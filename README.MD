@@ -2,26 +2,27 @@
 
 Just another adblocker
 
-Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock). 
+Nano Adblocker is based on [uBlock Origin](https://github.com/gorhill/uBlock).
 
-Please open an issue if there is something you want us to know. 
+Please open an issue if there is something you want us to know.
 
-*Note: If you see different version available to different browsers then chances are the new release is stuck in review queue 
-again.*
+*Chrome Web Store approves new builds **within seconds** but Microsoft Store
+takes weeks for a new version to be published, so the Edge version will be
+somewhat behind and that is out of my control.*
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
-### [Get it for Firefox](https://addons.mozilla.org/firefox/addon/real-nano-adblocker/)
+### [(Beta) Get it for Edge](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
 
-### [(Dev) Get it for Edge](/Notes/InstallationOnEdge.MD#installation-on-edge)
+### Maintainers wanted for other browsers (open an issue and let me know)
 
-### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://github.com/NanoAdblocker/NanoDefender#nano-defender)
+### [Get Nano Defender, the perfect companion extension for Nano Adblocker](https://jspenguin2017.github.io/uBlockProtector/)
 
 ## For Developers
 
-### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
-
 ### [Edge version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
+
+### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
 
 ## Notable Change
 
@@ -39,9 +40,11 @@ Not yet available
 
 ![Screenshot](https://i.imgur.com/zboYYEr.png)
 
+<!--
 #### Get notified for common mistakes
 
 ![Screenshot](https://i.imgur.com/IkTaEQ3.png)
+-->
 
 Partially available since 1.0.0.22
 
@@ -67,9 +70,17 @@ Available since 1.0.0.0
 
 *Note: user interface and other housekeeping changes are not listed here.*
 
-- [Extended advanced settings](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/AdvancedSettings.MD#advanced-settings)
-- [Extended filter syntax](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/FilterIncompatibility.MD#filter-incompatibility)
-- [Optimized update behavior](https://github.com/NanoAdblocker/NanoCore/blob/master/Notes/UpdateBehavior.MD#update-behavior)
-- Enabled `Block CSP reports` by default (to prevent websites from abusing it to track users)
+- [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
+- [Extended filter syntax](/notes/filter-syntax.MD#filter-syntax)
+- [Polished filter list subscription process](/notes/filter-list-authoring.MD#filter-list-authoring)
+- [Added whitelists for Edge build](/notes/dashboard-whitelist.MD#dashboard-whitelist)
+- Enabled `Block CSP reports` by default (to prevent websites from abusing it
+  to track users)
 - Added a few more filters to filters manager
+- Made cache control button to be always shown
 - Added force scroll mode (to be used with element zapper)
+
+## Pending Features
+
+We are constantly improving! The list of pending features can be found
+[here](/notes/pending-features.MD#pending-features).

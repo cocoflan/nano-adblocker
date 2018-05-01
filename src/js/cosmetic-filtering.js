@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@
 
 var µb = µBlock;
 var cosmeticSurveyingMissCountMax = parseInt(vAPI.localStorage.getItem('cosmeticSurveyingMissCountMax'), 10) || 15;
+
+var supportsUserStylesheets = vAPI.webextFlavor.soup.has('user_stylesheet');
+// https://www.reddit.com/r/uBlockOrigin/comments/8dkvqn/116_broken_loading_custom_filters_from_my_filters/
+window.addEventListener('webextFlavor', function() {
+    supportsUserStylesheets = vAPI.webextFlavor.soup.has('user_stylesheet');
+}, { once: true });
 
 /******************************************************************************/
 /*
@@ -393,7 +399,6 @@ var FilterContainer = function() {
         '^',
         '(?:',
             [
-            'script:contains',
             '.+?:has',
             '.+?:has-text',
             '.+?:if',
@@ -416,8 +421,6 @@ var FilterContainer = function() {
     this.selectorCacheCountMin = 25;
     this.netSelectorCacheCountMax = netSelectorCacheHighWaterMark;
     this.selectorCacheTimer = null;
-
-    this.supportsUserStylesheets = vAPI.supportsUserStylesheets;
 
     // generic exception filters
     this.genericDonthideSet = new Set();
@@ -817,7 +820,7 @@ FilterContainer.prototype.compileHostnameSelector = function(
         return;
     }
 
-    var domain = this.µburi.domainFromHostname(hostname),
+    var domain = this.µburi.domainFromHostnameNoCache(hostname),
         hash;
 
     // https://github.com/chrisaljoudi/uBlock/issues/188
@@ -1258,7 +1261,7 @@ FilterContainer.prototype.retrieveGenericSelectors = function(request) {
     // If user stylesheets are supported in the current process, inject the
     // cosmetic filters now.
     if (
-        this.supportsUserStylesheets &&
+        supportsUserStylesheets &&
         request.tabId !== undefined &&
         request.frameId !== undefined
     ) {
@@ -1473,7 +1476,7 @@ FilterContainer.prototype.retrieveDomainSelectors = function(
     //   If user stylesheets are supported in the current process, inject the
     //   cosmetic filters now.
     if (
-        this.supportsUserStylesheets &&
+        supportsUserStylesheets &&
         request.tabId !== undefined &&
         request.frameId !== undefined
     ) {

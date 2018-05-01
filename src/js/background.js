@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,6 +26,15 @@
 
 /******************************************************************************/
 
+// Not all platforms may have properly declared vAPI.webextFlavor.
+
+if ( vAPI.webextFlavor === undefined ) {
+    vAPI.webextFlavor = { major: 0, soup: new Set([ 'ublock' ]) };
+}
+
+
+/******************************************************************************/
+
 var µBlock = (function() { // jshint ignore:line
 
     var oneSecond = 1000,
@@ -45,10 +54,29 @@ var µBlock = (function() { // jshint ignore:line
         
         // Patch 2017-12-25: Add more advanced settings
         _nanoDisableHTMLFiltering: false,
+        _nanoDisconnectFrom_jspenguincom: false,
         _nanoIgnoreThirdPartyWhitelist: false,
         _nanoIgnorePerformanceAuditing: false,
         _nanoMakeUserFiltersPrivileged: false
     };
+
+    var whitelistDefault = [
+        'about-scheme',
+        'chrome-extension-scheme',
+        'chrome-scheme',
+        'moz-extension-scheme',
+        
+        // Patch 2018-04-18: Whitelist Edge extension pages by default
+        'ms-browser-extension-scheme',
+        
+        'opera-scheme',
+        'vivaldi-scheme',
+        'wyciwyg-scheme',   // Firefox's "What-You-Cache-Is-What-You-Get"
+    ];
+    // https://github.com/gorhill/uBlock/issues/3693#issuecomment-379782428
+    if ( vAPI.webextFlavor.soup.has('webext') === false ) {
+        whitelistDefault.push('behind-the-scene');
+    }
 
     return {
         firstInstall: false,
@@ -80,13 +108,13 @@ var µBlock = (function() { // jshint ignore:line
             // Patch 2017-12-19: Add UI configuration
             nanoDashboardAllowSelection: true,
             nanoEditorWordSoftWrap: false,
-            nanoViewerWordSoftWrap: false
+            nanoViewerWordSoftWrap: true
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
         hiddenSettings: (function() {
             var out = objectAssign({}, hiddenSettingsDefault),
-                json = vAPI.localStorage.getItem('hiddenSettings');
+                json = vAPI.localStorage.getItem('immediateHiddenSettings');
             if ( typeof json === 'string' ) {
                 try {
                     var o = JSON.parse(json);
@@ -101,6 +129,8 @@ var µBlock = (function() { // jshint ignore:line
                 catch(ex) {
                 }
             }
+            // Remove once 1.15.12+ is widespread.
+            vAPI.localStorage.removeItem('hiddenSettings');
             return out;
         })(),
 
@@ -113,16 +143,7 @@ var µBlock = (function() { // jshint ignore:line
         // Whitelist directives need to be loaded once the PSL is available
         netWhitelist: {},
         netWhitelistModifyTime: 0,
-        netWhitelistDefault: [
-            'about-scheme',
-            'behind-the-scene',
-            'chrome-extension-scheme',
-            'chrome-scheme',
-            'moz-extension-scheme',
-            'opera-scheme',
-            'vivaldi-scheme',
-            ''
-        ].join('\n'),
+        netWhitelistDefault: whitelistDefault.join('\n'),
 
         localSettings: {
             blockedRequestCount: 0,
@@ -133,8 +154,8 @@ var µBlock = (function() { // jshint ignore:line
 
         // read-only
         systemSettings: {
-            compiledMagic: '0dedw24amlmf',
-            selfieMagic: '0dedw24amlmf'
+            compiledMagic: 1,
+            selfieMagic: 1
         },
 
         restoreBackupSettings: {
@@ -159,7 +180,7 @@ var µBlock = (function() { // jshint ignore:line
 
         selfieAfter: 17 * oneMinute,
 
-        pageStores: {},
+        pageStores: new Map(),
         pageStoresToken: 0,
 
         storageQuota: vAPI.storage.QUOTA_BYTES,
@@ -180,11 +201,7 @@ var µBlock = (function() { // jshint ignore:line
         epickerZap: false,
         epickerEprom: null,
 
-        scriptlets: {
-        },
-
-        // so that I don't have to care for last comma
-        dummy: 0
+        scriptlets: {},
     };
 
 })();

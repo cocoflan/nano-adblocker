@@ -170,15 +170,29 @@
         },
 
         // Popup tooltips
+        "popupCacheControlPrompt": {
+            "message": "缓存控制",
+            "description": "The cache control strip name"
+        },
+        "popupTipOpenFirewallPane": {
+            // TODO 2018-02-10: There must be a better translation, but translated like so to stay
+            // consistent with other strings of uBlock Origin
+            "message": "是否显示防火墙边窗",
+            "description": "Tooltip for toggle firewall pane button"
+        },
+        "popupTipRefreshButton": {
+            "message": "单击：刷新当前页面\n\nCtrl + 单击：无视缓存并刷新当前页面",
+            "description": "English: Click: refresh this page.\n\nCtrl+click: refresh this page bypassing cache."
+        },
         // TODO 2018-02-02: Beta stage, do not translate!
         /*
         "popupTipForceEnableScroll": {
             "message": "进入临时强制滚动模式（会破坏布局）",
-            "description": "Force scroll button"
+            "description": "Tooltip for force scroll button"
         },
         "popupTipBugReporter": {
             "message": "打开问题汇报器",
-            "description": "Bug reporter button"
+            "description": "Tooltip for bug reporter button"
         },
         */
 

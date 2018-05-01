@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2016 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,67 +19,95 @@
     Home: https://github.com/gorhill/uBlock
 */
 
-/* global uDom, uBlockDashboard */
-
-/******************************************************************************/
-
-(function() {
+/* global CodeMirror, uDom, uBlockDashboard */
 
 'use strict';
 
 /******************************************************************************/
 
-var messaging = vAPI.messaging,
-    cachedWhitelist = '';
+(function() {
 
 /******************************************************************************/
 
-// Patch 2017-12-12: Change textarea to IDE, and clearly mark lines that are bad
-var editor = nanoIDE.init('whitelist', false, false);
+CodeMirror.defineMode("ubo-whitelist-directives", function() {
+    var reComment = /^\s*#/,
+        reRegex = /^\/.+\/$/;
 
-/******************************************************************************/
-
-var whitelistChanged = (function() {
-    var changedWhitelist, notChanged, timer;
-
-    var updateUI = function(badLines) {
-        uDom.nodeFromId('whitelistRevert').disabled = notChanged;
-        
-        if ( badLines.errors.length === 0 ) {
-            uDom.nodeFromId('whitelistApply').disabled = notChanged;
-        } else {
-            uDom.nodeFromId('whitelistApply').disabled = true;
+    return {
+        token: function(stream) {
+            var line = stream.string.trim();
+            stream.skipToEnd();
+            if ( reBadHostname === undefined ) {
+                return null;
+            }
+            if ( reComment.test(line) ) {
+                return 'comment';
+            }
+            if ( line.indexOf('/') === -1 ) {
+                return reBadHostname.test(line) ? 'error' : null;
+            }
+            if ( reRegex.test(line) ) {
+                try {
+                    new RegExp(line.slice(1, -1));
+                } catch(ex) {
+                    return 'error';
+                }
+                return null;
+            }
+            return reHostnameExtractor.test(line) ? null : 'error';
         }
-
-        editor.session.setAnnotations(badLines.errors.concat(badLines.warnings));
     };
+});
 
-    // TODO 2017-12-13: Why are we passing it over messaging? Why not lint it
-    // right here?
-    var validate = function() {
-        timer = undefined;
-        messaging.send(
-            'dashboard',
-            { what: 'validateWhitelistString', raw: changedWhitelist },
-            updateUI
-        );
-    };
+var reBadHostname,
+    reHostnameExtractor;
 
-    return function() {
-        changedWhitelist = nanoIDE.getLinuxValue().trim();
-        notChanged = changedWhitelist === cachedWhitelist;
-        if ( timer !== undefined ) { clearTimeout(timer); }
-        timer = vAPI.setTimeout(validate, 250);
-    };
-})();
+/******************************************************************************/
+
+var messaging = vAPI.messaging,
+    cachedWhitelist = '',
+    noopFunc = function(){};
+
+var cmEditor = new CodeMirror(
+    document.getElementById('whitelist'),
+    {
+        autofocus: true,
+        lineNumbers: true,
+        lineWrapping: true,
+        styleActiveLine: true
+    }
+);
+
+uBlockDashboard.patchCodeMirrorEditor(cmEditor);
+
+/******************************************************************************/
+
+var whitelistChanged = function() {
+    var whitelistElem = uDom.nodeFromId('whitelist');
+    var bad = whitelistElem.querySelector('.cm-error') !== null;
+    var changedWhitelist = cmEditor.getValue().trim();
+    var changed = changedWhitelist !== cachedWhitelist;
+    uDom.nodeFromId('whitelistApply').disabled = !changed || bad;
+    uDom.nodeFromId('whitelistRevert').disabled = !changed;
+    CodeMirror.commands.save = changed && !bad ? applyChanges : noopFunc;
+};
+
+cmEditor.on('changes', whitelistChanged);
 
 /******************************************************************************/
 
 var renderWhitelist = function() {
-    var onRead = function(whitelist) {
-        cachedWhitelist = whitelist.trim();
-        nanoIDE.setValueFocus(cachedWhitelist + '\n');
-        whitelistChanged();
+    var onRead = function(details) {
+        var first = reBadHostname === undefined;
+        if ( first ) {
+            reBadHostname = new RegExp(details.reBadHostname);
+            reHostnameExtractor = new RegExp(details.reHostnameExtractor);
+        }
+        cachedWhitelist = details.whitelist.trim();
+        cmEditor.setValue(cachedWhitelist + '\n');
+        if ( first ) {
+            cmEditor.clearHistory();
+        }
     };
     messaging.send('dashboard', { what: 'getWhitelist' }, onRead);
 };
@@ -88,16 +116,16 @@ var renderWhitelist = function() {
 
 var handleImportFilePicker = function() {
     var fileReaderOnLoadHandler = function() {
-        nanoIDE.setValueFocus(nanoIDE.getLinuxValue().trim() + '\n' + this.result.trim());
-        whitelistChanged();
+        cmEditor.setValue(
+            [
+                cmEditor.getValue().trim(),
+                this.result.trim()
+            ].join('\n').trim()
+        );
     };
     var file = this.files[0];
-    if ( file === undefined || file.name === '' ) {
-        return;
-    }
-    if ( file.type.indexOf('text') !== 0 ) {
-        return;
-    }
+    if ( file === undefined || file.name === '' ) { return; }
+    if ( file.type.indexOf('text') !== 0 ) { return; }
     var fr = new FileReader();
     fr.onload = fileReaderOnLoadHandler;
     fr.readAsText(file);
@@ -117,8 +145,7 @@ var startImportFilePicker = function() {
 /******************************************************************************/
 
 var exportWhitelistToFile = function() {
-    // Patch 2017-12-13: Just get value, not Linux line ending value
-    var val = editor.getValue().trim();
+    var val = cmEditor.getValue().trim();
     if ( val === '' ) { return; }
     var filename = vAPI.i18n('whitelistExportFilename')
         .replace('{{datetime}}', uBlockDashboard.dateNowToSensibleString())
@@ -132,34 +159,35 @@ var exportWhitelistToFile = function() {
 /******************************************************************************/
 
 var applyChanges = function() {
-    cachedWhitelist = nanoIDE.getLinuxValue().trim();
-    var request = {
-        what: 'setWhitelist',
-        whitelist: cachedWhitelist
-    };
-    messaging.send('dashboard', request, renderWhitelist);
+    cachedWhitelist = cmEditor.getValue().trim();
+    messaging.send(
+        'dashboard',
+        {
+            what: 'setWhitelist',
+            whitelist: cachedWhitelist
+        },
+        renderWhitelist
+    );
 };
 
 var revertChanges = function() {
-    nanoIDE.setValueFocus(cachedWhitelist + '\n');
-    whitelistChanged();
+    var content = cachedWhitelist;
+    if ( content !== '' ) { content += '\n'; }
+    cmEditor.setValue(content);
 };
 
 /******************************************************************************/
 
 var getCloudData = function() {
-    return nanoIDE.getLinuxValue();
+    return cmEditor.getValue();
 };
 
 var setCloudData = function(data, append) {
-    if ( typeof data !== 'string' ) {
-        return;
-    }
+    if ( typeof data !== 'string' ) { return; }
     if ( append ) {
-        data = uBlockDashboard.mergeNewLines(nanoIDE.getLinuxValue().trim(), data);
+        data = uBlockDashboard.mergeNewLines(cmEditor.getValue().trim(), data);
     }
-    nanoIDE.setValueFocus(data.trim() + '\n');
-    whitelistChanged();
+    cmEditor.setValue(data.trim() + '\n');
 };
 
 self.cloud.onPush = getCloudData;
@@ -172,7 +200,6 @@ uDom('#importFilePicker').on('change', handleImportFilePicker);
 uDom('#exportWhitelistToFile').on('click', exportWhitelistToFile);
 uDom('#whitelistApply').on('click', applyChanges);
 uDom('#whitelistRevert').on('click', revertChanges);
-editor.session.on('change', whitelistChanged)
 
 renderWhitelist();
 

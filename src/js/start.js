@@ -1,7 +1,7 @@
 /*******************************************************************************
 
     uBlock Origin - a browser extension to block requests.
-    Copyright (C) 2014-2017 Raymond Hill
+    Copyright (C) 2014-2018 Raymond Hill
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
     Home: https://github.com/gorhill/uBlock
 */
-
-/* global publicSuffixList */
 
 'use strict';
 
@@ -41,13 +39,10 @@ vAPI.app.onShutdown = function() {
     µb.staticNetFilteringEngine.reset();
     µb.staticExtFilteringEngine.reset();
     µb.sessionFirewall.reset();
-    
-    // TODO 2017-12-25: Why reset twice?
     µb.permanentFirewall.reset();
-    µb.permanentFirewall.reset();
-    
     µb.sessionURLFiltering.reset();
     µb.permanentURLFiltering.reset();
+    µb.hnSwitches.reset();
 };
 
 /******************************************************************************/
@@ -98,7 +93,12 @@ var onAllReady = function() {
 // - PSL
 
 var onPSLReady = function() {
-    µb.loadFilterLists(onAllReady);
+    µb.selfieManager.load(function(valid) {
+        if ( valid === true ) {
+            return onAllReady();
+        }
+        µb.loadFilterLists(onAllReady);
+    });
 };
 
 /******************************************************************************/
@@ -106,47 +106,58 @@ var onPSLReady = function() {
 // To bring older versions up to date
 
 var onVersionReady = function(lastVersion) {
-    // Starting with 1.9.17, non-advanced users can have access to the dynamic
-    // filtering pane in read-only mode. Still, it should not be visible by
-    // default.
-    /*
-    // Patch 2017-12-23: Not needed for Nano Adblocker
-    if ( lastVersion.localeCompare('1.9.17') < 0 ) {
-        if (
-            µb.userSettings.advancedUserEnabled === false &&
-            µb.userSettings.dynamicFilteringEnabled === true
-        ) {
-            µb.userSettings.dynamicFilteringEnabled = false;
-            µb.keyvalSetOne('dynamicFilteringEnabled', false);
-        }
-    }
-    */
-    if ( lastVersion !== vAPI.app.version ) {
-        vAPI.storage.set({ version: vAPI.app.version });
-    }
-};
+    if ( lastVersion === vAPI.app.version ) { return; }
 
-/******************************************************************************/
-
-var onSelfieReady = function(selfie) {
+    // Since AMO does not allow updating resources.txt, force a reload when a
+    // new version is detected, as resources.txt may have changed since last
+    // release. This will be done only for release versions of Firefox.
     if (
-        selfie instanceof Object === false ||
-        selfie.magic !== µb.systemSettings.selfieMagic
+        vAPI.webextFlavor.soup.has('firefox') &&
+        /(b|rc)\d+$/.test(vAPI.app.version) === false
     ) {
-        return false;
-    }
-    if ( publicSuffixList.fromSelfie(selfie.publicSuffixList) !== true ) {
-        return false;
-    }
-    if ( selfie.redirectEngine === undefined ) {
-        return false;
+        µb.redirectEngine.invalidateResourcesSelfie();
     }
 
-    µb.availableFilterLists = selfie.availableFilterLists;
-    µb.staticNetFilteringEngine.fromSelfie(selfie.staticNetFilteringEngine);
-    µb.redirectEngine.fromSelfie(selfie.redirectEngine);
-    µb.staticExtFilteringEngine.fromSelfie(selfie.staticExtFilteringEngine);
-    return true;
+    // From 1.15.19b9 and above, the `behind-the-scene` scope is no longer
+    // whitelisted by default, and network requests from that scope will be
+    // subject to filtering by default.
+    //
+    // Following code is to remove the `behind-the-scene` scope when updating
+    // from a version older than 1.15.19b9.
+    // This will apply only to webext versions of uBO, as the following would
+    // certainly cause too much breakage in Firefox legacy given that uBO can
+    // see ALL network requests.
+    // Remove when everybody is beyond 1.15.19b8.
+    (function patch1015019008(s) {
+        if ( vAPI.firefox !== undefined ) { return; }
+        
+        // Patch 2018-04-03: Add our own version check
+        var match = /.(\d+)\.(\d+)$/.exec(s);
+        if ( match === null ) { return; }
+        if ( parseInt(match[1], 10) > 0 ) { return; }
+        if ( parseInt(match[2], 10) > 40 ) { return; }
+        
+        if ( µb.getNetFilteringSwitch('http://behind-the-scene/') ) { return; }
+        var fwRules = [
+            'behind-the-scene * * noop',
+            'behind-the-scene * image noop',
+            'behind-the-scene * 3p noop',
+            'behind-the-scene * inline-script noop',
+            'behind-the-scene * 1p-script noop',
+            'behind-the-scene * 3p-script noop',
+            'behind-the-scene * 3p-frame noop'
+        ].join('\n');
+        µb.sessionFirewall.fromString(fwRules, true);
+        µb.permanentFirewall.fromString(fwRules, true);
+        µb.savePermanentFirewallRules();
+        µb.hnSwitches.fromString([
+            'no-large-media: behind-the-scene false'
+        ].join('\n'), true);
+        µb.saveHostnameSwitches();
+        µb.toggleNetFilteringSwitch('http://behind-the-scene/', '', true);
+    })(lastVersion);
+
+    vAPI.storage.set({ version: vAPI.app.version });
 };
 
 /******************************************************************************/
@@ -211,7 +222,7 @@ var onSystemSettingsReady = function(fetched) {
     if ( mustSaveSystemSettings ) {
         fetched.selfie = null;
         µb.selfieManager.destroy();
-        vAPI.storage.set(µb.systemSettings, µb.noopFunc);
+        vAPI.storage.set(µb.systemSettings);
     }
 };
 
@@ -229,13 +240,8 @@ var onFirstFetchReady = function(fetched) {
     onNetWhitelistReady(fetched.netWhitelist);
     onVersionReady(fetched.version);
 
-    // If we have a selfie, skip loading PSL, filter lists
-    vAPI.cacheStorage.get('selfie', function(bin) {
-        if ( bin instanceof Object && onSelfieReady(bin.selfie) ) {
-            return onAllReady();
-        }
-        µb.loadPublicSuffixList(onPSLReady);
-    });
+    µb.loadPublicSuffixList(onPSLReady);
+    µb.loadRedirectResources();
 };
 
 /******************************************************************************/
@@ -266,14 +272,28 @@ var fromFetch = function(to, fetched) {
 var onSelectedFilterListsLoaded = function() {
     var fetchableProps = {
         'compiledMagic': '',
-        'dynamicFilteringString': 'behind-the-scene * 3p noop\nbehind-the-scene * 3p-frame noop',
+        'dynamicFilteringString': [
+            'behind-the-scene * * noop',
+            'behind-the-scene * image noop',
+            'behind-the-scene * 3p noop',
+            'behind-the-scene * inline-script noop',
+            'behind-the-scene * 1p-script noop',
+            'behind-the-scene * 3p-script noop',
+            'behind-the-scene * 3p-frame noop'
+        ].join('\n'),
         'urlFilteringString': '',
-        // Patch 2017-12-23: Update default settings to block all CSP reports
-        // CSP reports are extremely easy to abuse, they can be exploited to
-        // track the user as they can be generated dynamically with JavaScript.
-        // The report-only header can also be used to see what extensions did
-        // to the DOM, disclosing extensions that the user have installed
-        'hostnameSwitchesString': 'no-csp-reports: * true',
+        'hostnameSwitchesString': [
+            // Patch 2017-12-23: Update default settings to block all CSP
+            // reports
+            // CSP reports are extremely easy to abuse, they can be exploited
+            // to track the user as they can be generated dynamically with
+            // JavaScript
+            // The report-only header can also be used to see what extensions
+            // did to the DOM, disclosing extensions that the user have
+            // installed
+            'no-csp-reports: * true',
+            'no-large-media: behind-the-scene false'
+        ].join('\n'),
         'lastRestoreFile': '',
         'lastRestoreTime': 0,
         'lastBackupFile': '',

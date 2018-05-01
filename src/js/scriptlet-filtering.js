@@ -65,6 +65,16 @@
                 content = patchScriptlet(content, args);
                 if ( !content ) { return; }
             }
+            // Patch 2018-03-06: Prevent one bad script snippet from crashing
+            // everything
+            // Notes 2018-03-06: https://stackoverflow.com/a/19728876/6598117
+            // This shouldn't cause performance overhead
+            content =
+                'try {\n' +
+                    content + '\n' +
+                '} catch ( e ) {\n' +
+                '    console.error("[Nano] Script Snippet ::", e);\n' +
+                '}';
             scriptletCache.add(raw, content);
         }
         toInject.set(raw, content);
