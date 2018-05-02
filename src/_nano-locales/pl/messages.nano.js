@@ -236,15 +236,15 @@
             "description": "Warning when 'redirect=' has no type"
         },
         "filterLinterWarningRedirectTooManyTypes": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ ma ona zbyt wiele typów opcji.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ zawiera ona zbyt wiele typów opcji.",
             "description": "Warning when 'redirect=' has too many types"
         },
         "filterLinterWarningRedirectNoResourceToken": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie ma ona żadnych argumentów.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie zawiera ona żadnych argumentów.",
             "description": "Warning when 'redirect=' has no arguments"
         },
         "filterLinterWarningRedirectNoSupportedType": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie ma ona żadnych obsługiwanych opcji typu.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie zawiera ona żadnych obsługiwanych opcji typu.",
             "description": "Warning when 'redirect=' has no supported type"
         },
         "filterLinterWarningRedirectNegatedDomain": {
@@ -252,7 +252,7 @@
             "description": "Warning when negated domain used with 'redirect='"
         },
         "filterLinterWarningRedirectNoValidDestinationDomain": {
-            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie ma ona żadnej prawidłowej domeny docelowej.",
+            "message": "Nano odrzucił opcję 'redirect=...', ponieważ nie zawiera ona żadnej prawidłowej domeny docelowej.",
             "description": "Warning when 'redirect=' has no destination"
         },
         "filterLinterWarningRedirectPureHostname": {
@@ -282,11 +282,11 @@
             "description": "Error when 'redirect=' used in exception"
         },
         "filterLinterRejectedBadDomainOptionArguments": {
-            "message": "Opcja 'domain=...' ma nieprawidłowe argumenty.",
+            "message": "Opcja 'domain=...' zawiera nieprawidłowe argumenty.",
             "description": "Error when 'domain=' has invalid arguments"
         },
         "filterLinterRejectedBadCspOptionArguments": {
-            "message": "Opcja 'csp=...' ma nieprawidłowe argumenty.",
+            "message": "Opcja 'csp=...' zawiera nieprawidłowe argumenty.",
             "description": "Error when 'csp=' has invalid arguments"
         },
         "filterLinterRejectedUnknownOption": {
@@ -323,6 +323,31 @@
             "description": "Title of the filter viewer"
         },
 
+         // Popup tooltips
+        "popupCacheControlPrompt": {
+            "message": "sterowanie cache",
+            "description": "The cache control strip name"
+        },
+        "popupTipOpenFirewallPane": {
+            "message": "Przełącz panel zapory sieciowej",
+            "description": "Tooltip for toggle firewall pane button"
+        },
+        "popupTipRefreshButton": {
+            "message": "Kliknij, by odświeżyć tę stronę.\n\nCtrl+klik, by odświeżyć tę stronę, pomijając pamięć podręczną.",
+            "description": "English: Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache."
+        },
+        // TODO 2018-02-02: Beta stage, do not translate!
+        /*        
+        "popupTipForceEnableScroll": {
+            "message": "(beta) Enter force scroll mode (will break layout)",
+            "description": "Tooltip for force scroll button"
+        },
+        "popupTipBugReporter": {
+            "message": "(beta) Open the bug reporter",
+            "description": "Tooltip for bug reporter button"
+        },
+        */
+        
         // Based on message of about page
         "aboutBasedOn": {
             "message": "Bazuje na {{@data}}",
