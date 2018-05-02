@@ -146,7 +146,7 @@
         var injectArgs = parsed.suffix.slice(14, -1);
         if ( !nano.compileFlags.isPrivileged && injectArgs.startsWith(nano.privilegedAssetsPrefix) ) {
             if ( nano.compileFlags.firstParty ) {
-                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterRejectedAssetsAccessViolation'));
+                nano.filterLinter.dispatchError(vAPI.i18n('filterLinterRejectedAssetsAccessViolation'));
             }
             // console.log('rejected', parsed.suffix);
             return;
