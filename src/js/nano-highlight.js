@@ -195,7 +195,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                 // Script inject
                 {
                     token: 'keyword',
-                    regex: /script:inject\(/,
+                    regex: /\+js\(|script:inject\(/,
                     next: 'script_inject_part1'
                 },
                 // CSS (default)
