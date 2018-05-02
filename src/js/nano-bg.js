@@ -100,13 +100,13 @@ nano.getDashboardMutex = function(sender) {
 /******************************************************************************/
 
 // Patch 2017-12-26: Mark some filter lists as privileged
-nano.privilegedFiltersAssetKeys = [
+nano.privilegedFiltersAssetKeys = new Set([
     'nano-filters',
     'nano-timer',
     'nano-annoyance',
     'nano-whitelist',
     'nano-defender'
-];
+]);
 
 /******************************************************************************/
 
@@ -128,8 +128,8 @@ nano.clearCompileFlags();
 // Patch 2017-12-26: Add force recompile to advanced settings dashboard
 nano.nanoForceRecompile = function() {
     vAPI.storage.set({
-        'compiledMagic': '',
-        'selfieMagic': ''
+        'compiledMagic': -1,
+        'selfieMagic': -1
     });
     vAPI.app.restart();
 };

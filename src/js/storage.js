@@ -861,7 +861,7 @@
     // filter compilation is synchronous, so this is safe
     nano.compileFlags.firstParty = assetKey === nano.userFiltersPath || assetKey === nano.nanoPartialUserFiltersKey;
     nano.compileFlags.isPartial = assetKey === nano.nanoPartialUserFiltersKey;
-    nano.compileFlags.isPrivileged = nano.privilegedFiltersAssetKeys.indexOf(assetKey) !== -1;
+    nano.compileFlags.isPrivileged = nano.privilegedFiltersAssetKeys.has(assetKey);
     nano.compileFlags.keepSlowFilters = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnorePerformanceAuditing;
     nano.compileFlags.strip3pWhitelist = nano.userSettings.advancedUserEnabled && nano.hiddenSettings._nanoIgnoreThirdPartyWhitelist;
     if (
