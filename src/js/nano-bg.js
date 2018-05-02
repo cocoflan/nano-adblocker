@@ -107,6 +107,7 @@ nano.privilegedFiltersAssetKeys = new Set([
     'nano-whitelist',
     'nano-defender'
 ]);
+nano.privilegedAssetsPrefix = 'nanop-';
 
 /******************************************************************************/
 

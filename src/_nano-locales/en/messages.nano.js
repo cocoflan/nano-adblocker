@@ -214,6 +214,10 @@
             "message": "This CSS injection rule has syntax errors.",
             "description": "Error when CSS injection has syntax errors"
         },
+        "filterLinterRejectedAssetsAccessViolation": {
+            "message": "Unprivileged filters may not reference privileged resources.",
+            "description": "Error when unprivileged filter references a privileged resources"
+        },
         // Network filtering warnings
         "filterLinterWarningDiscardedNonNegatableType": {
             "message": "Nano discarded the type option '{{type}}' because it cannot be negated.",

@@ -140,6 +140,17 @@
             }
             return;
         }
+        
+        // Patch 2018-05-02: Reject rule if unprivileged filter references
+        // privileged resources
+        var injectArgs = parsed.suffix.slice(14, -1);
+        if ( !nano.compileFlags.isPrivileged && injectArgs.startsWith(nano.privilegedAssetsPrefix) ) {
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterRejectedAssetsAccessViolation'));
+            }
+            // console.log('rejected', parsed.suffix);
+            return;
+        }
 
         // https://github.com/gorhill/uBlock/issues/3375
         //   Ignore instances of exception filter with negated hostnames,
