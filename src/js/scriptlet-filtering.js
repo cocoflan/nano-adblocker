@@ -71,7 +71,7 @@
             // This shouldn't cause performance overhead
             content =
                 'try {\n' +
-                    content + '\n' +
+                    content.replace('{{nano}}', '') + '\n' +
                 '} catch ( e ) {\n' +
                 '    console.error("[Nano] Script Snippet ::", e);\n' +
                 '}';
