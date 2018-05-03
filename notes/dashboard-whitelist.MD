@@ -5,8 +5,7 @@ If you are not familiar with whitelisting in uBlock Origin,
 
 ## Differences
 
-Nano Adblocker has a slightly different default whitelists, also, the
-`behind-the-scene` whitelist is optional.
+Nano Adblocker has a slightly different default whitelists:
 
 ```
 about-scheme
