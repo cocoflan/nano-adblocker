@@ -31,4 +31,7 @@
 if ( typeof vAPI === 'object' ) {
     vAPI.supportsUserStylesheets =
         /\bChrom(?:e|ium)\/(?:6[6789]|[789]|1\d\d)/.test(navigator.userAgent);
+
+    // Patch 2018-05-04: Disable UserCSS
+    vAPI.supportsUserStylesheets = false;
 }

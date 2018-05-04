@@ -76,6 +76,9 @@ var warResolve = (function() {
 //   Do not redirect to a WAR if the platform suffers from spurious redirect
 //   conflicts, and the request to redirect is not `https:`.
 //   This special handling code can removed once the Chromium issue is fixed.
+// Notes 2018-04-25: I usually don't like this type of tradeoff, but websites
+// that uses CSP are probably also using HTTPS, so the tradeoff is reasonable
+// in this case
 var suffersSpuriousRedirectConflicts = vAPI.webextFlavor.soup.has('chromium');
 
 /******************************************************************************/
@@ -302,6 +305,14 @@ RedirectEngine.prototype.fromCompiledRule = function(line) {
 RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
     var matches = this.reFilterParser.exec(line);
     if ( matches === null || matches.length !== 4 ) {
+        // Patch 2017-12-27: Show an appropriate warning message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchWarning(
+                vAPI.i18n('filterLinterWarningRedirectDoesNotMatchRegExp')
+                    .replace('{{regexp}}', this.reFilterParser.toString())
+            );
+        }
+        
         return;
     }
     var µburi = µBlock.URI,
@@ -329,6 +340,11 @@ RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
         // One and only one type must be specified.
         if ( option in this.supportedTypes ) {
             if ( type !== undefined ) {
+                // Patch 2017-12-27: Show an appropriate warning message
+                if ( nano.compileFlags.firstParty ) {
+                    nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectTooManyTypes'));
+                }
+                
                 return;
             }
             type = this.supportedTypes[option];
@@ -338,11 +354,23 @@ RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
 
     // Need a resource token.
     if ( redirect === '' ) {
+        // Patch 2017-12-27: Show an appropriate warning message
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoResourceToken'));
+        }
+        
         return;
     }
 
     // Need one single type -- not negated.
     if ( type === undefined || type.startsWith('~') ) {
+        // Patch 2017-12-27: Show an appropriate warning message, because all
+        // types in supportedTypes are not negated, I think type will never
+        // be negated, this message is thus appropriate
+        if ( nano.compileFlags.firstParty ) {
+            nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoSupportedType'));
+        }
+        
         return;
     }
 
@@ -362,9 +390,20 @@ RedirectEngine.prototype.compileRuleFromStaticFilter = function(line) {
             continue;
         }
         if ( src.startsWith('~') ) {
+            // Patch 2017-12-27: Show an appropriate warning message
+            if ( nano.compileFlags.firstParty ) {
+                nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNegatedDomain'));
+            }
+            
             continue;
         }
         out.push(src + '\t' + des + '\t' + type + '\t' + pattern + '\t' + redirect);
+    }
+    
+    // Patch 2017-12-27: Check if there are any valid domains left, and show an
+    // appropriate warning message if needed
+    if ( nano.compileFlags.firstParty && out.length === 0 ) {
+        nano.filterLinter.dispatchWarning(vAPI.i18n('filterLinterWarningRedirectNoValidDestinationDomain'));
     }
 
     return out;
@@ -384,6 +423,12 @@ RedirectEngine.prototype.supportedTypes = (function() {
     types.stylesheet = 'stylesheet';
     types.subdocument = 'sub_frame';
     types.xmlhttprequest = 'xmlhttprequest';
+    
+    // Patch 2017-12-30: Add mapping for convenience options
+    types.css = 'stylesheet';
+    types.iframe = 'sub_frame';
+    types.xhr = 'xmlhttprequest';
+
     return types;
 })();
 
