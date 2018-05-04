@@ -201,7 +201,7 @@ var onUserSettingsReady = function(fetched) {
     //
     // Patch 2017-12-16: This is just ridiculous, moving the problem to another
     // place is not a solution
-    //if ( µb.firstInstall && vAPI.battery ) {
+    //if ( µb.firstInstall && vAPI.webextFlavor.soup.has('mobile') ) {
     //    userSettings.ignoreGenericCosmeticFilters = true;
     //}
 };
