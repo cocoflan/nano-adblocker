@@ -1129,6 +1129,6 @@ var onHideTooltip = function() {
 /******************************************************************************/
 
 // Patch 2018-04-18: Fix popup page for edge
-if ( typeof elib === "object" ) {
+if ( typeof elib === "object" && !location.search ) {
     elib.unbreak_popup();
 }
