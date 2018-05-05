@@ -7,7 +7,9 @@ even minor ones! We ca not fix bugs that we are not aware of!
 
 [Nano Adblocker](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
 
-Nano Defender is not quite ready yet, we are still working on it.
+Nano Defender is in review queue, please use
+[Feedback Hub](https://aka.ms/extension-request) to help speeding up the
+process.
 
 ## Side Loading
 
