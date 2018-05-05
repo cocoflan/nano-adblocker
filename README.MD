@@ -80,6 +80,10 @@ Available since 1.0.0.0
 - Made cache control button to be always shown
 - Added force scroll mode (to be used with element zapper)
 
+There are also a few changes specifically for Edge: 
+- Mapped `fetch` requests to `xhr`
+- Fixed the popup panel in logger
+
 ## Pending Features
 
 We are constantly improving! The list of pending features can be found
