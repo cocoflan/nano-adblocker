@@ -168,6 +168,17 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                     regex: /nano-include-content-(?:start|end) (?!$)/,
                     next: 'include_url'
                 },
+                // If condition
+                {
+                    token: 'keyword',
+                    regex: /if (?!$)/,
+                    next: 'include_url'
+                },
+                 {
+                    token: 'keyword',
+                    regex: /endif/,
+                    next: 'include_url'
+                },
                 // Invalid (default)
                 {
                     defaultToken: 'invalid'
