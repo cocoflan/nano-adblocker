@@ -244,6 +244,7 @@
     "updateAfterDefault": 5,
     "title": "Malware Domain List",
     "contentURL": [
+      "https://jspenguin.com/NanoAdblocker/AssetsMirror/MalwareDomain0.txt",
       "https://www.malwaredomainlist.com/hostslist/hosts.txt",
       "assets/ThirdParty/MalwareDomain0.txt"
     ]
