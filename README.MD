@@ -83,6 +83,7 @@ Available since 1.0.0.0
 There are also a few changes specifically for Edge: 
 - Mapped `fetch` requests to `xhr`
 - Fixed the popup panel in logger
+- Fixed advanced settings button in dashboard
 
 ## Pending Features
 
