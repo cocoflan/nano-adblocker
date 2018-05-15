@@ -728,7 +728,9 @@ vAPI.setIcon = (function() {
         if ( browserAction.setIcon !== undefined ) {
             if ( parts === undefined || (parts & 0x01) !== 0 ) {
                 icons[state].tabId = tab.id;
-                browserAction.setIcon(icons[state]);
+                // Patch 2018-05-15: Temporary solution - Chromium handles this
+                // asynchronously if only path is given
+                browserAction.setIcon(Object.assign({}, icons[state]));
             }
             browserAction.setBadgeText({ tabId: tab.id, text: badge });
         }
