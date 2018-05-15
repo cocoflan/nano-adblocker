@@ -7,12 +7,19 @@
 <body>
 <script src="lib/punycode.js"></script>
 <script src="lib/publicsuffixlist.js"></script>
+<script src="js/nano-platform-vars.js"></script>
 <script src="js/vapi.js"></script>
 <script src="js/vapi-common.js"></script>
 <script src="js/vapi-background.js"></script>
 <script src="js/vapi-webrequest.js"></script><!-- Forks can pick the webext, chromium, or their own implementation -->
 <script src="js/vapi-cachestorage.js"></script><!-- Optional -->
 <script src="js/background.js"></script>
+
+<!-- Patch 2017-12-08: Add background script to contain logic only related to Nano -->
+<script src="js/nano-bg.js"></script>
+<!-- Patch 2017-12-13: Add linter -->
+<script src="js/nano-lint.js"></script>
+
 <script src="js/hntrie.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/uritools.js"></script>

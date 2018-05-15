@@ -646,14 +646,16 @@ vAPI.tabs.injectScript = function(tabId, details, callback) {
 vAPI.setIcon = (function() {
     let browserAction = chrome.browserAction,
         titleTemplate = chrome.runtime.getManifest().name + ' ({badge})';
+    
+    // Patch 2017-12-08: Replace icons
     let icons = [
         {
             tabId: 0,
-            path: { '16': 'img/icon_16-off.png', '32': 'img/icon_32-off.png' }
+            path: { '128': 'img/128_off.png' }
         },
         {
             tabId: 0,
-            path: { '16': 'img/icon_16.png', '32': 'img/icon_32.png' }
+            path: { '128': 'img/128_on.png' }
         }
     ];
 
@@ -677,6 +679,9 @@ vAPI.setIcon = (function() {
         // Firefox uses an internal cache for each setIcon's paths:
         // https://searchfox.org/mozilla-central/rev/5ff2d7683078c96e4b11b8a13674daded935aa44/browser/components/extensions/parent/ext-browserAction.js#631
         if ( vAPI.webextFlavor.soup.has('chromium') === false ) { return; }
+        
+        // TODO 2018-05-15: Due to technical difficulties, disable this for now
+        return;
 
         let imgs = [
             { i: 0, p: '16' }, { i: 0, p: '32' },
@@ -993,6 +998,31 @@ vAPI.messaging.broadcast = function(message) {
         port.postMessage(messageWrapper);
     }
 };
+
+/******************************************************************************/
+
+// Patch 2017-12-08: Add automatic configuration for Nano Defender integration
+vAPI.messaging.onNanoDefenderConnection = (function() {
+    var callbacks = [];
+    
+    chrome.runtime.onMessageExternal.addListener(function(msg, sender, response) {
+        if ( typeof msg !== 'object' || typeof msg.data !== 'string' ) {
+            return;
+        }
+        if ( sender.id === NanoDefenderExtensionID ) {
+            for ( var callback of callbacks ) {
+                callback(msg.data);
+            }
+            if ( typeof response === 'function' ) {
+                response('ok');
+            }
+        }
+    });
+    
+    return function(callback) {
+        callbacks.push(callback);
+    };
+})();
 
 /******************************************************************************/
 /******************************************************************************/
