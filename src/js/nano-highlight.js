@@ -177,7 +177,7 @@ ace.define('ace/mode/nano_filters_hr', function(require, exports, module) {
                  {
                     token: 'keyword',
                     regex: /endif/,
-                    next: 'include_url'
+                    next: 'start'
                 },
                 // Invalid (default)
                 {
