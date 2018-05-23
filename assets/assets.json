@@ -43,16 +43,6 @@
     ],
     "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
   },
-  "nano-timer": {
-    "content": "filters",
-    "group": "default",
-    "title": "Nano filters – Timer bypassing (sometimes works)",
-    "contentURL": [
-      "https://raw.githubusercontent.com/NanoAdblocker/NanoFilters/master/NanoFilters/NanoTimer.txt",
-      "assets/NanoFilters/NanoTimer.txt"
-    ],
-    "supportURL": "https://github.com/NanoAdblocker/NanoFilters/issues"
-  },
   "nano-annoyance": {
     "content": "filters",
     "group": "default",
