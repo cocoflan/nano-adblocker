@@ -95,6 +95,12 @@ https://github.com/gorhill/uBlock/issues/3178
 
 ---
 
+Allow custom warning text for strict blocking.
+
+https://github.com/NanoAdblocker/NanoFilters/issues/2
+
+---
+
 Clicking domain in popup UI expand that one domain.
 
 `low priority`
