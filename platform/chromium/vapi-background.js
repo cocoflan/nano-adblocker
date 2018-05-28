@@ -1008,7 +1008,7 @@ vAPI.messaging.onNanoDefenderConnection = (function() {
     var callbacks = [];
     
     chrome.runtime.onMessageExternal.addListener(function(msg, sender, response) {
-        if ( typeof msg !== 'object' || typeof msg.data !== 'string' ) {
+        if ( msg === null || typeof msg !== 'object' || typeof msg.data !== 'string' ) {
             return;
         }
         if ( sender.id === NanoDefenderExtensionID ) {
