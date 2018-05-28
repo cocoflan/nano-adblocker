@@ -1016,7 +1016,7 @@ vAPI.messaging.onNanoDefenderConnection = (function() {
                 callback(msg.data);
             }
             if ( typeof response === 'function' ) {
-                response('ok');
+                response({ data: 'ok' });
             }
         }
     });
