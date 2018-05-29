@@ -71,7 +71,6 @@ Available since 1.0.0.0
 - [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
 - [Extended filter syntax](/notes/filter-syntax.MD#filter-syntax)
 - [Polished filter list subscription process](/notes/filter-list-authoring.MD#filter-list-authoring)
-- [Added whitelists for Edge build](/notes/dashboard-whitelist.MD#dashboard-whitelist)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it
   to track users)
 - Added a few more filters to filters manager
@@ -79,6 +78,7 @@ Available since 1.0.0.0
 - Added force scroll mode (to be used with element zapper)
 
 There are also a few changes specifically for Edge: 
+- [Added whitelists for Edge build](/notes/dashboard-whitelist.MD#dashboard-whitelist)
 - Mapped `fetch` requests to `xhr`
 - Fixed the popup panel in logger
 - Fixed advanced settings button in dashboard
