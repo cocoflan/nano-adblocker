@@ -22,8 +22,6 @@ somewhat behind and that is out of my control.*
 
 ### [Edge version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/40)
 
-### [Firefox version discussion thread](https://github.com/NanoAdblocker/NanoCore/issues/41)
-
 ## Notable Change
 
 <!--
