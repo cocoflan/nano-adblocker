@@ -65,6 +65,8 @@ var noopFunc = function(){};
 /******************************************************************************/
 
 vAPI.app = (function() {
+    // Patch 2018-06-12: This is not needed for Nano
+    /*
     let version = manifest.version;
     let match = /(\d+\.\d+\.\d+)(?:\.(\d+))?/.exec(version);
     if ( match && match[2] ) {
@@ -75,6 +77,12 @@ vAPI.app = (function() {
     return {
         name: manifest.name.replace(/ dev\w+ build/, ''),
         version: version
+    };
+    */
+
+    return {
+        name: manifest.name,
+        version: manifest.version
     };
 })();
 
