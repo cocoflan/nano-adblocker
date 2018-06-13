@@ -647,12 +647,14 @@ vAPI.setIcon = (function() {
         titleTemplate =
             chrome.runtime.getManifest().browser_action.default_title +
             ' ({badge})';
+
+    // Patch 2017-12-08: Replace icons
     let icons = [
         {
-            path: { '16': 'img/icon_16-off.png', '32': 'img/icon_32-off.png' }
+            path: { '128': 'img/128_off.png' }
         },
         {
-            path: { '16': 'img/icon_16.png', '32': 'img/icon_32.png' }
+            path: { '128': 'img/128_on.png' }
         }
     ];
 
@@ -1000,6 +1002,31 @@ vAPI.messaging.broadcast = function(message) {
         port.postMessage(messageWrapper);
     }
 };
+
+/******************************************************************************/
+
+// Patch 2017-12-08: Add automatic configuration for Nano Defender integration
+vAPI.messaging.onNanoDefenderConnection = (function() {
+    var callbacks = [];
+    
+    chrome.runtime.onMessageExternal.addListener(function(msg, sender, response) {
+        if ( msg === null || typeof msg !== 'object' || typeof msg.data !== 'string' ) {
+            return;
+        }
+        if ( sender.id === NanoDefenderExtensionID ) {
+            for ( var callback of callbacks ) {
+                callback(msg.data);
+            }
+            if ( typeof response === 'function' ) {
+                response({ data: 'ok' });
+            }
+        }
+    });
+    
+    return function(callback) {
+        callbacks.push(callback);
+    };
+})();
 
 /******************************************************************************/
 /******************************************************************************/

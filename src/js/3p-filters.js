@@ -507,7 +507,8 @@ var buttonPurgeAllHandler = function(ev) {
         'dashboard',
         {
             what: 'purgeAllCaches',
-            hard: ev.ctrlKey && ev.shiftKey
+            // Patch 2018-02-12: Make hard to be any special key
+            hard: ev.ctrlKey || ev.metaKey || ev.shiftKey
         },
         function() { renderFilterLists(true); }
     );
