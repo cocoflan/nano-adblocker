@@ -559,6 +559,7 @@ FilterContainer.prototype.freeze = function() {
     this.frozen = true;
 };
 
+
 /******************************************************************************/
 
 // https://github.com/gorhill/uBlock/issues/1668
