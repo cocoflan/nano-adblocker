@@ -199,7 +199,7 @@
         },
         // Extended filtering errors
         "filterLinterRejectedAdguardJSInjection": {
-            "message": "Wstrzykiwanie Raw JavaSript nie jest akceptowane ze względów bezpieczeństwa.",
+            "message": "Wstrzykiwanie Raw JavaScript nie jest akceptowane ze względów bezpieczeństwa.",
             "description": "Error when raw JavaScript injection"
         },
         "filterLinterRejectedBadSelector": {
