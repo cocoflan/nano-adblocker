@@ -175,9 +175,7 @@
             "description": "The cache control strip name"
         },
         "popupTipOpenFirewallPane": {
-            // TODO 2018-02-10: There must be a better translation, but translated like so to stay
-            // consistent with other strings of uBlock Origin
-            "message": "是否显示防火墙边窗",
+            "message": "显示或隐藏防火墙边窗",
             "description": "Tooltip for toggle firewall pane button"
         },
         "popupTipRefreshButton": {
@@ -185,16 +183,14 @@
             "description": "English: Click: refresh this page.\n\nCtrl+click: refresh this page bypassing cache."
         },
         // TODO 2018-02-02: Beta stage, do not translate!
-        /*
-        "popupTipForceEnableScroll": {
+        /*"popupTipForceEnableScroll": {
             "message": "进入临时强制滚动模式（会破坏布局）",
             "description": "Tooltip for force scroll button"
         },
         "popupTipBugReporter": {
             "message": "打开问题汇报器",
             "description": "Tooltip for bug reporter button"
-        },
-        */
+        },*/
 
         // Based on message of about page
         "aboutBasedOn": {

@@ -214,6 +214,10 @@
             "message": "Ta reguła wstrzykiwania CSS zawiera błędy w składni.",
             "description": "Error when CSS injection has syntax errors"
         },
+        /*"filterLinterRejectedAssetsAccessViolation": {
+            "message": "Unprivileged filters may not reference privileged resources.",
+            "description": "Error when unprivileged filter references a privileged resources"
+        },*/
         // Network filtering warnings
         "filterLinterWarningDiscardedNonNegatableType": {
             "message": "Nano odrzucił opcję typu '{{type}}', ponieważ nie można jej zanegować.",
@@ -323,7 +327,7 @@
             "description": "Title of the filter viewer"
         },
 
-         // Popup tooltips
+        // Popup tooltips
         "popupCacheControlPrompt": {
             "message": "sterowanie cache",
             "description": "The cache control strip name"
@@ -337,17 +341,15 @@
             "description": "English: Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache."
         },
         // TODO 2018-02-02: Beta stage, do not translate!
-        /*        
-        "popupTipForceEnableScroll": {
+        /*"popupTipForceEnableScroll": {
             "message": "(beta) Enter force scroll mode (will break layout)",
             "description": "Tooltip for force scroll button"
         },
         "popupTipBugReporter": {
             "message": "(beta) Open the bug reporter",
             "description": "Tooltip for bug reporter button"
-        },
-        */
-        
+        },*/
+
         // Based on message of about page
         "aboutBasedOn": {
             "message": "Bazuje na {{@data}}",

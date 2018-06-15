@@ -341,14 +341,14 @@
             "description": "English: Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache."
         },
         // TODO 2018-02-02: Beta stage, do not translate!
-        "popupTipForceEnableScroll": {
+        /*"popupTipForceEnableScroll": {
             "message": "(beta) Enter force scroll mode (will break layout)",
             "description": "Tooltip for force scroll button"
         },
         "popupTipBugReporter": {
             "message": "(beta) Open the bug reporter",
             "description": "Tooltip for bug reporter button"
-        },
+        },*/
 
         // Based on message of about page
         "aboutBasedOn": {
