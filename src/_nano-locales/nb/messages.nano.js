@@ -4,11 +4,11 @@
     return {
         // Dialog buttons
         "genericYes": {
-            "message": "Yes",
+            "message": "Ja",
             "description": "Button 'Yes' for dialogs"
         },
         "genericNo": {
-            "message": "No",
+            "message": "Nei",
             "description": "Button 'No' for dialogs"
         },
         "genericOK": {
@@ -17,71 +17,71 @@
         },
         // Generic messages
         "genericUnsavedChange": {
-            "message": "Do you want to leave this tab? Changes you made will not be saved.",
+            "message": "Vil du forlate denne fanen? Endringer du har gjort vil ikke bli lagret.",
             "description": "Unsaved change warning"
         },
         "genericFilterReadError": {
-            "message": "Could not load data, please refresh.",
+            "message": "Kunne ikke laste inn data, vennligst oppfrisk.",
             "description": "Error when filter data could not be loaded"
         },
         "genericDataSaveError": {
-            "message": "Could not save data, please try again.",
+            "message": "Kunne ikke lagre data, vennligst prøv igjen.",
             "description": "Error when changes could not be saved"
         },
         "genericNothingToExport": {
-            "message": "Nothing to export.",
+            "message": "Det er ingenting å eksportere.",
             "description": "Error when nothing to export"
         },
 
         // New cloud UI
         "nanoCloudNoData": {
-            "message": "No cloud data",
+            "message": "Det er ingen skydata.",
             "description": "English: No cloud data"
         },
         "nanoCloudLastSync": {
-            "message": "Last sync: {{device}} at {{time}}",
+            "message": "Forrige synkronisering: {{device}} den {{time}}",
             "description": "English: Last sync: {{device}} at {{time}}"
         },
         "nanoCloudSyncFailed": {
-            "message": "Something went wrong:\n{{error}}",
+            "message": "Noe gikk galt:\n{{error}}",
             "description": "English: Something went wrong:\n{{error}}"
         },
 
         // Dashboard dialog messages
         "dashboardMutexError": {
-            "message": "Could not obtain mutex lock, do you have another dashboard open?",
+            "message": "Klarte ikke å hente mutex-låsen, har du et annet kontrollbord åpent?",
             "description": "Error when mutex locked by another dashboard"
         },
 
         // Settings groups
         "settingGeneralGroup": {
-            "message": "General",
+            "message": "Generelt",
             "description": "Group 'General' of settings tab"
         },
         "settingUserInterfaceGroup": {
-            "message": "User interface",
+            "message": "Brukergrensesnitt",
             "description": "Group 'User interface' of settings tab"
         },
         "settingOtherGroup": {
-            "message": "Other",
+            "message": "Annet",
             "description": "Group 'Other' of settings tab"
         },
         // Settings prompts
         "settingsDashboardAllowSelectionPrompt": {
-            "message": "Allow text selection in dashboard",
+            "message": "Tillat tekstmarkering i kontrollbordet",
             "description": "English: Allow text selection in dashboard"
         },
         "settingsEditorWordWrapPrompt": {
-            "message": "Soft wrap long lines in filter editor",
+            "message": "Myk tekstbryting av lange linjer i filterredigereren",
             "description": "English: Soft wrap long lines in filter editor"
         },
         "settingsViewerWordWrapPrompt": {
-            "message": "Soft wrap long lines in filter viewer",
+            "message": "Myk tekstbryting av lange linjer i filterviseren",
             "description": "English: Soft wrap long lines in filter viewer"
         },
         // Extra strings for new dashboard
         "settingDiskUsage": {
-            "message": "Disk usage: ",
+            "message": "Diskbruk: ",
             "description": "English: Disk usage: "
         },
         "settingMebibyte": {
@@ -89,35 +89,35 @@
             "description": "English: MiB"
         },
         "settingsLastBackedupFilePrompt": {
-            "message": "Last backed up file: ",
+            "message": "Filen ble senest sikkerhetskopiert den: ",
             "description": "English: Last backed up file: "
         },
         "settingsLastRestoredFilePrompt": {
-            "message": "Last restored file: ",
+            "message": "Filen ble senest gjenopprettet den: ",
             "description": "English: Last restored file: "
         },
 
         // The tab name of advanced settings
         "advancedPageName": {
-            "message": "Advanced",
+            "message": "Avansert",
             "description": "Advanced settings tab name"
         },
 
         // Extra help messages for user filters
         "1pResourcesReference": {
-            "message": "Nano comes with two sets of resources,",
+            "message": "Nano kommer med to sett med ressurser,",
             "description": "English: Nano comes with two sets of resources,"
         },
         "1pResourcesOriginal": {
-            "message": "uBlock Origin Resources",
+            "message": "uBlock Origin-ressursene",
             "description": "English: uBlock Origin Resources"
         },
         "1pResourcesAnd": {
-            "message": "and",
+            "message": "og",
             "description": "English: and"
         },
         "1pResourcesNano": {
-            "message": "Nano Extra Resources",
+            "message": "Nano sine ekstraressurser",
             "description": "English: Nano Extra Resources"
         },
         "1pResourcesPeriod": {
@@ -125,176 +125,176 @@
             "description": "English: ."
         },
         "1pFilterEditorHelp": {
-            "message": "Nano Filter Editor is powered by Ace and most shortcut keys works the same.",
+            "message": "Nano sin filterredigerer er drevet av Ace, og de fleste hurtigknappene virker på samme måte.",
             "description": "Explain the similarity between Nano Filter Editor and Ace in terms of shortcut keys"
         },
 
         // Whitelist linter limit warnings
         "whitelistLinterAborted": {
-            "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
+            "message": "Nano skannet ikke resten av linjene for feil, fordi det er for mange feil.",
             "description": "Warning when too many errors"
         },
         "whitelistLinterTooManyWarnings": {
-            "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",
+            "message": "Nano skannet ikke resten av linjene for advarsler, fordi det er for mange advarsler.",
             "description": "Warning when too many warnings"
         },
         // Whitelist linter errors
         "whitelistLinterInvalidHostname": {
-            "message": "This host name is not valid.",
+            "message": "Dette vertsnavnet er ikke gyldig.",
             "description": "Error when hostname not valid"
         },
         "whitelistLinterInvalidRegExp": {
-            "message": "This regular expression has syntax errors.",
+            "message": "Dette ordinære uttrykket har syntaksfeil.",
             "description": "Error when regular expression has syntax errors"
         },
         "whitelistLinterInvalidURL": {
-            "message": "This URL is not valid.",
+            "message": "Denne URLen er ugyldig.",
             "description": "Error when a URL not valid"
         },
         // Whitelist linter warnings
         "whitelistLinterSuspeciousRegExp": {
-            "message": "This line is treated as a regular expression, is that intended?",
+            "message": "Denne linjen blir behandlet som et ordinært uttrykk. Var det tilsiktet?",
             "description": "Warning when parsed as regular expression but is unlikely the intention of user"
         },
 
         // Filter linter limit warnings
         "filterLinterTooManyErrors": {
-            "message": "Nano did not scan the rest of the lines for errors because there are too many errors.",
+            "message": "Nano skannet ikke resten av linjene for feil, fordi det er for mange feil.",
             "description": "Error when too many errors"
         },
         "filterLinterTooManyWarnings": {
-            "message": "Nano did not scan the rest of the lines for warnings because there are too many warnings.",
+            "message": "Nano skannet ikke resten av linjene for advarsler, fordi det er for mange advarsler.",
             "description": "Warning when too many warnings"
         },
         // Filter linter special deprecation warnings
         "filterLinterDeprecatedCommentBracket": {
-            "message": "Using '[' to denote comment is deprecated, use '!' instead.",
+            "message": "Å bruke '[' til å markere en kommentar, har blitt utfaset. Bruk '!' istedet.",
             "description": "Deprecation when '[' used for comments"
         },
         "filterLinterDeprecatedInlineComment": {
-            "message": "Inline comments are deprecated.",
+            "message": "Kommentarer innenfor filteroppføringene har blitt utfaset.",
             "description": "Deprecation when inline comments"
         },
         // Filter linter special errors
         "filterLinterInternalErrorCosmeticFilterPassedThrough": {
-            "message": "This rule is rejected for now. More information: https://github.com/NanoAdblocker/NanoCore/issues/77",
+            "message": "Denne regelen har blitt avslått per nå. For mere informasjon: https://github.com/NanoAdblocker/NanoCore/issues/77",
             "description": "https://github.com/NanoAdblocker/NanoCore/issues/77"
         },
         // Extended filtering warnings
         "filterLinterDeprecatedScriptContains": {
-            "message": "'##script:contains(...)' is deprecated, use '##^script:has-text(...)' instead.",
+            "message": "'##script:contains(...)' har blitt utfaset. Bruk '##^script:has-text(...)' istedet.",
             "description": "Deprecation when 'script:contains' is used"
         },
         "filterLinterWarningScriptSnippetDoubleException": {
-            "message": "Nano discarded a negated domain because it cannot be used in a script snippet exception rule.",
+            "message": "Nano avslo et nullifisert domene, fordi den ikke kan bli brukt i en skriptutdrags-unntaksregel.",
             "description": "Warning when negated domain used with script snippet exception"
         },
         "filterLinterWarningConvertedToException": {
-            "message": "Nano converted this rule to an exception rule because it only contain negated domains.",
+            "message": "Nano konverterte denne regelen til en unntaksregel, siden den bare inneholder nullifiserte domener",
             "description": "Warning when a rule is convered to exception because all negated domains"
         },
         "filterLinterWarningNegatedHTMLFiltering": {
-            "message": "Negated domain is not yet supported for HTML filtering.",
+            "message": "Nullifiserte domener støtter ikke HTML-filtrering ennå.",
             "description": "Warning when negated domain used with HTML filtering"
         },
         // Extended filtering errors
         "filterLinterRejectedAdguardJSInjection": {
-            "message": "Raw JavaScript injection is not accepted due to security concerns.",
+            "message": "Rå JavaScript-innsprøytinger er ikke akseptert, grunnet sikkerhetsbekymringer.",
             "description": "Error when raw JavaScript injection"
         },
         "filterLinterRejectedBadSelector": {
-            "message": "The selector in this rule has syntax errors.",
+            "message": "Velgeren i denne regelen har syntaksfeil.",
             "description": "Error when selector has syntax errors"
         },
         "filterLinterRejectedTooExpensive": {
-            "message": "This rule cannot be generic.",
+            "message": "Denne regelen kan ikke være generisk.",
             "description": "Error when expensive cosmetic is generic"
         },
         "filterLinterRejectedStyleInjection": {
-            "message": "This CSS injection rule has syntax errors.",
+            "message": "Denne CSS-innsprøytingsregelen har syntaksfeil.",
             "description": "Error when CSS injection has syntax errors"
         },
         "filterLinterRejectedAssetsAccessViolation": {
-            "message": "Unprivileged filters may not reference privileged resources.",
+            "message": "Upriviligerte filtre kan ikke henvise til priviligerte filtre.",
             "description": "Error when unprivileged filter references a privileged resources"
         },
         // Network filtering warnings
         "filterLinterWarningDiscardedNonNegatableType": {
-            "message": "Nano discarded the type option '{{type}}' because it cannot be negated.",
+            "message": "Nano avslo typevalget '{{type}}' fordi den ikke kan bli nullifisert.",
             "description": "English: Nano discarded the type option '{{type}}' because it cannot be negated."
         },
         "filterLinterWarningExpandedMp4Option": {
-            "message": "Nano replaced the option 'mp4' with 'media,redirect=noopmp4-1s'.",
+            "message": "Nano byttet ut valget 'mp4' med 'media,redirect=noopmp4-1s'.",
             "description": "Warning when 'mp4' is replaced"
         },
         "filterLinterWarningDeprecatedMp4Option": {
-            "message": "The use of the option 'mp4' is deprecated, write out the full options instead.",
+            "message": "Bruken av valget 'mp4' har blitt utfaset. Utdyp fullengde-valgene istedet.",
             "description": "Deprecation when 'mp4'"
         },
         "filterLinterWarningUnsupportedTypeIgnored": {
-            "message": "Nano discarded type options that are not yet supported.",
+            "message": "Nano avslo typevalg som ikke er støttet ennå.",
             "description": "Warning when unsupported type options discarded but not entire rule"
         },
         "filterLinterWarningRedirectNoType": {
-            "message": "Nano discarded the option 'redirect=...' because it requires a type option.",
+            "message": "Nano avslo valget 'redirect=...' fordi den krever et typevalg.",
             "description": "Warning when 'redirect=' has no type"
         },
         "filterLinterWarningRedirectTooManyTypes": {
-            "message": "Nano discarded the option 'redirect=...' because it has too many type options.",
+            "message": "Nano avslo valget 'redirect=...' fordi den har for mange typevalg.",
             "description": "Warning when 'redirect=' has too many types"
         },
         "filterLinterWarningRedirectNoResourceToken": {
-            "message": "Nano discarded the option 'redirect=...' because it has no arguments.",
+            "message": "Nano avslo valget 'redirect=...' fordi den ikke har noen argumenter.",
             "description": "Warning when 'redirect=' has no arguments"
         },
         "filterLinterWarningRedirectNoSupportedType": {
-            "message": "Nano discarded the option 'redirect=...' because it has no supported type option.",
+            "message": "Nano avslo valget 'redirect=...' fordi den ikke har noen støttede typevalg.",
             "description": "Warning when 'redirect=' has no supported type"
         },
         "filterLinterWarningRedirectNegatedDomain": {
-            "message": "Nano discarded a negated domain because it cannot be used with the option 'redirect=...'.",
+            "message": "Nano avslo et nullifisert domene, fordi den ikke kan bli brukt med valget 'redirect=...'.",
             "description": "Warning when negated domain used with 'redirect='"
         },
         "filterLinterWarningRedirectNoValidDestinationDomain": {
-            "message": "Nano discarded the option 'redirect=...' because it has no valid destination domain.",
+            "message": "Nano avslo valget 'redirect=...' fordi den ikke har et gyldig måldomene.",
             "description": "Warning when 'redirect=' has no destination"
         },
         "filterLinterWarningRedirectPureHostname": {
-            "message": "Nano discarded the option 'redirect=...' because it cannot be used with a pure host name rule.",
+            "message": "Nano avslo valget 'redirect=...' fordi den ikke kan bli brukt med en ren vertsnavnregel.",
             "description": "Warning when 'redirect=' pure host name"
         },
         "filterLinterWarningRedirectDoesNotMatchRegExp": {
             // TODO 2017-12-28: Think of a better warning message
-            "message": "Nano discarded the option 'redirect=...' because this network rule does not match this regular expression: {{regexp}}",
+            "message": "Nano avslo valget 'redirect=...' fordi denne nettverksregelen ikke samsvarer med dette ordinære uttrykket: {{regexp}}",
             "description": "Warning when 'redirect=' failed initial test, use '{{regexp}}' to denote the tester if needed"
         },
         // Network filtering errors
         "filterLinterDiscardedLocalhostHostEntry": {
-            "message": "This host file entry is discarded because it is localhost declaration.",
+            "message": "Denne vertsfiloppføringen er avslått, siden den er en localhost-erklæring.",
             "description": "Error when localhost declaration"
         },
         "filterLinterRejectedAdguardElementRemove": {
-            "message": "Element remove rules with Adguard syntax are not yet supported.",
+            "message": "Elementfjerningsregler med Adguard sin syntaks er ikke støttet ennå.",
             "description": "Error when Adguard style element remove rule"
         },
         "filterLinterRejectedNegatedGenerichide": {
-            "message": "The options 'generichide', 'ghide', and 'elemhide' cannot be negated.",
+            "message": "Valgene 'generichide', 'ghide', and 'elemhide' kan ikke bli nullifisert.",
             "description": "Error when 'generichide' is negated"
         },
         "filterLinterRejectedRedirectInException": {
-            "message": "The option 'redirect=...' cannot be used in exception rules.",
+            "message": "Valget 'redirect=...' kan ikke bli brukt i unntaksregler.",
             "description": "Error when 'redirect=' used in exception"
         },
         "filterLinterRejectedBadDomainOptionArguments": {
-            "message": "The option 'domain=...' has invalid arguments.",
+            "message": "Valget 'domain=...' har ugyldige argumenter.",
             "description": "Error when 'domain=' has invalid arguments"
         },
         "filterLinterRejectedBadCspOptionArguments": {
-            "message": "The option 'csp=...' has invalid arguments.",
+            "message": "Valget 'csp=...' har ugyldige argumenter.",
             "description": "Error when 'csp=' has invalid arguments"
         },
         "filterLinterRejectedUnknownOption": {
-            "message": "The option '{{option}}' is not recognized.",
+            "message": "Valget '{{option}}' er ikke gjenkjent.",
             "description": "English: The option '{{option}}' is not recognized."
         },
         "filterLinterRejectedOnlyUnsupportedType": {
@@ -302,42 +302,42 @@
             // the type option 'webrtc', but turns out to be a bug:
             // https://github.com/gorhill/uBlock/issues/3433
             // Need to investigate whether this should be changed.
-            "message": "A type option is not yet supported.",
+            "message": "En typeinnstilling er ikke støttet ennå.",
             "description": "Error when unsupported type option used and entire rule discarded"
         },
         "filterLinterRejectedNetworkBadRegExp": {
-            "message": "This network rule has regular expression syntax errors.",
+            "message": "Denne nettverksregelen har syntaksfeil i dens ordinære uttrykk.",
             "description": "Error when network has regular expression syntax errors"
         },
         "filterLinterRejectedInterventionForSMed79": {
             // https://github.com/chrisaljoudi/uBlock/issues/1096
-            "message": "The domain anchor may not be immediately followed by '^'.",
+            "message": "Domeneankeret kan ikke bli umiddelbart etterfulgt av '^'.",
             "description": "Error when the bad rule from SMed79 is discarded"
         },
 
         // Tab name of hosts matrix
         "matrixPageName": {
-            "message": "Hosts matrix",
+            "message": "Vertsmatrise",
             "description": "Hosts matrix tab name"
         },
 
         // Title of filter viewer
         "filterViewerPageName": {
-            "message": "Nano — Filter Viewer",
+            "message": "Nano — Filterviser",
             "description": "Title of the filter viewer"
         },
 
         // Popup tooltips
         "popupCacheControlPrompt": {
-            "message": "cache control",
+            "message": "mellomlagerkontroll",
             "description": "The cache control strip name"
         },
         "popupTipOpenFirewallPane": {
-            "message": "Toggle the firewall pane",
+            "message": "Skru brannmurpanelet av/på",
             "description": "Tooltip for toggle firewall pane button"
         },
         "popupTipRefreshButton": {
-            "message": "Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache.",
+            "message": "Klikk her for å oppfriske denne siden.\n\nCtrl+klikk for å oppfriske denne siden mens mellomlageret blir forbipassert.",
             "description": "English: Click to refresh this page.\n\nCtrl+click to refresh this page while bypassing cache."
         },
         // TODO 2018-02-02: Beta stage, do not translate!
@@ -352,7 +352,7 @@
 
         // Based on message of about page
         "aboutBasedOn": {
-            "message": "Based on {{@data}}",
+            "message": "Basert på {{@data}}",
             "description": "English: Based on {{@data}}"
         }
     };
