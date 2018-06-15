@@ -211,7 +211,7 @@
             "description": "Error when expensive cosmetic is generic"
         },
         "filterLinterRejectedStyleInjection": {
-            "message": "Denne CSSS-innsprøytingsregelen har syntaksfeil.",
+            "message": "Denne CSS-innsprøytingsregelen har syntaksfeil.",
             "description": "Error when CSS injection has syntax errors"
         },
         "filterLinterRejectedAssetsAccessViolation": {
