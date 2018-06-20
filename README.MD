@@ -12,7 +12,7 @@ somewhat behind and that is out of my control.*
 
 ### [Get it for Chrome](https://chrome.google.com/webstore/detail/nano-adblocker/gabbbocakeomblphkmmnoamkioajlkfo)
 
-### [(Beta) Get it for Edge](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
+### [Get it for Edge (Beta)](https://www.microsoft.com/store/productId/9NSXDX2TDB3V)
 
 ### Maintainers wanted for other browsers (open an issue and let me know)
 
