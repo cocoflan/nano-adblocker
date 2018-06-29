@@ -150,6 +150,22 @@ var onMessage = function(request, sender, callback) {
         µb.mouseEventRegister.x = µb.mouseEventRegister.y = -1;
         µb.elementPickerExec(request.tabId, request.targetURL, request.zap);
         break;
+    
+    // Patch 2018-02-01: Add force enable scroll
+    case 'injectForceScrollCSS':
+        if ( vAPI.supportsUserStylesheets ) {
+            vAPI.insertCSS(request.tabId, {
+                code: '*{overflow:auto!important;}',
+                cssOrigin: 'user',
+                runAt: 'document_start'
+            });
+        } else {
+            vAPI.insertCSS(request.tabId, {
+                code: '*{overflow:auto!important;}',
+                runAt: 'document_start'
+            });
+        }
+        break;
 
     case 'gotoURL':
         µb.openNewTab(request.details);
@@ -803,7 +819,8 @@ var restoreUserData = function(request) {
 var resetUserData = function() {
     vAPI.cacheStorage.clear();
     vAPI.storage.clear();
-    vAPI.localStorage.removeItem('immediateHiddenSettings');
+    // Patch 2017-12-12: Completely clear local storage as well
+    vAPI.localStorage.clear();
 
     // Keep global counts, people can become quite attached to numbers
     µb.saveLocalSettings();
@@ -967,9 +984,14 @@ var onMessage = function(request, sender, callback) {
         µb.assets.purge(request.assetKey);
         µb.assets.remove('compiled/' + request.assetKey);
         // https://github.com/gorhill/uBlock/pull/2314#issuecomment-278716960
-        if ( request.assetKey === 'ublock-filters' ) {
+        if ( request.assetKey.startsWith('ublock-') ) {
             µb.assets.purge('ublock-resources');
             µb.redirectEngine.invalidateResourcesSelfie();
+        }
+        // Patch 2017-12-09: Do the same thing for Nano filters
+        if ( request.assetKey.startsWith('nano-') ) {
+            nano.assets.purge('nano-resources');
+            nano.redirectEngine.invalidateResourcesSelfie();
         }
         break;
 
@@ -987,6 +1009,27 @@ var onMessage = function(request, sender, callback) {
 
     case 'writeHiddenSettings':
         µb.changeHiddenSettings(µb.hiddenSettingsFromString(request.content));
+        break;
+    
+    // Patch 2017-12-26: Add invokables to advanced settings dashboard
+    case 'hiddenInvoke_nanoRestart':
+        vAPI.app.restart();
+        break;
+    case 'hiddenInvoke_nanoForceRecompile':
+        nano.nanoForceRecompile();
+        break;
+    
+    // Patch 2017-12-08: Add mutex lock for dashboard
+    case 'obtainDashboardMutex':
+        response = nano.getDashboardMutex(sender);
+        break;
+        
+    // Patch 2017-12-08: Show linter result in the editor
+    case 'fetchUserFilterLintingResult':
+        response = {
+            errors: nano.filterLinter.errors,
+            warnings: nano.filterLinter.warnings
+        };
         break;
 
     default:

@@ -38,17 +38,25 @@ var µBlock = (function() { // jshint ignore:line
     var oneSecond = 1000,
         oneMinute = 60 * oneSecond;
 
+    // Patch 2018-01-21: Update default values
     var hiddenSettingsDefault = {
-        assetFetchTimeout: 30,
-        autoUpdateAssetFetchPeriod: 120,
-        autoUpdatePeriod: 7,
+        assetFetchTimeout: 60,
+        autoUpdateAssetFetchPeriod: 300,
+        autoUpdatePeriod: 4,
         debugScriptlets: false,
         ignoreRedirectFilters: false,
         ignoreScriptInjectFilters: false,
-        manualUpdateAssetFetchPeriod: 500,
+        manualUpdateAssetFetchPeriod: 1,
         popupFontSize: 'unset',
         suspendTabsUntilReady: false,
-        userResourcesLocation: 'unset'
+        userResourcesLocation: 'unset',
+        
+        // Patch 2017-12-25: Add more advanced settings
+        _nanoDisableHTMLFiltering: false,
+        _nanoDisconnectFrom_jspenguincom: false,
+        _nanoIgnoreThirdPartyWhitelist: false,
+        _nanoIgnorePerformanceAuditing: false,
+        _nanoMakeUserFiltersPrivileged: false
     };
 
     var whitelistDefault = [
@@ -56,6 +64,10 @@ var µBlock = (function() { // jshint ignore:line
         'chrome-extension-scheme',
         'chrome-scheme',
         'moz-extension-scheme',
+        
+        // Patch 2018-04-18: Whitelist Edge extension pages by default
+        'ms-browser-extension-scheme',
+        
         'opera-scheme',
         'vivaldi-scheme',
         'wyciwyg-scheme',   // Firefox's "What-You-Cache-Is-What-You-Get"
@@ -90,7 +102,12 @@ var µBlock = (function() { // jshint ignore:line
             requestLogMaxEntries: 1000,
             showIconBadge: true,
             tooltipsDisabled: false,
-            webrtcIPAddressHidden: false
+            webrtcIPAddressHidden: false,
+            
+            // Patch 2017-12-19: Add UI configuration
+            nanoDashboardAllowSelection: true,
+            nanoEditorWordSoftWrap: false,
+            nanoViewerWordSoftWrap: true
         },
 
         hiddenSettingsDefault: hiddenSettingsDefault,
@@ -154,6 +171,8 @@ var µBlock = (function() { // jshint ignore:line
         assetsBootstrapLocation: 'assets/assets.json',
 
         userFiltersPath: 'user-filters',
+        // Patch 2017-12-25: Add a special asset key for partial user filters
+        nanoPartialUserFiltersKey: 'nano-partial-user-filters',
         pslAssetKey: 'public_suffix_list.dat',
 
         selectedFilterLists: [],
@@ -186,5 +205,21 @@ var µBlock = (function() { // jshint ignore:line
     };
 
 })();
+
+/******************************************************************************/
+
+// Patch 2017-12-07: Make debugging less painful
+var nano = µBlock;
+
+/******************************************************************************/
+
+// Patch 2018-01-25: Add a flag to disable HTML filtering.
+// Reading hidden settings is currently synchronous, must update this logic if
+// hidden settings handling have changed.
+// If the new logic is asynchronous, then must test the effect of the potential
+// race condition
+if ( nano.hiddenSettings._nanoDisableHTMLFiltering ) {
+    nano.canFilterResponseBody = false;
+}
 
 /******************************************************************************/

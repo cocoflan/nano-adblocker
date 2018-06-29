@@ -409,6 +409,8 @@ var renderPopup = function() {
     // If you think the `=== true` is pointless, you are mistaken
     uDom.nodeFromId('gotoPick').classList.toggle('enabled', popupData.canElementPicker === true);
     uDom.nodeFromId('gotoZap').classList.toggle('enabled', popupData.canElementPicker === true);
+    // Patch 2018-02-01: Add force enable scroll
+    uDom.nodeFromId('forceEnableScroll').classList.toggle('enabled', popupData.canElementPicker === true);
 
     var blocked = popupData.pageBlockedRequestCount,
         total = popupData.pageAllowedRequestCount + blocked;
@@ -506,7 +508,8 @@ var renderTooltips = function(selector) {
 
 var tooltipTargetSelectors = new Map([
     [
-        '#switch',
+        // Patch 2018-02-12: Change tooltip anchor
+        '#switch .fa',
         {
             state: 'body.off',
             i18n: 'popupPowerSwitchInfo',
@@ -651,8 +654,26 @@ var toggleNetFilteringSwitch = function(ev) {
             tabId: popupData.tabId
         }
     );
-    renderTooltips('#switch');
+    
+    // Patch 2018-02-12: Change tooltip anchor
+    renderTooltips('#switch .fa');
+    
     hashFromPopupData();
+};
+
+/******************************************************************************/
+
+// Patch 2018-02-01: Add force enable scroll
+var forceEnableScroll = function() {
+    messaging.send(
+        'popupPanel',
+        {
+            what: 'injectForceScrollCSS',
+            tabId: popupData.tabId
+        }
+    );
+
+    vAPI.closePopup();
 };
 
 /******************************************************************************/
@@ -1072,10 +1093,19 @@ var onHideTooltip = function() {
     getPopupData(tabId);
 })();
 
-uDom('#switch').on('click', toggleNetFilteringSwitch);
+// Patch 2018-02-12: Change tooltip anchor
+uDom('#switch .fa').on('click', toggleNetFilteringSwitch);
+
 uDom('#gotoZap').on('click', gotoZap);
+
+// Patch 2018-02-01: Add force enable scroll
+uDom('#forceEnableScroll').on('click', forceEnableScroll);
+
 uDom('#gotoPick').on('click', gotoPick);
-uDom('h2').on('click', toggleFirewallPane);
+
+// Patch 2018-02-10: Move openeing firewall pane to a explicit button
+uDom('#nanoFirewallPaneToggle').on('click', toggleFirewallPane);
+
 uDom('#refresh').on('click', reloadTab);
 uDom('.hnSwitch').on('click', toggleHostnameSwitch);
 uDom('#saveRules').on('click', saveFirewallRules);
@@ -1090,3 +1120,11 @@ uDom('a[href]').on('click', gotoURL);
 /******************************************************************************/
 
 })();
+
+
+/******************************************************************************/
+
+// Patch 2018-04-18: Fix popup page for edge
+if ( typeof elib === "object" && !location.search ) {
+    elib.unbreak_popup();
+}
