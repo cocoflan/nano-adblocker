@@ -24,25 +24,9 @@ somewhat behind and that is out of my control.*
 
 ## Notable Change
 
-<!--
-### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/33)\] Nano Dashboard, clean and modern
-
-![Screenshot](https://i.imgur.com/LUAu7KO.png)
-
-Not yet available
--->
-
 ### \[[Work in progress](https://github.com/NanoAdblocker/NanoCore/issues/1)\] Nano Filter Linter, neat and saves frustration
 
-#### Know exactly why your rule is misbehaving
-
-![Screenshot](https://i.imgur.com/zboYYEr.png)
-
-<!--
-#### Get notified for common mistakes
-
-![Screenshot](https://i.imgur.com/IkTaEQ3.png)
--->
+![Screenshot](https://i.imgur.com/SStKkqq.png)
 
 Partially available since 1.0.0.22
 
