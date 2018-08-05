@@ -56,9 +56,8 @@ Available since 1.0.0.0
 
 *Note: user interface and other housekeeping changes are not listed here.*
 
-- [Extended advanced settings](/notes/advanced-settings.MD#advanced-settings)
-- [Extended filter syntax](/notes/filter-syntax.MD#filter-syntax)
-- [Polished filter list subscription process](/notes/filter-list-authoring.MD#filter-list-authoring)
+- [Extended advanced settings](https://github.com/NanoAdblocker/NanoCore2/blob/master/notes/advanced_settings.md#advanced-settings)
+- [Tweaked filter syntax](https://github.com/NanoAdblocker/NanoCore2/blob/master/notes/filter_syntax.md#filter-syntax)
 - Enabled `Block CSP reports` by default (to prevent websites from abusing it
   to track users)
 - Added a few more filters to filters manager
@@ -70,8 +69,3 @@ There are also a few changes specifically for Edge:
 - Mapped `fetch` requests to `xhr`
 - Fixed the popup panel in logger
 - Fixed advanced settings button in dashboard
-
-## Pending Features
-
-We are constantly improving! The list of pending features can be found
-[here](/notes/pending-features.MD#pending-features).
