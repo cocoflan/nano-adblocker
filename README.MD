@@ -64,8 +64,7 @@ Available since 1.0.0.0
 - Made cache control button to be always shown
 - Added force scroll mode (to be used with element zapper)
 
-There are also a few changes specifically for Edge: 
-- [Added whitelists for Edge build](/notes/dashboard-whitelist.MD#dashboard-whitelist)
+There are also a few changes specifically for Edge:
 - Mapped `fetch` requests to `xhr`
 - Fixed the popup panel in logger
 - Fixed advanced settings button in dashboard
