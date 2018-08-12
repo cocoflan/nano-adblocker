@@ -68,3 +68,4 @@ There are also a few changes specifically for Edge:
 - Mapped `fetch` requests to `xhr`
 - Fixed the popup panel in logger
 - Fixed advanced settings button in dashboard
+- Fixed issues with InPrivate mode
